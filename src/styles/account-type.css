@@ -3,13 +3,13 @@
    =========================== */
 
 .account-type-page {
-  min-height: calc(100vh - 120px); /* ajusta si tu navbar/footers son más grandes */
+  min-height: calc(100vh - 120px);
   padding: 3rem 1.5rem 3.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%);
-  color: #e5e7eb;
+  background: #f9fafb; /* fondo claro */
+  color: #111827;
 }
 
 .account-type-header {
@@ -21,12 +21,13 @@
   font-size: 2.4rem;
   font-weight: 700;
   margin: 0;
+  color: #111827;
 }
 
 .account-type-header p {
   margin: 0.75rem 0 0;
   font-size: 0.95rem;
-  color: #cbd5f5;
+  color: #6b7280;
 }
 
 /* ===========================
@@ -49,8 +50,8 @@
   text-align: left;
   padding: 1.8rem 2rem;
   border-radius: 24px;
-  background: #020617;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9);
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
   display: flex;
   align-items: flex-start;
   gap: 1.25rem;
@@ -58,15 +59,15 @@
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
-    background 0.15s ease,
-    border 0.15s ease;
-  border: 1px solid rgba(148, 163, 184, 0.15);
+    border 0.15s ease,
+    background 0.15s ease;
+  border: 1px solid #e5e7eb;
 }
 
 .account-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 70px rgba(37, 99, 235, 0.55);
-  border-color: rgba(129, 140, 248, 0.7);
+  transform: translateY(-5px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
 /* icon wrapper */
@@ -98,47 +99,47 @@
   margin: 0 0 0.5rem;
   font-size: 1.4rem;
   font-weight: 600;
-  color: #f9fafb;
+  color: #111827;
 }
 
 .account-card-body p {
   margin: 0;
   font-size: 0.95rem;
-  color: #d1d5db;
+  color: #6b7280;
   max-width: 25rem;
 }
 
-/* Highlight suave en esquina como en tu referencia */
+/* Highlight suave en esquina como detalle */
 .account-card::after {
   content: "";
   position: absolute;
-  right: -40px;
-  top: -40px;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(249, 250, 251, 0.12), transparent);
-  opacity: 0.6;
+  right: -35px;
+  top: -35px;
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.12), transparent);
+  opacity: 0.7;
   pointer-events: none;
 }
 
-/* Cambios sutiles distintos por tipo (por si quieres jugar con colores) */
+/* Cambios sutiles distintos por tipo */
 .account-card--business:hover {
-  background: radial-gradient(circle at top left, #1d4ed8 0, #020617 60%);
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), #ffffff 60%);
 }
 
 .account-card--person:hover {
-  background: radial-gradient(circle at top left, #f97316 0, #020617 60%);
+  background: radial-gradient(circle at top left, rgba(249, 115, 22, 0.06), #ffffff 60%);
 }
 
 /* Hint inferior */
 .account-type-hint {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: #6b7280;
   text-align: center;
 }
 
 .account-type-hint span {
-  color: #60a5fa;
+  color: #2563eb;
   font-weight: 500;
 }
 
