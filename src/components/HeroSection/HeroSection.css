@@ -1,0 +1,51 @@
+/* Fondo completo tipo landing (sin recuadro) */
+.hero {
+  height: 53vh;                     
+  padding: 80px 24px 60px;           
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Fondo tipo Mozzo (degradado cálido) */
+  background: url("src/assets/hero-bg.jpg") center/cover no-repeat;
+
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Contenido centrado sin recuadro gris */
+.hero-content {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+
+  /* nos aseguramos de que NO tenga recuadro ni opacidad */
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* Título principal */
+.hero-title {
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  font-weight: 750;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Subtítulo */
+.hero-subtitle {
+  font-size: 1.05rem;
+  max-width: 640px;
+  margin: 0 auto 28px;
+  opacity: 0.92;
+}
+
+/* Ajustamos un poco la searchbar dentro del hero */
+.hero .searchbar-form {
+  max-width: 560px;
+}

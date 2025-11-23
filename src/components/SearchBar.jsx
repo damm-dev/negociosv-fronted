@@ -1,4 +1,5 @@
 import {useState} from "react";//Para guardar lo que el usuario escribe
+import "./SearchBar.css";//Importa estilos
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
@@ -9,17 +10,17 @@ export default function SearchBar() {
   };
 
   return (
-    <form>
+    <form className= "searchbar-form" onSubmit={handleSubmit}>
       <input
        type="search"
-       placeholder="Buscar negocios..."
+       placeholder="Encuentra el negocio que buscas"
        value={query}
        onChange={(e)=> setQuery(e.target.value)}
        aria-label="Buscar negocios"
-       onSubmit={handleSubmit}
+       className="searchbar-input"
       ></input>
 
-      <button type="submit">
+      <button type="submit" className="searchbar-button">
         Buscar
       </button>
 
