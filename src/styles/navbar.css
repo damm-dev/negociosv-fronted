@@ -6,7 +6,7 @@
    y centra el contenido principal */
 .layout-header {
   background-color: #020617;
-  padding: 0.75rem 2.5rem;   /* un poco más de aire lateral */
+  padding: 0.75rem 2.5rem;
   display: flex;
   justify-content: center;
 }
@@ -19,37 +19,39 @@
   display: flex;
   align-items: center;
 
-  /* más separación entre brand, tabs y acciones */
-  gap: 4rem;
+  /* separación entre marca, tabs y acciones */
+  gap: 4.5rem;
 }
 
 /* IZQUIERDA: marca */
 .nav-brand {
-  flex: 1; /* ocupa mismo espacio que los botones de la derecha */
+  flex: 1;
   font-size: 1.1rem;
   font-weight: 600;
   color: #e5e7eb;
   white-space: nowrap;
 
-  /* empuja un poquito más hacia la izquierda respecto a los tabs */
-  margin-right: 1.25rem;
+  /* la separamos aún más de los tabs */
+  margin-right: 3rem;
 }
 
 /* CENTRO: tabs */
 .nav-center {
-  flex: 2; /* más ancho que los lados para centrar mejor los tabs */
+  flex: 2;
   display: flex;
   justify-content: center;
 }
 
 /* “Píldora” que contiene los tabs */
 .nav-pill {
-  background-color: #020617; /* mismo color que el fondo */
+  background-color: #020617;
   border-radius: 999px;
-  padding: 0.5rem 1.6rem;
+  padding: 0.6rem 2rem;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+
+  /* más espacio entre cada tab */
+  gap: 2.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
@@ -58,13 +60,16 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.7rem;
+
+  /* más padding lateral para que respiren */
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+
   border-radius: 999px;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #e5e7eb;
   transition:
     background 0.15s ease,
@@ -92,7 +97,7 @@
 
 /* Texto de cada tab */
 .nav-label {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 /* Tab activo */
@@ -104,8 +109,8 @@
 .nav-item--active::after {
   content: "";
   position: absolute;
-  left: 8px;
-  right: 8px;
+  left: 12px;
+  right: 12px;
   bottom: -6px;
   height: 3px;
   border-radius: 999px;
@@ -114,14 +119,14 @@
 
 /* DERECHA: botones de sesión */
 .nav-actions {
-  flex: 1; /* mismo espacio que la marca */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
 
-  /* empuja un poquito más hacia la derecha respecto a los tabs */
-  margin-left: 1.25rem;
+  /* la separamos aún más de los tabs */
+  margin-left: 3rem;
 }
 
 .nav-btn {
