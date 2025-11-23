@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import { useState } from "react";
 import "../styles/navbar.css";
+import { NavLink, useNavigate } from "react-router-dom";
 
 /* ==== ICONOS SVG CLAROS ==== */
 
@@ -135,13 +136,16 @@ function CuentaIcon({ active }) {
 
 /* ==== TABS EN ESPAÑOL ==== */
 const TABS = [
-  { id: "inicio", label: "Inicio", icon: HomeIcon },
-  { id: "negocios", label: "Negocios", icon: NegociosIcon },
-  { id: "logros", label: "Logros", icon: LogrosIcon },
-  { id: "cuenta", label: "Cuenta", icon: CuentaIcon },
+  { id: "inicio", label: "Inicio", icon: <HomeIcon />, to: "/" },
+  { id: "negocios", label: "Negocios", icon: <NegociosIcon /> },
+  { id: "logros", label: "Logros", icon: <LogrosIcon /> },
+  { id: "cuenta", label: "Cuenta", icon: <CuentaIcon /> },
 ];
 
+
 export default function Navbar() {
+  const navigate = useNavigate();
+  const [_, setDummy] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
 
   return (
@@ -160,7 +164,10 @@ export default function Navbar() {
                 className={`nav-item ${
                   activeTab === id ? "nav-item--active" : ""
                 }`}
-                onClick={() => setActiveTab(id)}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  if (tab.to) navigate(tab.to);
+                }}
               >
                 <span className="nav-icon"><Icon active={activeTab === id} /></span>
                 <span className="nav-label">{label}</span>
@@ -171,8 +178,8 @@ export default function Navbar() {
 
         {/* DERECHA: botones sesión */}
         <div className="nav-actions">
-          <button className="nav-btn nav-btn-outline">Iniciar sesión</button>
-          <button className="nav-btn nav-btn-primary">Registrarse</button>
+          <button className="nav-btn nav-btn-outline" type="button" onClick={()=> navigate("/login")}>Iniciar sesión</button>
+          <button className="nav-btn nav-btn-primary" type="button" onClick={()=> navigate("/account-type")}>Registrarse</button>
         </div>
       </div>
     </header>

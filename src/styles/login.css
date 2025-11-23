@@ -1,0 +1,305 @@
+/* ===========================
+   CONTENEDOR GENERAL
+   =========================== */
+
+.login-page {
+  min-height: calc(100vh - 72px); /* por si usas navbar arriba */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  background: #020617; /* mismo fondo que el layout */
+}
+
+/* Tarjeta principal (dos columnas) */
+.login-card {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 520px;
+  border-radius: 24px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  background: linear-gradient(135deg, #1d4ed8, #020617);
+  box-shadow: 0 32px 80px rgba(15, 23, 42, 0.85);
+}
+
+/* ===========================
+   LADO IZQUIERDO (ILUSTRACIÓN)
+   =========================== */
+
+.login-illustration {
+  position: relative;
+  padding: 2.5rem 2.75rem;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* círculo "noche" */
+.login-illustration-orbit {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  margin-top: 0.5rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 15%, #fbbf24, #1e293b 35%, #020617);
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+}
+
+/* luna */
+.login-illustration-moon {
+  position: absolute;
+  top: 22%;
+  right: 30%;
+  width: 70px;
+  height: 70px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #fde68a, #fbbf24);
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.7);
+}
+
+/* colinas */
+.login-illustration-hill {
+  position: absolute;
+  bottom: -4%;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+.hill-1 {
+  left: -10%;
+  width: 70%;
+  height: 55%;
+}
+
+.hill-2 {
+  right: -15%;
+  width: 75%;
+  height: 60%;
+  opacity: 0.8;
+}
+
+.hill-3 {
+  left: 10%;
+  width: 60%;
+  height: 45%;
+  background: #020617;
+  opacity: 0.9;
+}
+
+/* texto bajo la ilustración */
+.login-illustration-text {
+  margin-top: 2rem;
+  max-width: 420px;
+}
+
+.login-illustration-text h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.login-illustration-text p {
+  font-size: 0.97rem;
+  color: #cbd5f5;
+}
+
+/* ===========================
+   LADO DERECHO (FORM)
+   =========================== */
+
+.login-form-wrapper {
+  background: #f9fafb;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.login-form-card {
+  width: 100%;
+  max-width: 360px;
+  margin: 2.5rem auto;
+  padding: 0.5rem 2rem 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.login-form-header {
+  margin-bottom: 1.75rem;
+}
+
+.login-greeting-top {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.login-greeting-main {
+  margin: 0.2rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.login-greeting-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.login-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.login-input {
+  border: none;
+  border-bottom: 1px solid #d1d5db;
+  padding: 0.45rem 0;
+  font-size: 0.92rem;
+  outline: none;
+  background: transparent;
+  color: #111827;
+}
+
+.login-input::placeholder {
+  color: #9ca3af;
+}
+
+.login-input:focus {
+  border-bottom-color: #2563eb;
+}
+
+/* fila recordar / olvidar */
+.login-extra-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.login-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #4b5563;
+}
+
+.login-remember input {
+  width: 14px;
+  height: 14px;
+}
+
+.login-link-button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.login-forgot {
+  color: #2563eb;
+}
+
+.login-forgot:hover {
+  text-decoration: underline;
+}
+
+/* botón submit */
+.login-submit {
+  margin-top: 0.5rem;
+  border: none;
+  width: 100%;
+  padding: 0.65rem 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #f9fafb;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 18px 35px rgba(37, 99, 235, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.1s ease,
+    filter 0.1s ease;
+}
+
+.login-submit:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 22px 40px rgba(37, 99, 235, 0.5);
+}
+
+/* crear cuenta */
+.login-register-text {
+  margin: 0.8rem 0 0;
+  font-size: 0.82rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.login-register-link {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.login-register-link:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 900px) {
+  .login-card {
+    grid-template-columns: 1fr; /* se apilan */
+    max-width: 560px;
+  }
+
+  .login-illustration {
+    padding: 1.75rem 1.75rem 1.25rem;
+  }
+
+  .login-illustration-orbit {
+    max-width: 290px;
+  }
+
+  .login-form-card {
+    margin: 1.5rem auto 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .login-page {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .login-card {
+    min-height: auto;
+    box-shadow: 0 20px 55px rgba(15, 23, 42, 0.85);
+  }
+
+  .login-illustration-text h2 {
+    font-size: 1.3rem;
+  }
+}

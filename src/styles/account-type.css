@@ -1,0 +1,172 @@
+/* ===========================
+   PÁGINA GENERAL
+   =========================== */
+
+.account-type-page {
+  min-height: calc(100vh - 120px); /* ajusta si tu navbar/footers son más grandes */
+  padding: 3rem 1.5rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%);
+  color: #e5e7eb;
+}
+
+.account-type-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.account-type-header h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.account-type-header p {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  color: #cbd5f5;
+}
+
+/* ===========================
+   GRID DE CARDS
+   =========================== */
+
+.account-type-grid {
+  width: 100%;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+/* Card base */
+.account-card {
+  position: relative;
+  border: none;
+  text-align: left;
+  padding: 1.8rem 2rem;
+  border-radius: 24px;
+  background: #020617;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    border 0.15s ease;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.account-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 70px rgba(37, 99, 235, 0.55);
+  border-color: rgba(129, 140, 248, 0.7);
+}
+
+/* icon wrapper */
+.account-card-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9fafb;
+}
+
+.account-card-icon--business {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.account-card-icon--person {
+  background: linear-gradient(135deg, #f97316, #facc15);
+}
+
+.at-icon-svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* texto */
+.account-card-body h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.account-card-body p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #d1d5db;
+  max-width: 25rem;
+}
+
+/* Highlight suave en esquina como en tu referencia */
+.account-card::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(249, 250, 251, 0.12), transparent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Cambios sutiles distintos por tipo (por si quieres jugar con colores) */
+.account-card--business:hover {
+  background: radial-gradient(circle at top left, #1d4ed8 0, #020617 60%);
+}
+
+.account-card--person:hover {
+  background: radial-gradient(circle at top left, #f97316 0, #020617 60%);
+}
+
+/* Hint inferior */
+.account-type-hint {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.account-type-hint span {
+  color: #60a5fa;
+  font-weight: 500;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 900px) {
+  .account-type-page {
+    padding-top: 2.4rem;
+  }
+
+  .account-type-header h1 {
+    font-size: 2rem;
+  }
+
+  .account-type-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 600px) {
+  .account-card {
+    padding: 1.4rem 1.5rem;
+  }
+
+  .account-card-body h2 {
+    font-size: 1.25rem;
+  }
+}

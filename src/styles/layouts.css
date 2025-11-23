@@ -6,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #020617;         /* fondo oscuro */
+  background-color: #020617;
   color: #e5e7eb;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
@@ -19,15 +19,9 @@ html, body {
 }
 
 
-/* Orden normal en escritorio:
-   1) header (navbar)
-   2) main (contenido)
-   3) footer
-*/
+/* Orden normal: navbar arriba, contenido, footer */
 .layout-header {
-  order: 1;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #1f2937;
+  order: 1;          /* estilos visuales del header están en navbar.css */
 }
 
 .layout-main {
@@ -39,17 +33,14 @@ html, body {
 
 .layout-footer {
   order: 3;
-  border-top: 1px solid #1f2937;
 }
 
-/* ===========================
-   FOOTER BASE (por si no lo sobreescribes en footer.css)
-   =========================== */
-
+/* FOOTER base (si luego no lo sobrescribes en footer.css) */
 .layout-footer {
   background-color: #020617;
   color: #e5e7eb;
   font-size: 0.85rem;
+  border-top: 1px solid #1f2937; /* solo la línea del footer, no del header */
 }
 
 /* ===========================
@@ -61,10 +52,11 @@ html, body {
   /* Cambiamos el orden:
      1) main
      2) footer
-     3) header (navbar)
+     3) header (navbar abajo fijo)
   */
   .layout-main {
     order: 1;
+    padding-bottom: 4rem; /* espacio para que el navbar fijo no tape el contenido */
   }
 
   .layout-footer {
@@ -73,8 +65,6 @@ html, body {
 
   .layout-header {
     order: 3;
-
-    /* barra fija abajo */
     position: fixed;
     left: 0;
     right: 0;
@@ -94,4 +84,3 @@ html, body {
     padding-bottom: 4rem; /* ajusta según la altura real del navbar */
   }
 }
-
