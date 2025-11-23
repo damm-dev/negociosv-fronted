@@ -135,11 +135,12 @@ function CuentaIcon({ active }) {
 }
 
 /* ==== TABS EN ESPAÑOL ==== */
+
 const TABS = [
-  { id: "inicio", label: "Inicio", icon: <HomeIcon />, to: "/" },
-  { id: "negocios", label: "Negocios", icon: <NegociosIcon /> },
-  { id: "logros", label: "Logros", icon: <LogrosIcon /> },
-  { id: "cuenta", label: "Cuenta", icon: <CuentaIcon /> },
+  { id: "inicio", label: "Inicio", icon: HomeIcon, to: "/" },
+  { id: "negocios", label: "Negocios", icon: NegociosIcon },
+  { id: "logros", label: "Logros", icon: LogrosIcon },
+  { id: "cuenta", label: "Cuenta", icon: CuentaIcon },
 ];
 
 
@@ -157,7 +158,7 @@ export default function Navbar() {
         {/* CENTRO: tabs */}
         <nav className="nav-center">
           <div className="nav-pill">
-            {TABS.map(({ id, label, icon: Icon }) => (
+            {TABS.map(({ id, label, icon: Icon, to }) => (
               <button
                 key={id}
                 type="button"
@@ -165,8 +166,8 @@ export default function Navbar() {
                   activeTab === id ? "nav-item--active" : ""
                 }`}
                 onClick={() => {
-                  setActiveTab(tab.id);
-                  if (tab.to) navigate(tab.to);
+                  setActiveTab(id);
+                  if (to) navigate(to);
                 }}
               >
                 <span className="nav-icon"><Icon active={activeTab === id} /></span>
