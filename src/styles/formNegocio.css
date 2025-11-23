@@ -22,17 +22,26 @@ html, body {
 * { box-sizing: border-box; }
 
 /* --- LAYOUT PRINCIPAL (Pantalla Completa) --- */
+/* src/styles/formNegocio.css */
+
+/* ... tus variables y reset ... */
+
 .wizard-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Altura exacta de la pantalla */
+  height: 100vh;
   width: 100vw;
   background-color: var(--bg-color);
-  font-family: 'Inter', system-ui, sans-serif;
-  position: absolute; /* Asegura que cubra todo */
+  font-family: 'Inter', sans-serif;
+  
+  /* ESTO ES CRUCIAL PARA QUE SE VEA BIEN: */
+  position: fixed; 
   top: 0;
   left: 0;
+  z-index: 9999; 
 }
+
+/* ... el resto de tu css (botones, inputs, etc.) ... */
 
 /* --- CONTENIDO CENTRAL (Donde van los inputs) --- */
 .wizard-content {
