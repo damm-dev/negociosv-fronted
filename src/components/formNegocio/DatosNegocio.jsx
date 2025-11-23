@@ -97,41 +97,6 @@ const DatosNegocio = ({ formData, updateForm, internalStep, setInternalStep, nex
       <div className="wizard-content">
         {renderContent()}
       </div>
-
-      {/* NAVEGACIÓN DEL SUBWIZARD */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        paddingTop: '16px'
-      }}>
-        <button
-          onClick={() => prevStep()}
-          disabled={internalStep === 0}
-          style={{
-            backgroundColor: internalStep === 0 ? '#ddd' : '#6b7280',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '10px 20px',
-            cursor: internalStep === 0 ? 'not-allowed' : 'pointer',
-          }}
-        >
-          ← Anterior
-        </button>
-        <button
-          onClick={() => nextStep()}
-          style={{
-            backgroundColor: '#2563eb',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '10px 20px',
-            cursor: 'pointer',
-          }}
-        >
-          Siguiente →
-        </button>
-      </div>
     </div>
   );
 };

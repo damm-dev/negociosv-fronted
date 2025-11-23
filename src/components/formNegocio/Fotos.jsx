@@ -50,10 +50,7 @@ const Fotos = ({ formData, updateForm, nextStep, prevStep }) => {
       </div>
 
       {/* BOTONES ABAJO */}
-      <div className="bottom-bar">
-        <button onClick={prevStep} className="btn-prev">← Anterior</button>
-        <button onClick={handleNext} className="btn-next">Siguiente →</button>
-      </div>
+      {/* Botones removidos para evitar duplicación */}
     </div>
   );
 };

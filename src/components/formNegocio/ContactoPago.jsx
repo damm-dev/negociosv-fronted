@@ -118,10 +118,7 @@ const ContactoPago = ({ formData, updateForm, nextStep, prevStep }) => {
       </div>
 
       {/* Barra Inferior Fija (Solo UN par de botones) */}
-      <div className="bottom-bar">
-        <button onClick={handleBack} className="btn-prev">← Anterior</button>
-        <button onClick={handleNext} className="btn-next">Siguiente →</button>
-      </div>
+      {/* Botones removidos para evitar duplicación */}
 
     </div>
   );
