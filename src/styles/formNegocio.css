@@ -149,18 +149,21 @@ textarea.big-input {
 
 /* --- BARRA INFERIOR (Footer) --- */
 .bottom-bar {
-  height: 90px;
-  width: 100%;
-  background-color: white;
-  border-top: 1px solid #f3f4f6;
-  
+  position: fixed; /* ya está así */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px 18px;
+  border-top: 1px solid #e5e7eb;
+
   display: flex;
-  justify-content: center; /* BOTONES CENTRADOS */
-  align-items: center;
-  gap: 20px; /* Espacio entre botones */
-  
-  flex-shrink: 0;
+  justify-content: center;
+  gap: 12px;
+
+  z-index: 9999; /* <-- AGREGA ESTO */
 }
+
 
 /* --- BOTONES --- */
 .btn-prev {
@@ -196,4 +199,60 @@ textarea.big-input {
 .btn-next:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
+}
+
+/* =========================
+   OVERRIDES PARA WIZARD PERSONAS
+   (centrado + botones separados)
+========================= */
+
+/* Hace el layout igual al wizard negocio: pantalla completa centrada */
+.wizard-layout{
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0 24px 90px;   /* deja espacio para la bottom bar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra vertical */
+  align-items: stretch;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* El contenido ocupa el alto disponible y se centra */
+.wizard-content{
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra vertical */
+  align-items: center;     /* centra horizontal */
+  text-align: center;
+}
+
+/* Barra inferior igual a la de negocio:
+   botones lejos y con aire */
+.bottom-bar{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #ddd;
+
+  display: flex;
+  justify-content: space-around; /* separa botones */
+  padding: 12px 40px;           /* aire lateral */
+  z-index: 9999;                /* encima del navbar */
+  gap: 24px;                    /* distancia extra entre botones */
+}
+
+/* Botones más grandes tipo negocio */
+.btn-prev,
+.btn-next{
+  padding: 10px 40px;
+  min-width: 180px; /* evita que queden muy juntos */
+  border-radius: 8px;
 }
