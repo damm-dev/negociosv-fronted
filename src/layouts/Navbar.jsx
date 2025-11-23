@@ -1,0 +1,180 @@
+// src/components/Navbar.jsx
+import { useState } from "react";
+import "../styles/navbar.css";
+
+/* ==== ICONOS SVG CLAROS ==== */
+
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* casita */}
+      <path
+        d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5a.5.5 0 0 1-.5-.5V15h-4v5.5a.5.5 0 0 1-.5.5H5a1 1 0 0 1-1-1v-8.5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function NegociosIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* cuadricula 3x2 */}
+      <rect
+        x="3"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="10"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="17"
+        y="4"
+        width="4"
+        height="6"
+        rx="1.3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="3"
+        y="13"
+        width="8"
+        height="7"
+        rx="1.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="13"
+        y="13"
+        width="8"
+        height="7"
+        rx="1.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+    </svg>
+  );
+}
+
+function LogrosIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* trofeo */}
+      <path
+        d="M8 5h8v3a4 4 0 0 1-4 4 4 4 0 0 1-4-4V5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10 16h4v2.5H9.5a.5.5 0 0 1-.5-.5V17a1 1 0 0 1 1-1Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8 8H6a2 2 0 0 1-2-2V5.5A1.5 1.5 0 0 1 5.5 4H8m8 4h2a2 2 0 0 0 2-2V5.5A1.5 1.5 0 0 0 18.5 4H16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CuentaIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* usuario */}
+      <circle
+        cx="12"
+        cy="9"
+        r="3.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M6.5 18.5c.7-2.4 2.5-3.8 5.5-3.8s4.8 1.4 5.5 3.8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/* ==== TABS EN ESPAÑOL ==== */
+const TABS = [
+  { id: "inicio", label: "Inicio", icon: <HomeIcon /> },
+  { id: "negocios", label: "Negocios", icon: <NegociosIcon /> },
+  { id: "logros", label: "Logros", icon: <LogrosIcon /> },
+  { id: "cuenta", label: "Cuenta", icon: <CuentaIcon /> },
+];
+
+export default function Navbar() {
+  const [activeTab, setActiveTab] = useState("inicio");
+
+  return (
+    <header className="layout-header">
+      <div className="nav-bar">
+        {/* IZQUIERDA: marca */}
+        <div className="nav-brand">NegocioSV</div>
+
+        {/* CENTRO: tabs */}
+        <nav className="nav-center">
+          <div className="nav-pill">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`nav-item ${
+                  activeTab === tab.id ? "nav-item--active" : ""
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="nav-icon">{tab.icon}</span>
+                <span className="nav-label">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* DERECHA: botones sesión */}
+        <div className="nav-actions">
+          <button className="nav-btn nav-btn-outline">Iniciar sesión</button>
+          <button className="nav-btn nav-btn-primary">Registrarse</button>
+        </div>
+      </div>
+    </header>
+  );
+}
