@@ -1,0 +1,218 @@
+/* ===========================
+   HEADER / NAVBAR (DESKTOP)
+   =========================== */
+
+/* El header usa el mismo fondo del layout
+   y centra el contenido principal */
+.layout-header {
+  background-color: #020617;
+  padding: 0.75rem 2.5rem;   /* un poco más de aire lateral */
+  display: flex;
+  justify-content: center;
+}
+
+/* Barra principal: marca | tabs | botones */
+.nav-bar {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+
+  /* más separación entre brand, tabs y acciones */
+  gap: 4rem;
+}
+
+/* IZQUIERDA: marca */
+.nav-brand {
+  flex: 1; /* ocupa mismo espacio que los botones de la derecha */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  white-space: nowrap;
+
+  /* empuja un poquito más hacia la izquierda respecto a los tabs */
+  margin-right: 1.25rem;
+}
+
+/* CENTRO: tabs */
+.nav-center {
+  flex: 2; /* más ancho que los lados para centrar mejor los tabs */
+  display: flex;
+  justify-content: center;
+}
+
+/* “Píldora” que contiene los tabs */
+.nav-pill {
+  background-color: #020617; /* mismo color que el fondo */
+  border-radius: 999px;
+  padding: 0.5rem 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Cada tab */
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.nav-item:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Iconos SVG */
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-svg-icon {
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+}
+
+/* Texto de cada tab */
+.nav-label {
+  font-size: 0.9rem;
+}
+
+/* Tab activo */
+.nav-item--active {
+  color: #60a5fa;
+  font-weight: 500;
+}
+
+.nav-item--active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 999px;
+  background: #3b82f6;
+}
+
+/* DERECHA: botones de sesión */
+.nav-actions {
+  flex: 1; /* mismo espacio que la marca */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  /* empuja un poquito más hacia la derecha respecto a los tabs */
+  margin-left: 1.25rem;
+}
+
+.nav-btn {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-btn-outline {
+  background: transparent;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+}
+
+.nav-btn-outline:hover {
+  background-color: #111827;
+  transform: translateY(-1px);
+}
+
+.nav-btn-primary {
+  background: #2563eb;
+  color: #f9fafb;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
+}
+
+.nav-btn-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   MÓVIL (navbar abajo solo iconos)
+   =========================== */
+
+@media (max-width: 768px) {
+  .layout-header {
+    padding: 0;
+  }
+
+  .nav-bar {
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Ocultamos marca y botones en móvil */
+  .nav-brand,
+  .nav-actions {
+    display: none;
+  }
+
+  .nav-center {
+    flex: 1;
+  }
+
+  .nav-pill {
+    width: 100%;
+    border-radius: 0;
+    padding: 0.25rem 0;
+    box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.6);
+    justify-content: space-around;
+    gap: 0;
+  }
+
+  .nav-item {
+    flex: 1;
+    justify-content: center;
+    padding: 0.35rem 0.2rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-size: 0.7rem;
+  }
+
+  /* En móvil solo iconos */
+  .nav-label {
+    display: none;
+  }
+
+  .nav-svg-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-item--active::after {
+    left: 30%;
+    right: 30%;
+    bottom: -2px;
+    height: 3px;
+  }
+}

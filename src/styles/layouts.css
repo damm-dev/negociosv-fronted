@@ -1,0 +1,89 @@
+/* ===========================
+   LAYOUT GENERAL
+   =========================== */
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #020617;         /* fondo oscuro */
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Orden normal en escritorio:
+   1) header (navbar)
+   2) main (contenido)
+   3) footer
+*/
+.layout-header {
+  order: 1;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #1f2937;
+}
+
+.layout-main {
+  order: 2;
+  flex: 1;
+  width: 100%;
+  padding: 0;
+}
+
+.layout-footer {
+  order: 3;
+  border-top: 1px solid #1f2937;
+}
+
+/* ===========================
+   FOOTER BASE (por si no lo sobreescribes en footer.css)
+   =========================== */
+
+.layout-footer {
+  background-color: #020617;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+}
+
+/* ===========================
+   RESPONSIVE (MÓVIL)
+   Navbar abajo tipo app
+   =========================== */
+
+@media (max-width: 768px) {
+  /* Cambiamos el orden:
+     1) main
+     2) footer
+     3) header (navbar)
+  */
+  .layout-main {
+    order: 1;
+  }
+
+  .layout-footer {
+    order: 2;
+  }
+
+  .layout-header {
+    order: 3;
+
+    /* barra fija abajo */
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+
+    /* opcional: quitar borde superior porque está abajo */
+    border-top: 1px solid #1f2937;
+    border-bottom: none;
+
+    padding: 0.5rem 1rem;
+    background-color: #020617; /* fondo igual al layout */
+  }
+
+  /* Para que el contenido no quede tapado por el navbar fijo */
+  .layout-main {
+    padding-bottom: 4rem; /* ajusta según la altura real del navbar */
+  }
+}
+
