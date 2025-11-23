@@ -37,41 +37,49 @@ const BUSINESSES = [
 export default function CardSection() {
   return (
     <section className="cards-section">
-      <div className="cards-section-header">
-        <h2>Negocios Recomendados</h2>
-        <p>Explora algunos de los negocios recomendados en NegocioSV.</p>
-      </div>
+      {/* FILA: título + cards destacadas */}
+      <div className="cards-section-row">
+        <div className="cards-section-header">
+          <h2>Negocios recomendados</h2>
+          <p>
+            Explora algunos de los negocios recomendados en NegocioSV y descubre
+            nuevas opciones cerca de ti.
+          </p>
+        </div>
 
-      <div className="cards-grid">
-        {BUSINESSES.map((business) => (
-          <article key={business.id} className="business-card">
-            {/* Fondo con imagen */}
-            <div
-              className="business-card-bg"
-              style={{ backgroundImage: `url(${business.image})` }}
-            />
+        <div className="cards-grid">
+          {BUSINESSES.map((business) => (
+            <article key={business.id} className="business-card">
+              {/* Fondo con imagen */}
+              <div
+                className="business-card-bg"
+                style={{ backgroundImage: `url(${business.image})` }}
+              />
 
-            {/* Título visible siempre */}
-            <div className="business-card-label">
-              <span>{business.name}</span>
-            </div>
-
-            {/* Panel que se desliza desde la izquierda al hacer hover */}
-            <div className="business-card-overlay">
-              <div className="business-card-overlay-inner">
-                <p className="business-card-badge">{business.category}</p>
-                <h3>{business.name}</h3>
-                <p className="business-card-text">{business.description}</p>
-                <p className="business-card-location">{business.location}</p>
-
-                <button type="button" className="business-card-btn">
-                  Ver detalles
-                </button>
+              {/* Título visible siempre */}
+              <div className="business-card-label">
+                <span>{business.name}</span>
               </div>
-            </div>
-          </article>
-        ))}
+
+              {/* Panel que se desliza desde la izquierda al hacer hover */}
+              <div className="business-card-overlay">
+                <div className="business-card-overlay-inner">
+                  <p className="business-card-badge">{business.category}</p>
+                  <h3>{business.name}</h3>
+                  <p className="business-card-text">{business.description}</p>
+                  <p className="business-card-location">{business.location}</p>
+
+                  <button type="button" className="business-card-btn">
+                    Ver detalles
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
+
+      {/* FILA INFERIOR: mismas cards pero “normales” */}
     </section>
   );
 }

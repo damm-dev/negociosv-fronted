@@ -3,53 +3,57 @@
    =========================== */
 
 .cards-section {
-  padding: 3rem 2rem 3.5rem;
+  padding: 2rem 2rem 3.5rem;
   background: #f3f4f6; /* mismo tono de fondo que el resto */
 }
 
-.cards-section-header {
-  max-width: 1100px;
-  margin: 0 auto 1.8rem;
+/* FILA: título + cards destacadas en la misma fila */
+.cards-section-row {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: stretch;
 }
 
+/* bloque del título */
 .cards-section-header h2 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 700;
   color: #111827;
 }
 
 .cards-section-header p {
-  margin: 0.4rem 0 0;
+  margin: 0.7rem 0 0;
   font-size: 0.95rem;
   color: #6b7280;
 }
 
 /* ===========================
-   GRID DE CARDS
+   GRID DE CARDS DESTACADAS
    =========================== */
 
 .cards-grid {
-  max-width: 1100px;
-  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1.3rem;
 }
 
 /* ===========================
-   CARD
+   CARD DESTACADA (con overlay)
    =========================== */
 
 .business-card {
   position: relative;
   overflow: hidden;
   border-radius: 18px;
-  height: 240px;
+  height: 220px; /* un poco más pequeñas */
   cursor: pointer;
   transform: translateZ(0);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
   background: #111827;
 }
 
@@ -81,7 +85,7 @@
 }
 
 .business-card-label span {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #f9fafb;
 }
@@ -92,16 +96,16 @@
   inset: 0;
   display: flex;
   align-items: stretch;
-  pointer-events: none; /* el panel solo se usa visualmente */
+  pointer-events: none;
 }
 
 .business-card-overlay-inner {
-  width: 70%;
-  max-width: 260px;
+  width: 75%;
+  max-width: none;
   height: 100%;
   background: rgba(17, 24, 39, 0.96);
   color: #f9fafb;
-  padding: 1.1rem 1.2rem;
+  padding: 1rem 1.1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -112,28 +116,28 @@
 
 /* contenido del overlay */
 .business-card-badge {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #bfdbfe;
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.3rem;
 }
 
 .business-card-overlay-inner h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.1rem;
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
 }
 
 .business-card-text {
-  margin: 0 0 0.6rem;
-  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
   color: #e5e7eb;
 }
 
 .business-card-location {
-  margin: 0 0 0.9rem;
-  font-size: 0.8rem;
+  margin: 0 0 0.7rem;
+  font-size: 0.78rem;
   color: #93c5fd;
 }
 
@@ -142,14 +146,13 @@
   align-self: flex-start;
   border: none;
   border-radius: 999px;
-  padding: 0.4rem 1rem;
-  font-size: 0.82rem;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
   cursor: pointer;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #f9fafb;
   box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
-  transition: transform 0.1s ease, box-shadow 0.1s ease,
-    filter 0.1s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
 }
 
 .business-card-btn:hover {
@@ -157,13 +160,10 @@
   filter: brightness(1.05);
 }
 
-/* ===========================
-   HOVER: ZOOM + PANEL QUE ENTRA
-   =========================== */
-
+/* HOVER: zoom + overlay */
 .business-card:hover {
   transform: scale(1.03);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
 }
 
 .business-card:hover .business-card-bg {
@@ -172,15 +172,96 @@
 }
 
 .business-card:hover .business-card-overlay-inner {
-  transform: translateX(0); /* se desliza desde la izquierda */
+  transform: translateX(0);
+}
+
+/* ===========================
+   CARDS INFERIORES (normales)
+   =========================== */
+
+.cards-simple-wrapper {
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+}
+
+.cards-simple-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.business-card-simple {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+/* imagen arriba */
+.business-card-simple-image {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* cuerpo */
+.business-card-simple-body {
+  padding: 1rem 1.1rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.business-card-simple-body h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.business-card-simple-category {
+  margin: 0 0 0.45rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.business-card-simple-desc {
+  margin: 0 0 1.1rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+  flex: 1;
+}
+
+.business-card-simple-footer {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.55rem;
 }
 
 /* ===========================
    RESPONSIVE
    =========================== */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .cards-section-row {
+    grid-template-columns: 1fr;
+  }
+
   .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .cards-grid,
+  .cards-simple-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -190,11 +271,12 @@
     padding: 2.5rem 1rem 3rem;
   }
 
-  .cards-grid {
+  .cards-grid,
+  .cards-simple-grid {
     grid-template-columns: 1fr;
   }
 
   .business-card {
-    height: 220px;
+    height: 190px;
   }
 }
