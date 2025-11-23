@@ -14,12 +14,7 @@ const Fotos = ({ formData, updateForm, nextStep, prevStep }) => {
     }
   };
 
-  const handleNext = () => {
-    if (!formData.logoPreview) {
-      return alert("Sube una foto para continuar");
-    }
-    nextStep();
-  };
+  // Removed internal handleNext navigation and buttons - parent controls navigation
 
   return (
     <div className="full-screen-container">
@@ -45,10 +40,7 @@ const Fotos = ({ formData, updateForm, nextStep, prevStep }) => {
         )}
       </label>
 
-      <div className="navigation-buttons">
-        <button onClick={prevStep} className="btn-nav btn-prev">← Atrás</button>
-        <button onClick={handleNext} className="btn-nav btn-next">Siguiente →</button>
-      </div>
+      {/* Removed navigation buttons - controlled by parent */}
     </div>
   );
 };

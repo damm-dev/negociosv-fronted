@@ -8,13 +8,7 @@ const Ubicacion = ({ formData, updateForm, nextStep, prevStep }) => {
     updateForm({ [e.target.name]: e.target.value });
   };
 
-  // Validamos y avanzamos al siguiente componente (Fotos)
-  const handleNext = () => {
-    if (!formData.direccionEscrita || formData.direccionEscrita.trim() === "") {
-      return alert("Por favor escribe la dirección del negocio.");
-    }
-    nextStep(); 
-  };
+  // Removed internal handleNext and navigation buttons to lift navigation control to parent
 
   return (
     <div className="full-screen-container">
@@ -37,15 +31,7 @@ const Ubicacion = ({ formData, updateForm, nextStep, prevStep }) => {
       />
 
       {/* Botones de Navegación */}
-      <div className="navigation-buttons">
-        <button onClick={prevStep} className="btn-nav btn-prev">
-          ← Atrás
-        </button>
-        <button onClick={handleNext} className="btn-nav btn-next">
-          Siguiente →
-        </button>
-      </div>
-
+      {/* Removed navigation buttons - controlled by parent */}
     </div>
   );
 };

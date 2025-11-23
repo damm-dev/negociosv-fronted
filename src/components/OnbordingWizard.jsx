@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/wizardclient.css";
+import "../styles/formNegocio.css";
 
 export default function OnboardingWizard() {
   const [step, setStep] = useState(1);
@@ -58,29 +58,25 @@ export default function OnboardingWizard() {
   };
 
   return (
-    <div className="wizard-wrap">
-      <div className="wizard-card">
+    <div style={{ width: "100%", height: "100vh", margin: 0, padding: 0 }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontSize: 12,
+          color: "#aaa",
+          zIndex: 999,
+        }}
+      >
+        Registro paso {step} de {totalSteps}
+      </div>
+
+      <div className="wizard-card" style={{ maxWidth: "480px", margin: "0 auto", padding: "20px" }}>
         <h2 className="wizard-title">Registro paso a paso</h2>
-        <p className="wizard-sub">
-          Responde rápido y te daremos sugerencias más certeras.
-        </p>
-
-        {/* Progreso */}
-        <div className="progress">
-          {Array.from({ length: totalSteps }).map((_, idx) => {
-            const n = idx + 1;
-            return (
-              <div
-                key={n}
-                className={`progress-dot ${step >= n ? "active" : ""}`}
-              />
-            );
-          })}
-        </div>
-
-        {/* ============================== */}
-        {/*             PASOS             */}
-        {/* ============================== */}
+        <p className="wizard-sub">Responde rápido y te daremos sugerencias más certeras.</p>
 
         {step === 1 && (
           <div>

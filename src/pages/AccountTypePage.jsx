@@ -1,6 +1,6 @@
-// src/pages/AccountTypePage.jsx
-import "../styles/account-type.css";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/account-type.css";
 
 function BusinessIcon() {
   return (
@@ -56,17 +56,14 @@ function PersonIcon() {
 }
 
 export default function AccountTypePage() {
-  // const navigate = useNavigate(); // si quieres navegar a /register-business, etc.
+  const navigate = useNavigate();
 
   const handleBusinessClick = () => {
-    // aquí iría tu navegación real
-    // navigate("/register/negocio");
-    console.log("Elegiste cuenta de negocio");
+    navigate("/register/negocio");
   };
 
   const handlePersonClick = () => {
-    // navigate("/register/persona");
-    console.log("Elegiste cuenta de persona");
+    navigate("/register/persona");
   };
 
   return (

@@ -47,13 +47,7 @@ const Resumen = ({ formData, prevStep, submitForm }) => { // Asumimos que submit
         )}
 
       </div>
-
-      <div className="navigation-buttons">
-        <button onClick={prevStep} className="btn-nav btn-prev">← Volver</button>
-        <button onClick={handleFinalSubmit} className="btn-nav btn-next" style={{backgroundColor: '#10b981'}}>
-          Confirmar Registro ✨
-        </button>
-      </div>
+      {/* Removed internal navigation buttons - parent controls navigation */}
     </div>
   );
 };

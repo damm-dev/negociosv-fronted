@@ -19,22 +19,9 @@ const ContactoPago = ({ formData, updateForm, nextStep, prevStep }) => {
     updateForm({ metodosPago: updated });
   };
 
-  const handleNext = () => {
-    // Validaciones simples
-    if (internalStep === 0 && !formData.contactoEmail) return alert("Ingresa un correo de contacto");
-    if (internalStep === 1 && !formData.telefonoWhatsApp) return alert("Ingresa un teléfono");
-
-    if (internalStep === 2) {
-      nextStep(); // Ir al resumen
-    } else {
-      setInternalStep(internalStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (internalStep > 0) setInternalStep(internalStep - 1);
-    else prevStep();
-  };
+  // Removed internal handleNext and handleBack handlers to move navigation control to parent.
+  
+  // Removed internalStep state.
 
   const renderContent = () => {
     switch (internalStep) {
@@ -82,10 +69,7 @@ const ContactoPago = ({ formData, updateForm, nextStep, prevStep }) => {
   return (
     <div className="full-screen-container">
       {renderContent()}
-      <div className="navigation-buttons">
-        <button onClick={handleBack} className="btn-nav btn-prev">← Atrás</button>
-        <button onClick={handleNext} className="btn-nav btn-next">Siguiente →</button>
-      </div>
+      {/* Removed navigation buttons - navigation controlled by parent */}
     </div>
   );
 };
