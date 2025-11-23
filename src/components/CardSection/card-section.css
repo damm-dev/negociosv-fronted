@@ -1,0 +1,200 @@
+/* ===========================
+   SECCIÓN CONTENEDORA
+   =========================== */
+
+.cards-section {
+  padding: 3rem 2rem 3.5rem;
+  background: #f3f4f6; /* mismo tono de fondo que el resto */
+}
+
+.cards-section-header {
+  max-width: 1100px;
+  margin: 0 auto 1.8rem;
+}
+
+.cards-section-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.cards-section-header p {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+/* ===========================
+   GRID DE CARDS
+   =========================== */
+
+.cards-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+/* ===========================
+   CARD
+   =========================== */
+
+.business-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  height: 240px;
+  cursor: pointer;
+  transform: translateZ(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.1);
+  background: #111827;
+}
+
+/* fondo foto */
+.business-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.9);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* etiqueta con el nombre (visible siempre) */
+.business-card-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.65rem 0.9rem;
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.9),
+    rgba(15, 23, 42, 0.2),
+    transparent
+  );
+  display: flex;
+  align-items: flex-end;
+}
+
+.business-card-label span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+/* overlay que entra desde la izquierda */
+.business-card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none; /* el panel solo se usa visualmente */
+}
+
+.business-card-overlay-inner {
+  width: 70%;
+  max-width: 260px;
+  height: 100%;
+  background: rgba(17, 24, 39, 0.96);
+  color: #f9fafb;
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+/* contenido del overlay */
+.business-card-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #bfdbfe;
+  margin: 0 0 0.4rem;
+}
+
+.business-card-overlay-inner h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+}
+
+.business-card-text {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.business-card-location {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  color: #93c5fd;
+}
+
+/* botón */
+.business-card-btn {
+  align-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #f9fafb;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.1s ease,
+    filter 0.1s ease;
+}
+
+.business-card-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* ===========================
+   HOVER: ZOOM + PANEL QUE ENTRA
+   =========================== */
+
+.business-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+}
+
+.business-card:hover .business-card-bg {
+  transform: scale(1.08);
+  filter: brightness(0.6);
+}
+
+.business-card:hover .business-card-overlay-inner {
+  transform: translateX(0); /* se desliza desde la izquierda */
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .cards-section {
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .business-card {
+    height: 220px;
+  }
+}
