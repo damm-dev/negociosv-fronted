@@ -1,6 +1,6 @@
 /* El fondo respeta el del layout (#020617) */
 .layout-footer {
-  background-color: #020617;
+  background-color:rgb(0, 42, 249);
   color: #e5e7eb;
   border-top: 1px solid #1f2937;
   font-size: 0.85rem;

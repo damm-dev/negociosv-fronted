@@ -10,6 +10,14 @@
   color: #e5e7eb;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
 
 /* Orden normal en escritorio:
    1) header (navbar)
@@ -78,7 +86,7 @@
     border-bottom: none;
 
     padding: 0.5rem 1rem;
-    background-color: #020617; /* fondo igual al layout */
+    background-color: #0c1c5b; /* fondo igual al layout */
   }
 
   /* Para que el contenido no quede tapado por el navbar fijo */

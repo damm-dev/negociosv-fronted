@@ -1,7 +1,7 @@
 /* Fondo completo tipo landing (sin recuadro) */
 .hero {
   height: 53vh;                     
-  padding: 80px 24px 60px;           
+  padding: 0px 24px 60px;           
   display: flex;
   align-items: center;
   justify-content: center;
