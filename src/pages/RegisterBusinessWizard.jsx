@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import '../styles/formNegocio.css'; // Asegúrate de que este archivo tenga el CSS que te pasé
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import '../styles/formNegocio.css';
 
 export default function RegisterBusinessWizard() {
-  // --- ESTADO UNIFICADO ---
+  const navigate = useNavigate();
+  const { registerBusiness } = useAuth();
+  
   const [step, setStep] = useState(1);
-  const totalSteps = 11; // Total de pantallas lineales
+  const totalSteps = 11;
 
   const [formData, setFormData] = useState({
     email: '',
@@ -19,6 +23,9 @@ export default function RegisterBusinessWizard() {
     telefonoWhatsApp: '',
     metodosPago: []
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // --- HELPERS PARA ACTUALIZAR DATOS ---
   
@@ -94,9 +101,53 @@ export default function RegisterBusinessWizard() {
     if (step > 1) setStep(s => s - 1);
   };
 
-  const submitForm = () => {
-    alert("¡Registro de Negocio Completado! 🚀");
-    console.log("DATA FINAL:", formData);
+  const submitForm = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await registerBusiness(formData);
+      
+      alert("¡Registro de Negocio Completado! 🚀");
+      console.log("Respuesta del servidor:", response);
+      
+      navigate('/login');
+    } catch (err) {
+      console.error("Error completo en registro:", err);
+      console.error("Error response:", err.response);
+      
+      let errorMessage = "Error en el registro:\n\n";
+      
+      if (err.response?.data) {
+        const errors = err.response.data;
+        console.log("Errores del servidor:", errors);
+        
+        // Si es un objeto con errores de validación
+        if (typeof errors === 'object' && !errors.message) {
+          Object.keys(errors).forEach(key => {
+            const errorValue = errors[key];
+            if (Array.isArray(errorValue)) {
+              errorMessage += `• ${key}: ${errorValue.join(', ')}\n`;
+            } else if (typeof errorValue === 'string') {
+              errorMessage += `• ${key}: ${errorValue}\n`;
+            }
+          });
+        } else if (errors.message) {
+          errorMessage = errors.message;
+        } else {
+          errorMessage = "Error desconocido en el servidor";
+        }
+      } else if (err.message) {
+        errorMessage = `Error: ${err.message}`;
+      } else {
+        errorMessage = "Error al conectar con el servidor. Verifica tu conexión.";
+      }
+      
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- RENDERIZADO DE PANTALLAS ---
@@ -108,8 +159,22 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">¿Cuál es tu correo?</h2>
             <p className="question-subtitle">Te enviaremos la confirmación por ahí.</p>
+            {error && (
+              <div style={{
+                padding: '12px',
+                marginBottom: '16px',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                color: '#dc2626',
+                fontSize: '14px',
+                whiteSpace: 'pre-line',
+              }}>
+                {error}
+              </div>
+            )}
             <input className="big-input" type="email" placeholder="ejemplo@correo.com"
-              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} autoFocus />
+              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} autoFocus disabled={loading} />
           </>
         );
       case 2:
@@ -256,8 +321,13 @@ export default function RegisterBusinessWizard() {
           ← Anterior
         </button>
         
-        <button className="btn-next" onClick={nextStep}>
-          {step === totalSteps ? "Confirmar Registro ✨" : "Siguiente →"}
+        <button 
+          className="btn-next" 
+          onClick={nextStep}
+          disabled={loading}
+          style={{ opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? "Registrando..." : (step === totalSteps ? "Confirmar Registro ✨" : "Siguiente →")}
         </button>
       </div>
     </div>

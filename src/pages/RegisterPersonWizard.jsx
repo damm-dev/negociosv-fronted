@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import "../styles/formNegocio.css"; // reutilizamos el mismo CSS/UX del wizard de negocio
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import "../styles/formNegocio.css";
 
 export default function RegisterPersonWizard() {
+  const navigate = useNavigate();
+  const { registerUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
 
   const [formData, setFormData] = useState({
@@ -16,6 +20,9 @@ export default function RegisterPersonWizard() {
     activarUbicacion: false,
     terminos: false,
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const totalSteps = 9;
 
@@ -68,8 +75,6 @@ export default function RegisterPersonWizard() {
         }
         return true;
       case 4:
-        // Foto opcional (si la quieres obligatoria, descomenta abajo)
-        // if (!formData.fotoPreview) { alert("Sube una foto para continuar"); return false; }
         return true;
       case 5:
         if (!formData.intereses.length) {
@@ -111,9 +116,55 @@ export default function RegisterPersonWizard() {
   const prevStep = () =>
     setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-  const submitForm = () => {
-    alert("¡Registro completado!");
-    console.log("DATA FINAL PERSONA:", formData);
+  const submitForm = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const userData = {
+        nombre: formData.nombre,
+        apellidos: "",
+        correo: formData.correo,
+        password: formData.password,
+        fotoFile: formData.fotoFile,
+        ciudad: formData.ciudad,
+        municipio: "",
+        departamento: "",
+        activarUbicacion: formData.activarUbicacion,
+      };
+
+      const response = await registerUser(userData);
+      
+      alert("¡Registro completado exitosamente! 🎉");
+      console.log("Respuesta del servidor:", response);
+      
+      navigate('/login');
+    } catch (err) {
+      console.error("Error en registro:", err);
+      
+      if (err.response?.data) {
+        const errors = err.response.data;
+        let errorMessage = "Error en el registro:\n";
+        
+        if (typeof errors === 'object') {
+          Object.keys(errors).forEach(key => {
+            if (Array.isArray(errors[key])) {
+              errorMessage += `${errors[key].join(', ')}\n`;
+            }
+          });
+        } else {
+          errorMessage = errors.message || "Error desconocido";
+        }
+        
+        setError(errorMessage);
+        alert(errorMessage);
+      } else {
+        setError("Error al conectar con el servidor");
+        alert("Error al conectar con el servidor. Verifica tu conexión.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep = () => {
@@ -123,6 +174,20 @@ export default function RegisterPersonWizard() {
           <>
             <h2 className="question-title">¿Cómo te llamas?</h2>
             <p className="question-subtitle">Queremos conocerte 🙂</p>
+            {error && (
+              <div style={{
+                padding: '12px',
+                marginBottom: '16px',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                color: '#dc2626',
+                fontSize: '14px',
+                whiteSpace: 'pre-line',
+              }}>
+                {error}
+              </div>
+            )}
             <input
               className="big-input"
               type="text"
@@ -130,6 +195,7 @@ export default function RegisterPersonWizard() {
               value={formData.nombre}
               onChange={(e) => updateForm({ nombre: e.target.value })}
               autoFocus
+              disabled={loading}
             />
           </>
         );
@@ -206,7 +272,6 @@ export default function RegisterPersonWizard() {
               Mientras más nos cuentes de tus gustos, más certeras serán tus sugerencias.
             </p>
 
-            {/* Usamos el look de "option-card" del CSS de negocio */}
             <div
               style={{
                 display: "flex",
@@ -328,12 +393,10 @@ export default function RegisterPersonWizard() {
 
   return (
     <div className="wizard-layout">
-      {/* contenido centrado */}
       <div className="wizard-content">
         {renderStep()}
       </div>
 
-      {/* barra inferior idéntica UX del wizard negocio */}
       <div className="bottom-bar">
         <button
           className="btn-prev"
@@ -348,8 +411,13 @@ export default function RegisterPersonWizard() {
             Siguiente →
           </button>
         ) : (
-          <button className="btn-next" onClick={submitForm}>
-            Confirmar Registro ✨
+          <button 
+            className="btn-next" 
+            onClick={submitForm}
+            disabled={loading}
+            style={{ opacity: loading ? 0.7 : 1 }}
+          >
+            {loading ? "Registrando..." : "Confirmar Registro ✨"}
           </button>
         )}
       </div>
