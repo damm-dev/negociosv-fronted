@@ -7,9 +7,8 @@
   justify-content: center;
   text-align: center;
 
-  /* Fondo tipo Mozzo (degradado cálido) */
-  background: url("src/assets/hero-bg.jpg") center/cover no-repeat;
-
+  /* Fondo */
+  background: url("src/assets/ciudad.jpg") center/cover no-repeat;
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -39,13 +38,23 @@
 
 /* Subtítulo */
 .hero-subtitle {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   max-width: 640px;
   margin: 0 auto 28px;
-  opacity: 0.92;
+  opacity: 1;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+}
+
+/* Animación de letras para GSAP - estilo para letras individuales */
+.hero-subtitle .letter {
+  display: inline-block;
+  white-space: pre;
 }
 
 /* Ajustamos un poco la searchbar dentro del hero */
 .hero .searchbar-form {
   max-width: 560px;
 }
+
+

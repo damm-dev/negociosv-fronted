@@ -4,6 +4,7 @@ import Home from "./pages/Home.jsx";
 import OnboardingWizard from "./components/OnbordingWizard.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import AccountTypePage from "./pages/AccountTypePage.jsx";
+import RegisterPersonWizard from "./pages/RegisterPersonWizard.jsx";
 import RegisterBusinessWizard from "./pages/RegisterBusinessWizard.jsx";
 import CuentaPage from "./pages/CuentaPage.jsx";
 
@@ -12,11 +13,10 @@ function App() {
     <MainLayout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/onboarding" element={<OnboardingWizard />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/account-type" element={<AccountTypePage />} />
-        <Route path="/register/persona" element={<OnboardingWizard />} />
+        <Route path="/register/persona" element={<RegisterPersonWizard />} />
         <Route path="/register/negocio" element={<RegisterBusinessWizard />} />
         <Route path="/cuenta" element={<CuentaPage />} />
         {/* aquí luego agregaremos más rutas:
