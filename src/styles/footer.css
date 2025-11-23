@@ -1,0 +1,41 @@
+/* El fondo respeta el del layout (#020617) */
+.layout-footer {
+  background-color: #020617;
+  color: #e5e7eb;
+  border-top: 1px solid #1f2937;
+  font-size: 0.85rem;
+}
+
+/* Parte superior: redes + correo */
+.footer-top {
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+.footer-email {
+  display: inline-block;
+  text-decoration: none;
+  color: #e5e7eb;
+  opacity: 0.9;
+}
+
+.footer-email:hover {
+  text-decoration: underline;
+}
+
+/* Franja inferior */
+.footer-bottom {
+  background-color: #020617; /* mismo fondo, pero puedes poner un tono aún más oscuro si quieres */
+  border-top: 1px solid #111827;
+  padding: 0.7rem 2rem;
+  text-align: center;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #9ca3af;
+}
+
+.footer-separator {
+  margin: 0 0.4rem;
+}
