@@ -5,7 +5,7 @@
 /* El header usa el mismo fondo del layout
    y centra el contenido principal */
 .layout-header {
-  background-color: #0c1c5b;
+  background-color: var(--surface);
   padding: 0.75rem 2.5rem;   /* un poco más de aire lateral */
   display: flex;
   justify-content: center;
@@ -28,7 +28,7 @@
   flex: 1;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #e5e7eb;
+  color: var(--on-surface);
   white-space: nowrap;
 
   /* la separamos aún más de los tabs */
@@ -68,7 +68,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 0.95rem;
-  color: #e5e7eb;
+  color: var(--on-surface);
   transition:
     background 0.15s ease,
     color 0.15s ease,
@@ -100,7 +100,7 @@
 
 /* Tab activo */
 .nav-item--active {
-  color: #60a5fa;
+  color: var(--on-primary);
   font-weight: 500;
 }
 
@@ -112,7 +112,7 @@
   bottom: -6px;
   height: 3px;
   border-radius: 999px;
-  background: #3b82f6;
+  background: var(--on-primary);
 }
 
 /* DERECHA: botones de sesión */
@@ -140,23 +140,23 @@
 
 .nav-btn-outline {
   background: transparent;
-  color: #e5e7eb;
-  border: 1px solid #4b5563;
+  color: var(--on-surface);
+  border: 1px solid var(--line);
 }
 
 .nav-btn-outline:hover {
-  background-color: #111827;
+  background-color: var(--on-surface);
+  color: var(--background);
   transform: translateY(-1px);
 }
 
 .nav-btn-primary {
-  background: #2563eb;
-  color: #f9fafb;
+  background: var(--primary);
+  color: var(--on-primary);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
 }
-
 .nav-btn-primary:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 

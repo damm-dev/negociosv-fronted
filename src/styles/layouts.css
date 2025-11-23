@@ -2,14 +2,55 @@
    LAYOUT GENERAL
    =========================== */
 
+/* Define CSS variables for colors and theming */
+:root {
+  /* Default to light theme variables */
+  --primary: #3b82f6;           /* Primary blue */
+  --on-primary: #020617;        /* Text on primary */
+  --background: #ffffff;        /* Light background */
+  --on-background: #020617;     /* Text on light background */
+  --surface: #f9fafb;           /* Light surface */
+  --on-surface: #020617;        /* Text on surface */
+  --muted: #6b7280;             /* Muted text */
+  --line: #e5e7eb;              /* Lines and borders */
+  --primary-hover: #2563eb;     /* Primary hover */
+}
+
+body.light-theme {
+  /* Light theme overrides */
+  --primary: #3b82f6;
+  --on-primary: #020617;
+  --background: #ffffff;
+  --on-background: #020617;
+  --surface: #f9fafb;
+  --on-surface: #020617;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --primary-hover: #2563eb;
+}
+
+body.dark-theme {
+  /* Dark theme overrides */
+  --primary: #3b82f6;
+  --on-primary: #e5e7eb;
+  --background: #020617;
+  --on-background: #e5e7eb;
+  --surface: #0c1c5b;
+  --on-surface: #e5e7eb;
+  --muted: #9ca3af;
+  --line: #4b5563;
+  --primary-hover: #2563eb;
+}
+
 .layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #020617;
-  color: #e5e7eb;
+  background-color: var(--background);
+  color: var(--on-background);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
 html, body {
   width: 100%;
   margin: 0;
@@ -17,7 +58,6 @@ html, body {
   box-sizing: border-box;
   overflow-x: hidden;
 }
-
 
 /* Orden normal: navbar arriba, contenido, footer */
 .layout-header {
@@ -33,14 +73,10 @@ html, body {
 
 .layout-footer {
   order: 3;
-}
-
-/* FOOTER base (si luego no lo sobrescribes en footer.css) */
-.layout-footer {
-  background-color: #020617;
-  color: #e5e7eb;
+  background-color: var(--background);
+  color: var(--on-background);
   font-size: 0.85rem;
-  border-top: 1px solid #1f2937; /* solo la línea del footer, no del header */
+  border-top: 1px solid var(--line); /* solo la línea del footer, no del header */
 }
 
 /* ===========================
@@ -72,11 +108,11 @@ html, body {
     z-index: 50;
 
     /* opcional: quitar borde superior porque está abajo */
-    border-top: 1px solid #1f2937;
+    border-top: 1px solid var(--line);
     border-bottom: none;
 
     padding: 0.5rem 1rem;
-    background-color: #0c1c5b; /* fondo igual al layout */
+    background-color: var(--surface); /* fondo igual al layout */
   }
 
   /* Para que el contenido no quede tapado por el navbar fijo */
