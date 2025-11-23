@@ -3,35 +3,40 @@ import '../../styles/formNegocio.css';
 
 const Ubicacion = ({ formData, updateForm, nextStep, prevStep }) => {
 
-  // Manejamos el cambio en el textarea
   const handleChange = (e) => {
     updateForm({ [e.target.name]: e.target.value });
   };
 
-  // Removed internal handleNext and navigation buttons to lift navigation control to parent
+  const handleNext = () => {
+    if (!formData.direccionEscrita) return alert("Escribe la dirección");
+    nextStep();
+  };
 
   return (
-    <div className="full-screen-container">
-      
-      {/* Título y Pregunta */}
-      <h2 className="question-title">Dirección escrita</h2>
-      <p className="question-subtitle">
-        Escríbela tal como aparece en Maps o como la darías a un cliente.
-      </p>
+    <div className="wizard-layout">
+      {/* CONTENIDO CENTRADO */}
+      <div className="wizard-content">
+        <h2 className="question-title">Dirección escrita</h2>
+        <p className="question-subtitle">
+          Escríbela tal como aparece en Maps o como la darías a un cliente.
+        </p>
+        
+        <textarea
+          className="big-input"
+          rows="4"
+          name="direccionEscrita"
+          placeholder="Calle La Mascota, #24, San Benito..."
+          value={formData.direccionEscrita || ''}
+          onChange={handleChange}
+          autoFocus
+        />
+      </div>
 
-      {/* Input de Dirección */}
-      <textarea
-        className="big-input"
-        rows="4"
-        name="direccionEscrita"
-        placeholder="Calle La Mascota, #24, San Benito..."
-        value={formData.direccionEscrita || ''}
-        onChange={handleChange}
-        autoFocus
-      />
-
-      {/* Botones de Navegación */}
-      {/* Removed navigation buttons - controlled by parent */}
+      {/* BOTONES ABAJO */}
+      <div className="bottom-bar">
+        <button onClick={prevStep} className="btn-prev">← Anterior</button>
+        <button onClick={handleNext} className="btn-next">Siguiente →</button>
+      </div>
     </div>
   );
 };

@@ -2,26 +2,26 @@
 
 :root {
   --bg-color: #ffffff;       /* Fondo Blanco */
-  --text-color: #111827;     /* Texto oscuro */
+  --text-color: #1f2937;     /* Texto oscuro */
   --subtitle-color: #6b7280; /* Gris */
   --input-border: #e5e7eb;   /* Borde gris claro */
-  --primary-color: #3b82f6;  /* AZUL (Tu color) */
+  --primary-color: #3b82f6;  /* AZUL Principal */
   --primary-hover: #2563eb;  /* Azul oscuro al pasar mouse */
   --primary-light: #eff6ff;  /* Azul muy clarito (fondos) */
 }
 
-/* --- RESET PARA ELIMINAR SCROLLBAR --- */
+/* --- RESET GLOBAL IMPORTANTE --- */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Adiós barra de scroll del navegador */
+   /* Elimina scroll del navegador para que solo scrollee el contenido */
 }
 
 * { box-sizing: border-box; }
 
-/* --- LAYOUT PRINCIPAL --- */
+/* --- LAYOUT PRINCIPAL (Pantalla Completa) --- */
 .wizard-layout {
   display: flex;
   flex-direction: column;
@@ -29,94 +29,121 @@ html, body {
   width: 100vw;
   background-color: var(--bg-color);
   font-family: 'Inter', system-ui, sans-serif;
+  position: absolute; /* Asegura que cubra todo */
+  top: 0;
+  left: 0;
 }
 
-/* --- CONTENIDO CENTRAL --- */
+/* --- CONTENIDO CENTRAL (Donde van los inputs) --- */
 .wizard-content {
-  flex: 1; /* Ocupa todo el espacio libre */
+  flex: 1; /* Ocupa todo el espacio disponible arriba de la barra */
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centrado Vertical */
   align-items: center;     /* Centrado Horizontal */
   padding: 20px;
   width: 100%;
-  overflow-y: auto; /* Scroll interno suave solo si es necesario */
+  overflow-y: auto; /* Scroll interno si la pantalla es muy pequeña */
+  text-align: center;
 }
 
-/* Contenedor interno para que el texto no se estire demasiado */
+/* Contenedor interno para limitar el ancho máximo de todo */
 .wizard-content > * {
   width: 100%;
-  max-width: 650px;
-  text-align: center; /* Todo centrado */
+  max-width: 600px;
+  margin: 0 auto; /* Centrado en bloque */
 }
 
-/* --- TEXTOS GRANDES --- */
+/* --- TEXTOS --- */
 .question-title {
-  font-size: 2.2rem; /* Grande */
+  font-size: 2rem;
   font-weight: 700;
   color: var(--text-color);
   margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .question-subtitle {
   font-size: 1.1rem;
   color: var(--subtitle-color);
   margin-bottom: 2.5rem;
+  text-align: center;
 }
 
-/* --- INPUTS --- */
+/* --- INPUTS Y TEXTAREAS --- */
 .big-input {
+  display: block;      /* Comportamiento de bloque */
+  margin: 0 auto;      /* Centrado horizontal */
   width: 100%;
+  max-width: 550px;    /* Ancho controlado (No se estira al 100%) */
   padding: 1rem 1.5rem;
-  font-size: 1.2rem; /* Letra grande */
+  font-size: 1.2rem;
   border: 2px solid var(--input-border);
   border-radius: 12px;
   background-color: white;
   outline: none;
   transition: all 0.2s;
   color: var(--text-color);
-  text-align: center; /* Escribir en el centro se ve más moderno */
+  text-align: center;  /* Texto centrado al inicio */
 }
 
 .big-input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); /* Resplandor azul */
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  text-align: left;    /* Al escribir se alinea a la izquierda */
 }
-
-.big-input::placeholder { color: #9ca3af; }
 
 textarea.big-input {
   resize: none;
   min-height: 140px;
-  text-align: left; /* Textarea alineado a la izquierda */
+  text-align: left;    /* Textarea siempre alineado a la izquierda */
 }
 
-/* --- CAJA DE TIP (VERSIÓN AZUL) --- */
-.tip-box {
-  margin-top: 1.5rem;
-  background-color: var(--primary-light); /* Fondo azulito suave */
-  border: 1px solid #dbeafe;              /* Borde azul suave */
-  color: #1e40af;                         /* Texto azul oscuro */
-  padding: 1rem;
-  border-radius: 10px;
-  font-size: 0.95rem;
+/* --- CAJA DE SUBIDA DE FOTOS (Upload) --- */
+.file-upload-box {
+  width: 100%;
+  max-width: 550px;
+  height: 250px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: center; /* Centrado */
-  gap: 10px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  cursor: pointer;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+  margin: 20px auto;   /* MARGEN AUTOMÁTICO PARA CENTRAR */
 }
 
-/* --- CHECKBOXES --- */
+.file-upload-box:hover {
+  border-color: var(--primary-color);
+  background-color: #eff6ff;
+}
+
+.file-preview-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  color: #9ca3af;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* --- CHECKBOXES (Opciones) --- */
 .options-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  max-width: 450px; /* Un poco más angosto para verse bien */
-  margin: 0 auto;
+  max-width: 450px;    /* Ancho controlado */
+  margin: 0 auto;      /* Centrado */
 }
 
 .option-card {
@@ -147,7 +174,7 @@ textarea.big-input {
   accent-color: var(--primary-color);
 }
 
-/* --- BARRA INFERIOR (Footer) --- */
+/* --- BARRA INFERIOR (Footer Fijo) --- */
 .bottom-bar {
   height: 90px;
   width: 100%;
@@ -155,11 +182,12 @@ textarea.big-input {
   border-top: 1px solid #f3f4f6;
   
   display: flex;
-  justify-content: center; /* BOTONES CENTRADOS */
+  justify-content: center; /* Botones centrados */
   align-items: center;
-  gap: 20px; /* Espacio entre botones */
+  gap: 20px;
   
-  flex-shrink: 0;
+  flex-shrink: 0;          /* Evita que se encoja */
+  z-index: 100;
 }
 
 /* --- BOTONES --- */
@@ -181,7 +209,7 @@ textarea.big-input {
 }
 
 .btn-next {
-  background-color: var(--primary-color); /* AZUL PURO */
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 12px 45px;
@@ -196,4 +224,36 @@ textarea.big-input {
 .btn-next:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
+}
+
+/* --- RESUMEN FINAL --- */
+.summary-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+  background: white;
+  padding: 2rem;
+  border: 1px solid var(--input-border);
+  border-radius: 16px;
+}
+
+.summary-item {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+}
+
+.summary-label {
+  font-size: 0.85rem;
+  color: var(--subtitle-color);
+  text-transform: uppercase;
+  font-weight: 700;
+  display: block;
+}
+
+.summary-value {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  font-weight: 500;
 }
