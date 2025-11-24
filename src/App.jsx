@@ -7,6 +7,8 @@ import AccountTypePage from "./pages/AccountTypePage.jsx";
 import RegisterPersonWizard from "./pages/RegisterPersonWizard.jsx";
 import RegisterBusinessWizard from "./pages/RegisterBusinessWizard.jsx";
 import CuentaPage from "./pages/CuentaPage.jsx";
+import NegociosList from "./pages/NegociosList.jsx";
+import BusinessDetail from "./pages/BusinessDetail.jsx";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/register/persona" element={<RegisterPersonWizard />} />
         <Route path="/register/negocio" element={<RegisterBusinessWizard />} />
         <Route path="/cuenta" element={<CuentaPage />} />
+        <Route path="/negocios" element={<NegociosList />} />
+        <Route path="/negocios/:id" element={<BusinessDetail />} />
         {/* aquí luego agregaremos más rutas:
             <Route path="/negocios" element={<Negocios />} />
              

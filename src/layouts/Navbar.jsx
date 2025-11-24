@@ -138,7 +138,7 @@ function CuentaIcon({ active }) {
 
 const TABS = [
   { id: "inicio", label: "Inicio", icon: HomeIcon, to: "/" },
-  { id: "negocios", label: "Negocios", icon: NegociosIcon },
+  { id: "negocios", label: "Negocios", icon: NegociosIcon, to: "/negocios" },
   { id: "logros", label: "Logros", icon: LogrosIcon },
   { id: "cuenta", label: "Cuenta", icon: CuentaIcon, to: "/cuenta" },
 ];

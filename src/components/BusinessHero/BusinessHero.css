@@ -1,0 +1,84 @@
+/* Fondo tipo landing igual que HeroSection */
+.businesses-hero {
+  height: 53vh;                         
+  padding: 0px 24px 60px;                
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Fondo con soporte para animación GSAP */
+  background: url("src/assets/BusinessHero.png") center/cover no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+
+  /* Permitir que GSAP anime suavemente */
+  transition: background-position 0.3s ease-out;
+}
+
+/* Contenido centrado */
+.businesses-hero-content {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* Título */
+.businesses-hero-title {
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  font-weight: 750;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Subtítulo */
+.businesses-hero-subtitle {
+  font-size: 1.1rem;
+  max-width: 640px;
+  margin: 0 auto 28px;
+  opacity: 1;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+}
+
+/* Animación letra por letra */
+.businesses-hero-subtitle .letter {
+  display: inline-block;
+  white-space: pre;
+}
+
+/* Contenedor de categorías */
+.hero-categories {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* Categorías estilo glass */
+.hero-category-item {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 10px 18px;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+  color: #fff;
+}
+
+.hero-category-item:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-3px);
+}
