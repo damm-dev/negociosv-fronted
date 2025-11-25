@@ -1,137 +1,117 @@
-// src/pages/BusinessDetail.jsx
 import { useState } from "react";
 import "../styles/business-detail.css";
-import playa from "../assets/playa.avif";
 
-const sampleBusiness = {
-  id: 1,
-  name: "Pupusería Doña Ana",
-  category: "Comida típica",
-  address: "Col. Miramonte, San Salvador",
-  phone: "+503 7000 0000",
-  horario: "Lun-Dom 8:00 - 21:00",
-  rating: 4.6,
-  reviews: [
-    { user: "Ana", text: "Las pupusas son deliciosas, 100% recomendadas." },
-    { user: "Carlos", text: "Buena atención y precios accesibles." }
-  ],
-  description:
-    "Negocio familiar especializado en pupusas hechas a mano con recetas tradicionales. Opciones vegetarianas disponibles.",
-  photos: [playa, playa, playa],
-  extras: {
-    servicios: ["Domicilio", "Wi-Fi"],
-    website: "https://example.com",
-    redes: { facebook: "https://facebook.com/donaana" }
-  }
-};
+export default function BusinessDetail() {
+  const [activeTab, setActiveTab] = useState("general");
 
-export default function BusinessDetail({ business = sampleBusiness }) {
-  const [activeSection, setActiveSection] = useState("info");
+  const images = [
+    "https://picsum.photos/600/600?random=101",
+    "https://picsum.photos/600/600?random=102",
+    "https://picsum.photos/600/600?random=103",
+    "https://picsum.photos/600/600?random=104",
+  ];
 
   return (
-    <div className="bd-page">
-      <div className="bd-header">
-        <h1>{business.name}</h1>
-        <p>
-          {business.category} · {business.address}
+    <div className="business-detail-container">
+
+      {/* ============================
+           BLOQUE CON EL NOMBRE
+      ============================ */}
+      <div className="business-title-box">
+        <h1 className="business-title">Pupusería Doña Ana</h1>
+        <p className="business-category">
+          Comida típica • Col. Miramonte, San Salvador
         </p>
       </div>
 
-      <div className="bd-container">
+      {/* ============================
+           GALERÍA DE FOTOS
+      ============================ */}
+      <div className="photo-grid">
+        {images.map((img, i) => (
+          <div className="photo-grid-item" key={i}>
+            <img src={img} alt={`Foto ${i}`} />
+          </div>
+        ))}
+      </div>
 
-        {/* ================= SIDEBAR ================= */}
-        <aside className="bd-sidebar">
+      {/* ============================
+           PESTAÑAS
+      ============================ */}
+      <div className="tabs-container">
+        <div className="tabs-header">
           <button
-            className={
-              "bd-menu-item" + (activeSection === "info" ? " active" : "")
-            }
-            onClick={() => setActiveSection("info")}
+            className={`tab-btn ${activeTab === "general" ? "active" : ""}`}
+            onClick={() => setActiveTab("general")}
           >
-            🛈 Información general
+            Información general
           </button>
 
           <button
-            className={
-              "bd-menu-item" + (activeSection === "reviews" ? " active" : "")
-            }
-            onClick={() => setActiveSection("reviews")}
+            className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
+            onClick={() => setActiveTab("reviews")}
           >
-            ⭐ Reseñas
+            Reseñas
           </button>
 
           <button
-            className={
-              "bd-menu-item" + (activeSection === "extras" ? " active" : "")
-            }
-            onClick={() => setActiveSection("extras")}
+            className={`tab-btn ${activeTab === "contact" ? "active" : ""}`}
+            onClick={() => setActiveTab("contact")}
           >
-            📷 Fotos & extra
+            Contáctanos
           </button>
-        </aside>
+        </div>
 
-        {/* ================= CONTENIDO ================= */}
-        <section className="bd-content">
+        <div className="tabs-content">
 
-          {/* ---- Información general ---- */}
-          {activeSection === "info" && (
-            <div className="bd-card">
-              <h2>Información general</h2>
-              <p className="bd-description">{business.description}</p>
+          {/* ----- INFORMACIÓN GENERAL ----- */}
+          {activeTab === "general" && (
+            <div className="info-flex">
+              <div className="info-left">
+                <h2>Sobre el negocio</h2>
+                <p>
+                  Negocio familiar especializado en pupusas hechas a mano,
+                  utilizando ingredientes frescos y recetas tradicionales.
+                </p>
 
-              <ul className="bd-info-list">
-                <li><strong>Dirección:</strong> {business.address}</li>
-                <li><strong>Teléfono:</strong> {business.phone}</li>
-                <li><strong>Horario:</strong> {business.horario}</li>
-                <li>
-                  <strong>Sitio web:</strong>{" "}
-                  <a href={business.extras.website} target="_blank">Visitar</a>
-                </li>
-              </ul>
+                <p><b>Dirección:</b> Col. Miramonte, San Salvador</p>
+                <p><b>Teléfono:</b> +503 7000 0000</p>
+                <p><b>Horario:</b> Lun-Dom · 8:00 AM – 9:00 PM</p>
+              </div>
+
+              <div className="info-map">
+                <iframe
+                  title="mapa"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, borderRadius: "12px" }}
+                  loading="lazy"
+                  allowFullScreen
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.514736315342!2d-89.224!3d13.698!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0000000000000000!2sSan%20Salvador!5e0!3m2!1ses!2ssv!4v1234567890123"
+                ></iframe>
+              </div>
             </div>
           )}
 
-          {/* ---- Reseñas ---- */}
-          {activeSection === "reviews" && (
-            <div className="bd-card">
+          {/* ----- RESEÑAS ----- */}
+          {activeTab === "reviews" && (
+            <div className="tab-content-box">
               <h2>Reseñas</h2>
-
-              <div className="bd-reviews">
-                {business.reviews.map((r, index) => (
-                  <div key={index} className="bd-review">
-                    <h4>{r.user}</h4>
-                    <p>{r.text}</p>
-                  </div>
-                ))}
-              </div>
+              <p>Aún no hay reseñas disponibles.</p>
             </div>
           )}
 
-          {/* ---- Fotos e información extra ---- */}
-          {activeSection === "extras" && (
-            <div className="bd-card">
-              <h2>Fotos del negocio</h2>
-
-              <div className="bd-photo-grid">
-                {business.photos.map((p, index) => (
-                  <img key={index} src={p} alt={`foto-${index}`} />
-                ))}
-              </div>
-
-              <hr className="bd-divider" />
-
-              <h2>Información extra</h2>
-
-              <ul className="bd-info-list">
-                <li><strong>Servicios:</strong> {business.extras.servicios.join(", ")}</li>
-                <li>
-                  <strong>Facebook:</strong>{" "}
-                  <a href={business.extras.redes.facebook} target="_blank">Página</a>
-                </li>
-              </ul>
+          {/* ----- CONTÁCTANOS ----- */}
+          {activeTab === "contact" && (
+            <div className="tab-content-box">
+              <h2>Contáctanos</h2>
+              <p>Puedes comunicarte con nosotros a través de los siguientes medios:</p>
+              <p><b>Teléfono:</b> +503 7000 0000</p>
+              <p><b>Correo:</b> ejemplo@pupuseriadoana.com</p>
             </div>
           )}
 
-        </section>
+        </div>
       </div>
     </div>
   );
