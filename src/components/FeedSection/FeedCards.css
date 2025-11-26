@@ -1,0 +1,121 @@
+/* Contenedor con margen lateral */
+.cards-section {
+  width: 100%;
+  padding: 2rem 20rem 3.5rem;
+  box-sizing: border-box;
+}
+
+.cards-section-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* GRID de 2 columnas estilo WordPress */
+.wp-style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 1.2rem;
+}
+
+/* CARD estilo WordPress plugin directory */
+.wp-card {
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  overflow: hidden; /* Crucial para que la imagen no se salga al crecer */
+  display: flex;
+  flex-direction: column;
+  /* Solo animamos la sombra aquí. El tamaño lo animará la imagen. */
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Hover sobre la tarjeta */
+.wp-card:hover {
+  /* Sombra más pronunciada para efecto de levantar */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  /* YA NO usamos transform: scaleY aquí */
+}
+
+/* Imagen superior */
+.wp-card-image {
+  width: 100%;
+  height: 140px; /* Altura inicial "recortada" */
+  background-size: cover; /* Cubre el área, recortando si es necesario */
+  background-position: center;
+  /* AÑADIR: Transición suave para la propiedad height */
+  /* Usamos una curva 'cubic-bezier' para un efecto más dinámico de "apertura" */
+  transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* NUEVO: Cuando el cursor está sobre la CARD, afecta a la IMAGEN */
+.wp-card:hover .wp-card-image {
+  /* Aumentamos la altura significativamente para mostrar más imagen */
+  /* Ajusta este valor (ej. 250px, 300px) según el tamaño real de tus imágenes */
+  height: 280px;
+}
+
+/* Cuerpo del card */
+.wp-card-body {
+  padding: 12px;
+  flex-grow: 1; /* Asegura que el contenido ocupe el espacio */
+}
+
+.wp-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.wp-card-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+/* Meta info: categoría y ubicación */
+.wp-card-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Stats inferiores */
+.wp-card-stats {
+  font-size: 0.8rem;
+  color: #444;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Acción */
+.wp-card-actions {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  text-align: right;
+}
+
+.wp-card-btn {
+  background: #2271b1;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.wp-card-btn:hover {
+  background: #165c94;
+}
+
+/* RESPONSIVE: una por fila */
+@media (max-width: 768px) {
+  .wp-style-grid {
+    grid-template-columns: 1fr;
+  }
+}
