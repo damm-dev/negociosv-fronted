@@ -202,9 +202,9 @@ export default function RegisterBusinessWizard() {
         return (
           <>
             <h2 className="question-title">¿Qué ofreces?</h2>
-            <p className="question-subtitle">Elige una o más opciones.</p>
+            <p className="question-subtitle">Elige tu categoria.</p>
             <div className="options-container">
-              {['Productos', 'Servicios', 'Ambos'].map(opcion => (
+              {['Restaurante', 'Cafetería', 'Barbería', 'Clínica', 'Taller', 'Coworking', 'Tienda', 'Servicios', 'Otro'].map(opcion => (
                 <div key={opcion} className={`option-card ${formData.oferta.includes(opcion) ? 'selected' : ''}`}
                   onClick={() => toggleList('oferta', opcion)}>
                   <input type="checkbox" className="option-checkbox" checked={formData.oferta.includes(opcion)} readOnly />
