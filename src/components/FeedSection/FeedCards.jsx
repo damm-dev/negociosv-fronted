@@ -128,7 +128,10 @@ export default function CardSection() {
 
             {/* Botón estilo WordPress */}
             <div className="wp-card-actions">
-              <button className="wp-card-btn">Ver detalles</button>
+              <a href="/negocios/1">
+                <button className="wp-card-btn">Ver detalles</button>
+              </a>
+              
             </div>
           </article>
         ))}
