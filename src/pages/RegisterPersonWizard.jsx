@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ProgressBar from "../components/ProgressBar";
 import "../styles/formNegocio.css";
 
 export default function RegisterPersonWizard() {
@@ -9,45 +10,108 @@ export default function RegisterPersonWizard() {
   const [currentStep, setCurrentStep] = useState(1);
 
   const [formData, setFormData] = useState({
-    nombre: "",
+    nombres: "",
+    apellidos: "",
     genero: "",
+    fecha_nacimiento: "",
     correo: "",
     password: "",
+    telefono: "",
     fotoFile: null,
     fotoPreview: null,
     intereses: [],
-    emocionCasa: "",
-    ciudad: "",
-    activarUbicacion: false,
+    id_municipio: "",
+    descripcion: "",
+    ubicacion_activa: false,
     terminos: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [municipios, setMunicipios] = useState([]);
 
-  const totalSteps = 10;
+  const totalSteps = 11;
 
+  // Cargar municipios al montar el componente
+  useEffect(() => {
+    // Lista de municipios de El Salvador (simplificada)
+    const municipiosSV = [
+      { id: 1, nombre: "San Salvador" },
+      { id: 2, nombre: "Santa Tecla" },
+      { id: 3, nombre: "Soyapango" },
+      { id: 4, nombre: "San Miguel" },
+      { id: 5, nombre: "Santa Ana" },
+      { id: 6, nombre: "Mejicanos" },
+      { id: 7, nombre: "Apopa" },
+      { id: 8, nombre: "Delgado" },
+      { id: 9, nombre: "Sonsonate" },
+      { id: 10, nombre: "Ahuachapán" },
+      { id: 11, nombre: "Usulután" },
+      { id: 12, nombre: "La Unión" },
+      { id: 13, nombre: "Chalatenango" },
+      { id: 14, nombre: "Cojutepeque" },
+      { id: 15, nombre: "Zacatecoluca" },
+    ];
+    setMunicipios(municipiosSV);
+  }, []);
+
+  // Categorías/Intereses disponibles (IDs de la tabla categorias)
   const interesesDisponibles = [
-    "Tecnología","Música","Programación","Videojuegos","Noticias",
-    "Deporte","Salud y Fitness","Películas","Comida","Política",
-    "Finanzas","Viajes","Educación","Arte","Animales",
-    "Moda","Fotografía","Cultura pop","Ciencia","Emprendimiento",
+    { id: 1, nombre: "Restaurantes" },
+    { id: 2, nombre: "Cafeterías" },
+    { id: 3, nombre: "Tecnología" },
+    { id: 4, nombre: "Salud y Fitness" },
+    { id: 5, nombre: "Entretenimiento" },
+    { id: 6, nombre: "Educación" },
+    { id: 7, nombre: "Moda" },
+    { id: 8, nombre: "Belleza" },
+    { id: 9, nombre: "Deportes" },
+    { id: 10, nombre: "Arte y Cultura" },
   ];
 
   const updateForm = (newData) =>
     setFormData((prev) => ({ ...prev, ...newData }));
 
-  const toggleInteres = (interes) => {
+  const toggleInteres = (interesId) => {
     updateForm({
-      intereses: formData.intereses.includes(interes)
-        ? formData.intereses.filter((i) => i !== interes)
-        : [...formData.intereses, interes],
+      intereses: formData.intereses.includes(interesId)
+        ? formData.intereses.filter((i) => i !== interesId)
+        : [...formData.intereses, interesId],
     });
+  };
+
+  // Función para aplicar máscara de teléfono
+  const handlePhoneChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (value.length > 4) {
+      value = `${value.slice(0, 4)}-${value.slice(4)}`;
+    }
+    updateForm({ telefono: value });
+  };
+
+  // Función para calcular edad
+  const calcularEdad = (fechaNacimiento) => {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+    return edad;
   };
 
   const handleFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Validar tamaño del archivo (máximo 2MB)
+    const maxSize = 2 * 1024 * 1024; // 2MB en bytes
+    if (file.size > maxSize) {
+      alert('La imagen es demasiado grande. Por favor selecciona una imagen menor a 2MB.');
+      e.target.value = ''; // Limpiar el input
+      return;
+    }
 
     updateForm({
       fotoFile: file,
@@ -57,68 +121,143 @@ export default function RegisterPersonWizard() {
 
   const validateCurrentStep = () => {
     switch (currentStep) {
-      case 1: 
-        if (!formData.nombre.trim()) {
-          alert("Escribe tu nombre");
+      case 1: // Nombres
+        if (!formData.nombres.trim()) {
+          alert("Por favor, escribe tu nombre");
+          return false;
+        }
+        // Validar que solo contenga letras y espacios
+        const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!nameRegex.test(formData.nombres)) {
+          alert("El nombre solo debe contener letras");
+          return false;
+        }
+        if (formData.nombres.trim().length < 2) {
+          alert("El nombre debe tener al menos 2 caracteres");
           return false;
         }
         return true;
       
-      case 2: 
-        if (!formData.genero) {
-          alert("Selecciona tu género");
+      case 2: // Apellidos
+        if (!formData.apellidos.trim()) {
+          alert("Por favor, escribe tus apellidos");
+          return false;
+        }
+        // Validar que solo contenga letras y espacios
+        const apellidoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!apellidoRegex.test(formData.apellidos)) {
+          alert("Los apellidos solo deben contener letras");
+          return false;
+        }
+        if (formData.apellidos.trim().length < 2) {
+          alert("Los apellidos deben tener al menos 2 caracteres");
           return false;
         }
         return true;
 
-      case 3: 
+      case 3: // Género
+        if (!formData.genero) {
+          alert("Por favor, selecciona tu género");
+          return false;
+        }
+        return true;
+
+      case 4: // Fecha de nacimiento
+        if (!formData.fecha_nacimiento) {
+          alert("Por favor, selecciona tu fecha de nacimiento");
+          return false;
+        }
+        // Validar que no sea fecha futura
+        const hoy = new Date();
+        const fechaNac = new Date(formData.fecha_nacimiento);
+        if (fechaNac > hoy) {
+          alert("La fecha de nacimiento no puede ser futura");
+          return false;
+        }
+        // Validar edad mínima (18 años)
+        const edad = calcularEdad(formData.fecha_nacimiento);
+        if (edad < 18) {
+          alert("Debes ser mayor de 18 años para registrarte");
+          return false;
+        }
+        // Validar edad máxima razonable (120 años)
+        if (edad > 120) {
+          alert("Por favor, verifica tu fecha de nacimiento");
+          return false;
+        }
+        return true;
+
+      case 5: // Correo
         if (!formData.correo.trim()) {
-          alert("Escribe tu correo");
+          alert("Por favor, escribe tu correo electrónico");
           return false;
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.correo)) {
-          alert("Por favor, ingresa un correo válido (ej: usuario@mail.com)");
-          return false;
-        }
-        return true;
-      case 4: 
-        if (!formData.password || formData.password.length < 8) {
-          alert("Contraseña mínimo 8 caracteres");
+          alert("Por favor, ingresa un correo electrónico válido (ejemplo@correo.com)");
           return false;
         }
         return true;
 
-      case 5: 
+      case 6: // Contraseña
+        if (!formData.password) {
+          alert("Por favor, crea una contraseña");
+          return false;
+        }
+        if (formData.password.length < 8) {
+          alert("La contraseña debe tener al menos 8 caracteres");
+          return false;
+        }
+        // Validar que tenga al menos una letra y un número
+        if (!/[a-zA-Z]/.test(formData.password) || !/[0-9]/.test(formData.password)) {
+          alert("La contraseña debe contener al menos una letra y un número");
+          return false;
+        }
         return true;
 
-      case 6: 
+      case 7: // Teléfono
+        if (!formData.telefono.trim()) {
+          alert("Por favor, escribe tu número de teléfono");
+          return false;
+        }
+        // Validar formato de teléfono salvadoreño (####-####)
+        const phoneRegex = /^\d{4}-\d{4}$/;
+        if (!phoneRegex.test(formData.telefono)) {
+          alert("El teléfono debe tener el formato ####-#### (8 dígitos)");
+          return false;
+        }
+        // Validar que empiece con 2, 6, 7 (números válidos en El Salvador)
+        const primerDigito = formData.telefono.charAt(0);
+        if (!['2', '6', '7'].includes(primerDigito)) {
+          alert("El teléfono debe comenzar con 2, 6 o 7");
+          return false;
+        }
+        return true;
+
+      case 8: // Foto (opcional)
+        return true;
+
+      case 9: // Intereses
         if (!formData.intereses.length) {
-          alert("Selecciona al menos 1 tema");
+          alert("Por favor, selecciona al menos 1 interés");
+          return false;
+        }
+        if (formData.intereses.length > 5) {
+          alert("Puedes seleccionar máximo 5 intereses");
           return false;
         }
         return true;
 
-      case 7: 
-        if (!formData.emocionCasa.trim()) {
-          alert("Cuéntanos qué te emociona encontrar");
+      case 10: // Municipio
+        if (!formData.id_municipio) {
+          alert("Por favor, selecciona tu municipio");
           return false;
         }
         return true;
 
-      case 8:
-        if (!formData.ciudad.trim()) {
-          alert("Escribe tu ciudad o municipio");
-          return false;
-        }
-        return true;
-
-      case 9: 
-        return true;
-
-      case 10: 
+      case 11: // Términos
         if (!formData.terminos) {
-          alert("Debes aceptar términos");
+          alert("Debes aceptar los términos y condiciones para continuar");
           return false;
         }
         return true;
@@ -143,16 +282,18 @@ export default function RegisterPersonWizard() {
 
     try {
       const userData = {
-        nombre: formData.nombre,
-        apellidos: "",
-        genero: formData.genero,
-        correo: formData.correo,
+        email: formData.correo,
         password: formData.password,
-        fotoFile: formData.fotoFile,
-        ciudad: formData.ciudad,
-        municipio: "",
-        departamento: "",
-        activarUbicacion: formData.activarUbicacion,
+        nombres: formData.nombres,
+        apellidos: formData.apellidos,
+        fecha_nacimiento: formData.fecha_nacimiento,
+        genero: formData.genero,
+        telefono: formData.telefono,
+        foto: formData.fotoFile ? "foto_perfil.jpg" : "",
+        id_municipio: parseInt(formData.id_municipio),
+        descripcion: formData.descripcion || "",
+        intereses: formData.intereses,
+        ubicacion_activa: formData.ubicacion_activa,
       };
 
       const response = await registerUser(userData);
@@ -191,11 +332,11 @@ export default function RegisterPersonWizard() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1:
+      case 1: // Nombres
         return (
           <>
             <h2 className="question-title">¿Cómo te llamas?</h2>
-            <p className="question-subtitle">Queremos conocerte</p>
+            <p className="question-subtitle">Tu nombre</p>
             {error && (
               <div style={{
                 padding: '12px',
@@ -213,48 +354,83 @@ export default function RegisterPersonWizard() {
             <input
               className="big-input"
               type="text"
-              placeholder="Tu nombre"
-              value={formData.nombre}
-              onChange={(e) => updateForm({ nombre: e.target.value })}
+              placeholder="Ej: Juan Carlos"
+              value={formData.nombres}
+              onChange={(e) => updateForm({ nombres: e.target.value })}
               autoFocus
               disabled={loading}
             />
           </>
         );
-case 2: 
+
+      case 2: // Apellidos
+        return (
+          <>
+            <h2 className="question-title">¿Cuáles son tus apellidos?</h2>
+            <p className="question-subtitle">Tus apellidos completos</p>
+            <input
+              className="big-input"
+              type="text"
+              placeholder="Ej: Pérez García"
+              value={formData.apellidos}
+              onChange={(e) => updateForm({ apellidos: e.target.value })}
+              autoFocus
+            />
+          </>
+        );
+
+      case 3: // Género
         return (
           <>
             <h2 className="question-title">¿Cómo te identificas?</h2>
-            <p className="question-subtitle">
-              Para dirigirnos a ti correctamente
-            </p>
-
+            <p className="question-subtitle">Tu género</p>
             <div className="options-container">
-              {["Hombre", "Mujer", "Otro"].map((opcion) => (
+              {[
+                { value: "M", label: "Hombre" },
+                { value: "F", label: "Mujer" },
+                { value: "O", label: "Otro" }
+              ].map((opcion) => (
                 <div
-                  key={opcion}
+                  key={opcion.value}
                   className={`option-card ${
-                    formData.genero === opcion ? "selected" : ""
+                    formData.genero === opcion.value ? "selected" : ""
                   }`}
-                  onClick={() => updateForm({ genero: opcion })}
+                  onClick={() => updateForm({ genero: opcion.value })}
                 >
                   <input
                     type="radio"
                     className="option-checkbox"
-                    checked={formData.genero === opcion}
+                    checked={formData.genero === opcion.value}
                     readOnly
                   />
-                  <span>{opcion}</span>
+                  <span>{opcion.label}</span>
                 </div>
               ))}
             </div>
           </>
         );
-      case 3:
+
+      case 4: // Fecha de nacimiento
+        return (
+          <>
+            <h2 className="question-title">¿Cuál es tu fecha de nacimiento?</h2>
+            <p className="question-subtitle">Para verificar tu edad</p>
+            <input
+              className="big-input"
+              type="date"
+              value={formData.fecha_nacimiento}
+              onChange={(e) => updateForm({ fecha_nacimiento: e.target.value })}
+              max={new Date().toISOString().split('T')[0]}
+              autoFocus
+            />
+          </>
+        );
+
+      case 5: // Correo
         return (
           <>
             <h2 className="question-title">¿Cuál es tu correo?</h2>
-            <p className="question-subtitle"></p>
+            <p className="question-subtitle">Tu correo electrónico</p>
             <input
               className="big-input"
               type="email"
@@ -266,11 +442,11 @@ case 2:
           </>
         );
 
-      case 4:
+      case 6: // Contraseña
         return (
           <>
             <h2 className="question-title">Crea tu contraseña</h2>
-            <p className="question-subtitle">Al menos 8 caracteres.</p>
+            <p className="question-subtitle">Mínimo 8 caracteres</p>
             <input
               className="big-input"
               type="password"
@@ -282,24 +458,40 @@ case 2:
           </>
         );
 
-      case 5: // FOTO
+      case 7: // Teléfono
         return (
           <>
-            <h2 className="question-title">Sube una foto tuya</h2>
-            <p className="question-subtitle">Ayuda a personalizar tu perfil.</p>
+            <h2 className="question-title">¿Cuál es tu teléfono?</h2>
+            <p className="question-subtitle">Para contactarte si es necesario</p>
+            <input
+              className="big-input"
+              type="tel"
+              placeholder="7000-0000"
+              value={formData.telefono}
+              onChange={handlePhoneChange}
+              maxLength={9}
+              autoFocus
+            />
+            <div className="tip-box" style={{ marginTop: '10px' }}>
+              <span>ℹ️</span>
+              <span>Formato: ####-#### (8 dígitos)</span>
+            </div>
+          </>
+        );
 
-            {/* Usamos un label para que toda la caja sea clickeable */}
+      case 8: // Foto
+        return (
+          <>
+            <h2 className="question-title">Sube una foto tuya (opcional)</h2>
+            <p className="question-subtitle">Ayuda a personalizar tu perfil</p>
             <label className="file-upload-box">
-              {/* Input oculto pero funcional */}
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFile}
                 style={{ display: "none" }}
               />
-
               {formData.fotoPreview ? (
-                // Si hay foto, mostramos la previsualización
                 <img
                   src={formData.fotoPreview}
                   alt="Previsualización"
@@ -338,14 +530,14 @@ case 2:
             )}
           </>
         );
-      case 6:
+
+      case 9: // Intereses
         return (
           <>
-            <h2 className="question-title">¿Qué temas te llaman la atención?</h2>
+            <h2 className="question-title">¿Qué te interesa?</h2>
             <p className="question-subtitle">
-              Mientras más nos cuentes de tus gustos, más certeras serán tus sugerencias.
+              Selecciona entre 1 y 5 intereses para personalizar tu experiencia
             </p>
-
             <div
               style={{
                 display: "flex",
@@ -355,11 +547,11 @@ case 2:
                 marginTop: 12,
               }}
             >
-              {interesesDisponibles.map((i) => {
-                const selected = formData.intereses.includes(i);
+              {interesesDisponibles.map((interes) => {
+                const selected = formData.intereses.includes(interes.id);
                 return (
                   <button
-                    key={i}
+                    key={interes.id}
                     type="button"
                     className={`option-card ${selected ? "selected" : ""}`}
                     style={{
@@ -367,82 +559,52 @@ case 2:
                       minWidth: 120,
                       justifyContent: "center",
                     }}
-                    onClick={() => toggleInteres(i)}
+                    onClick={() => toggleInteres(interes.id)}
                   >
-                    {i}
+                    {interes.nombre}
                   </button>
                 );
               })}
             </div>
-          </>
-        );
-
-      case 7:
-        return (
-          <>
-            <h2 className="question-title">
-              Cuando sales de tu casa, ¿qué te emociona encontrar?
-            </h2>
-            <p className="question-subtitle">
-              Cuéntanos un poquito más de ti.
-            </p>
-            <textarea
-              className="big-input"
-              placeholder="Ej: comida rica, lugares nuevos, eventos, etc."
-              value={formData.emocionCasa}
-              onChange={(e) => updateForm({ emocionCasa: e.target.value })}
-              autoFocus
-            />
-          </>
-        );
-
-      case 8:
-        return (
-          <>
-            <h2 className="question-title">¿En qué ciudad o municipio estás?</h2>
-            <p className="question-subtitle">Para darte opciones locales.</p>
-            <input
-              className="big-input"
-              type="text"
-              placeholder="Ciudad / municipio"
-              value={formData.ciudad}
-              onChange={(e) => updateForm({ ciudad: e.target.value })}
-              autoFocus
-            />
-          </>
-        );
-
-      case 9:
-        return (
-          <>
-            <h2 className="question-title">
-              ¿Quieres activar tu ubicación para ver opciones cerquita?
-            </h2>
-            <p className="question-subtitle">
-              Ubicación activa = opciones cercanas que sí te quedan.
-            </p>
-
-            <div className="options-container">
-              <button
-                type="button"
-                className={`option-card ${formData.activarUbicacion ? "selected" : ""}`}
-                onClick={() => updateForm({ activarUbicacion: true })}
-              >
-                Sí, activar ubicación
-              </button>
-
-              <button
-                type="button"
-                className={`option-card ${!formData.activarUbicacion ? "selected" : ""}`}
-                onClick={() => updateForm({ activarUbicacion: false })}
-              >
-                No por ahora
-              </button>
+            <div style={{ marginTop: '10px', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
+              Seleccionados: {formData.intereses.length} / 5
             </div>
           </>
         );
 
-      case 10:
+      case 10: // Municipio
+        return (
+          <>
+            <h2 className="question-title">¿En qué municipio vives?</h2>
+            <p className="question-subtitle">Para mostrarte opciones cercanas</p>
+            <select
+              className="big-input"
+              value={formData.id_municipio}
+              onChange={(e) => updateForm({ id_municipio: e.target.value })}
+              autoFocus
+            >
+              <option value="">Selecciona tu municipio</option>
+              {municipios.map((municipio) => (
+                <option key={municipio.id} value={municipio.id}>
+                  {municipio.nombre}
+                </option>
+              ))}
+            </select>
+            <div style={{ marginTop: 16 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={formData.ubicacion_activa}
+                  onChange={(e) => updateForm({ ubicacion_activa: e.target.checked })}
+                  style={{ width: 18, height: 18 }}
+                />
+                <span>Activar ubicación para ver opciones cercanas</span>
+              </label>
+            </div>
+          </>
+        );
+
+      case 11: // Términos
         return (
           <>
             <h2 className="question-title">Términos y servicios</h2>
@@ -467,6 +629,9 @@ case 2:
 
   return (
     <div className="wizard-layout">
+      {/* Barra de progreso */}
+      <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+      
       <div className="wizard-content">
         {renderStep()}
       </div>

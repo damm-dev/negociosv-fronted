@@ -1,0 +1,57 @@
+{
+  "name": "NegocioSV - Plataforma de Negocios Salvadoreños",
+  "short_name": "NegocioSV",
+  "description": "Descubre y conecta con negocios locales en El Salvador. Apoya emprendimientos salvadoreños.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007bff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/N.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Banner.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "shopping", "lifestyle"],
+  "lang": "es-SV",
+  "dir": "ltr",
+  "scope": "/",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Buscar Negocios",
+      "short_name": "Buscar",
+      "description": "Buscar negocios locales",
+      "url": "/negocios",
+      "icons": [
+        {
+          "src": "/N.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Mi Cuenta",
+      "short_name": "Cuenta",
+      "description": "Ver mi perfil",
+      "url": "/cuenta",
+      "icons": [
+        {
+          "src": "/N.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

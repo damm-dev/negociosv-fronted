@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ProgressBar from '../components/ProgressBar';
 import '../styles/formNegocio.css';
 
 export default function RegisterBusinessWizard() {
@@ -13,19 +14,71 @@ export default function RegisterBusinessWizard() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    nombreNegocio: '',
-    oferta: [],
-    descripcionCorta: '',
-    direccionEscrita: '',
+    nombre_negocio: '',
+    id_categoria: [],
+    descripcion: '',
+    direccion: '',
+    id_municipio: '',
     logoFile: null,
     logoPreview: null,
-    contactoEmail: '',
-    telefonoWhatsApp: '',
-    metodosPago: []
+    email_contacto: '',
+    telefono: '',
+    metodos_pago: []
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [municipios, setMunicipios] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [metodosPago, setMetodosPago] = useState([]);
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    // Municipios de El Salvador
+    const municipiosSV = [
+      { id: 1, nombre: "San Salvador" },
+      { id: 2, nombre: "Santa Tecla" },
+      { id: 3, nombre: "Soyapango" },
+      { id: 4, nombre: "San Miguel" },
+      { id: 5, nombre: "Santa Ana" },
+      { id: 6, nombre: "Mejicanos" },
+      { id: 7, nombre: "Apopa" },
+      { id: 8, nombre: "Delgado" },
+      { id: 9, nombre: "Sonsonate" },
+      { id: 10, nombre: "Ahuachapán" },
+      { id: 11, nombre: "Usulután" },
+      { id: 12, nombre: "La Unión" },
+      { id: 13, nombre: "Chalatenango" },
+      { id: 14, nombre: "Cojutepeque" },
+      { id: 15, nombre: "Zacatecoluca" },
+    ];
+    setMunicipios(municipiosSV);
+
+    // Categorías de negocios (IDs de la tabla categorias)
+    const categoriasNegocio = [
+      { id: 1, nombre: "Restaurante" },
+      { id: 2, nombre: "Cafetería" },
+      { id: 3, nombre: "Barbería" },
+      { id: 4, nombre: "Salón de Belleza" },
+      { id: 5, nombre: "Gimnasio" },
+      { id: 6, nombre: "Tienda" },
+      { id: 7, nombre: "Servicios Profesionales" },
+      { id: 8, nombre: "Entretenimiento" },
+      { id: 9, nombre: "Educación" },
+      { id: 10, nombre: "Salud" },
+    ];
+    setCategorias(categoriasNegocio);
+
+    // Métodos de pago (IDs de la tabla metodos_pago)
+    const metodosPagoDisponibles = [
+      { id: 1, nombre: "Efectivo" },
+      { id: 2, nombre: "Tarjeta" },
+      { id: 3, nombre: "Transferencia" },
+      { id: 4, nombre: "Bitcoin" },
+      { id: 5, nombre: "Otros" },
+    ];
+    setMetodosPago(metodosPagoDisponibles);
+  }, []);
 
   // --- HELPERS PARA ACTUALIZAR DATOS ---
   
@@ -36,7 +89,7 @@ export default function RegisterBusinessWizard() {
   const handlePhoneChange = (e) => {
     let value = e.target.value.replace(/\D/g, '').slice(0, 8);
     if (value.length > 4) value = `${value.slice(0, 4)}-${value.slice(4)}`;
-    updateForm({ telefonoWhatsApp: value });
+    updateForm({ telefono: value });
   };
 
   const toggleList = (field, value) => {
@@ -50,6 +103,13 @@ export default function RegisterBusinessWizard() {
   const handleFile = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validar tamaño del archivo (máximo 2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB en bytes
+      if (file.size > maxSize) {
+        alert('La imagen es demasiado grande. Por favor selecciona una imagen menor a 2MB.');
+        e.target.value = ''; // Limpiar el input
+        return;
+      }
       updateForm({ logoFile: file, logoPreview: URL.createObjectURL(file) });
     }
   };
@@ -58,34 +118,139 @@ export default function RegisterBusinessWizard() {
   const validateStep = () => {
     switch (step) {
       case 1: // Email Usuario
-        if (!formData.email) return alert("Escribe tu correo");
+        if (!formData.email.trim()) {
+          alert("Por favor, escribe tu correo electrónico");
+          return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+          alert("Por favor, ingresa un correo electrónico válido (ejemplo@correo.com)");
+          return false;
+        }
         return true;
+        
       case 2: // Password
-        if (!formData.password || formData.password.length < 8) return alert("Contraseña muy corta (mínimo 8)");
+        if (!formData.password) {
+          alert("Por favor, crea una contraseña");
+          return false;
+        }
+        if (formData.password.length < 8) {
+          alert("La contraseña debe tener al menos 8 caracteres");
+          return false;
+        }
+        // Validar que tenga al menos una letra y un número
+        if (!/[a-zA-Z]/.test(formData.password) || !/[0-9]/.test(formData.password)) {
+          alert("La contraseña debe contener al menos una letra y un número");
+          return false;
+        }
         return true;
+        
       case 3: // Nombre Negocio
-        if (!formData.nombreNegocio) return alert("Escribe el nombre del negocio");
+        if (!formData.nombre_negocio.trim()) {
+          alert("Por favor, escribe el nombre del negocio");
+          return false;
+        }
+        if (formData.nombre_negocio.trim().length < 3) {
+          alert("El nombre del negocio debe tener al menos 3 caracteres");
+          return false;
+        }
+        if (formData.nombre_negocio.trim().length > 100) {
+          alert("El nombre del negocio no puede exceder 100 caracteres");
+          return false;
+        }
         return true;
-      case 4: // Oferta
-        if (formData.oferta.length === 0) return alert("Selecciona qué ofreces");
+        
+      case 4: // Categoría
+        if (formData.id_categoria.length === 0) {
+          alert("Por favor, selecciona al menos una categoría");
+          return false;
+        }
+        if (formData.id_categoria.length > 3) {
+          alert("Puedes seleccionar máximo 3 categorías");
+          return false;
+        }
         return true;
+        
       case 5: // Descripción
-        if (!formData.descripcionCorta) return alert("Escribe una descripción");
+        if (!formData.descripcion.trim()) {
+          alert("Por favor, escribe una descripción del negocio");
+          return false;
+        }
+        if (formData.descripcion.trim().length < 20) {
+          alert("La descripción debe tener al menos 20 caracteres");
+          return false;
+        }
+        if (formData.descripcion.trim().length > 500) {
+          alert("La descripción no puede exceder 500 caracteres");
+          return false;
+        }
         return true;
+        
       case 6: // Dirección
-        if (!formData.direccionEscrita) return alert("Escribe la dirección");
+        if (!formData.direccion.trim()) {
+          alert("Por favor, escribe la dirección del negocio");
+          return false;
+        }
+        if (formData.direccion.trim().length < 10) {
+          alert("La dirección debe tener al menos 10 caracteres");
+          return false;
+        }
         return true;
-      case 7: // Foto
-        if (!formData.logoPreview) return alert("Sube una foto o logo");
+        
+      case 7: // Municipio
+        if (!formData.id_municipio) {
+          alert("Por favor, selecciona el municipio donde está ubicado el negocio");
+          return false;
+        }
         return true;
-      case 8: // Email Contacto
-        if (!formData.contactoEmail) return alert("Escribe el correo de contacto");
+        
+      case 8: // Foto
+        if (!formData.logoPreview) {
+          alert("Por favor, sube una foto o logo del negocio");
+          return false;
+        }
         return true;
-      case 9: // Teléfono
-        if (!formData.telefonoWhatsApp || formData.telefonoWhatsApp.length < 9) return alert("Teléfono incompleto (####-####)");
+        
+      case 9: // Email Contacto
+        if (!formData.email_contacto.trim()) {
+          alert("Por favor, escribe el correo de contacto del negocio");
+          return false;
+        }
+        const emailContactoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailContactoRegex.test(formData.email_contacto)) {
+          alert("Por favor, ingresa un correo de contacto válido");
+          return false;
+        }
         return true;
-      // Paso 10 (Pagos) y 11 (Resumen) no requieren validación estricta para avanzar
-      default: return true;
+        
+      case 10: // Teléfono
+        if (!formData.telefono.trim()) {
+          alert("Por favor, escribe el número de teléfono del negocio");
+          return false;
+        }
+        // Validar formato de teléfono salvadoreño (####-####)
+        const phoneRegex = /^\d{4}-\d{4}$/;
+        if (!phoneRegex.test(formData.telefono)) {
+          alert("El teléfono debe tener el formato ####-#### (8 dígitos)");
+          return false;
+        }
+        // Validar que empiece con 2, 6, 7 (números válidos en El Salvador)
+        const primerDigito = formData.telefono.charAt(0);
+        if (!['2', '6', '7'].includes(primerDigito)) {
+          alert("El teléfono debe comenzar con 2, 6 o 7");
+          return false;
+        }
+        return true;
+        
+      case 11: // Métodos de pago (opcional pero recomendado)
+        if (formData.metodos_pago.length === 0) {
+          const confirmar = window.confirm("No has seleccionado ningún método de pago. ¿Deseas continuar sin seleccionar métodos de pago?");
+          return confirmar;
+        }
+        return true;
+        
+      default: 
+        return true;
     }
   };
 
@@ -106,7 +271,21 @@ export default function RegisterBusinessWizard() {
     setError("");
 
     try {
-      const response = await registerBusiness(formData);
+      const businessData = {
+        email: formData.email,
+        password: formData.password,
+        nombre_negocio: formData.nombre_negocio,
+        id_categoria: formData.id_categoria,
+        descripcion: formData.descripcion,
+        direccion: formData.direccion,
+        id_municipio: parseInt(formData.id_municipio),
+        logoFile: formData.logoFile,
+        email_contacto: formData.email_contacto,
+        telefono: formData.telefono,
+        metodos_pago: formData.metodos_pago,
+      };
+
+      const response = await registerBusiness(businessData);
       
       alert("¡Registro de Negocio Completado! 🚀");
       console.log("Respuesta del servidor:", response);
@@ -122,7 +301,6 @@ export default function RegisterBusinessWizard() {
         const errors = err.response.data;
         console.log("Errores del servidor:", errors);
         
-        // Si es un objeto con errores de validación
         if (typeof errors === 'object' && !errors.message) {
           Object.keys(errors).forEach(key => {
             const errorValue = errors[key];
@@ -193,48 +371,101 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">Nombre del negocio</h2>
             <p className="question-subtitle">Es el nombre que verán tus clientes.</p>
-            <input className="big-input" type="text" placeholder="Ej: Café La Esquina"
-              value={formData.nombreNegocio} onChange={(e) => updateForm({ nombreNegocio: e.target.value })} autoFocus />
-            <div className="tip-box"><span>ℹ️</span><span>Mientras más claro sea el nombre, mejor.</span></div>
+            <input 
+              className="big-input" 
+              type="text" 
+              placeholder="Ej: Café La Esquina"
+              value={formData.nombre_negocio} 
+              onChange={(e) => updateForm({ nombre_negocio: e.target.value })} 
+              maxLength={100}
+              autoFocus 
+            />
+            <div className="tip-box">
+              <span>ℹ️</span>
+              <span>Mientras más claro sea el nombre, mejor. (3-100 caracteres)</span>
+            </div>
           </>
         );
       case 4:
         return (
           <>
-            <h2 className="question-title">¿Qué ofreces?</h2>
-            <p className="question-subtitle">Elige tu categoria.</p>
+            <h2 className="question-title">¿Qué tipo de negocio es?</h2>
+            <p className="question-subtitle">Selecciona entre 1 y 3 categorías.</p>
             <div className="options-container">
-              {['Restaurante', 'Cafetería', 'Barbería', 'Clínica', 'Taller', 'Coworking', 'Tienda', 'Servicios', 'Otro'].map(opcion => (
-                <div key={opcion} className={`option-card ${formData.oferta.includes(opcion) ? 'selected' : ''}`}
-                  onClick={() => toggleList('oferta', opcion)}>
-                  <input type="checkbox" className="option-checkbox" checked={formData.oferta.includes(opcion)} readOnly />
-                  <span>{opcion}</span>
+              {categorias.map(categoria => (
+                <div key={categoria.id} className={`option-card ${formData.id_categoria.includes(categoria.id) ? 'selected' : ''}`}
+                  onClick={() => toggleList('id_categoria', categoria.id)}>
+                  <input type="checkbox" className="option-checkbox" checked={formData.id_categoria.includes(categoria.id)} readOnly />
+                  <span>{categoria.nombre}</span>
                 </div>
               ))}
+            </div>
+            <div style={{ marginTop: '10px', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
+              Seleccionadas: {formData.id_categoria.length} / 3
             </div>
           </>
         );
       case 5:
         return (
           <>
-            <h2 className="question-title">Descripción corta</h2>
-            <p className="question-subtitle">Describe tu negocio en pocas palabras.</p>
-            <textarea className="big-input" placeholder="Venta de pasteles artesanales..."
-              value={formData.descripcionCorta} onChange={(e) => updateForm({ descripcionCorta: e.target.value })} autoFocus />
+            <h2 className="question-title">Descripción del negocio</h2>
+            <p className="question-subtitle">Describe tu negocio en pocas palabras (20-500 caracteres).</p>
+            <textarea 
+              className="big-input" 
+              placeholder="Ej: Cafetería especializada en café de altura con ambiente acogedor..."
+              value={formData.descripcion} 
+              onChange={(e) => updateForm({ descripcion: e.target.value })} 
+              maxLength={500}
+              rows={4}
+              autoFocus 
+            />
+            <div style={{ marginTop: '5px', textAlign: 'right', color: '#6b7280', fontSize: '0.85rem' }}>
+              {formData.descripcion.length} / 500 caracteres
+            </div>
           </>
         );
 
-      // 3. UBICACIÓN Y FOTO
+      // 3. UBICACIÓN
       case 6:
         return (
           <>
-            <h2 className="question-title">Dirección escrita</h2>
+            <h2 className="question-title">Dirección del negocio</h2>
             <p className="question-subtitle">Escríbela tal como aparece en Maps.</p>
-            <textarea className="big-input" placeholder="Calle La Mascota #24..."
-              value={formData.direccionEscrita} onChange={(e) => updateForm({ direccionEscrita: e.target.value })} autoFocus />
+            <textarea 
+              className="big-input" 
+              placeholder="Ej: Calle La Mascota #24, Colonia San Benito, San Salvador"
+              value={formData.direccion} 
+              onChange={(e) => updateForm({ direccion: e.target.value })} 
+              rows={3}
+              autoFocus 
+            />
+            <div className="tip-box" style={{ marginTop: '10px' }}>
+              <span>ℹ️</span>
+              <span>Incluye calle, número, colonia y referencias importantes</span>
+            </div>
           </>
         );
       case 7:
+        return (
+          <>
+            <h2 className="question-title">¿En qué municipio está ubicado?</h2>
+            <p className="question-subtitle">Selecciona el municipio.</p>
+            <select
+              className="big-input"
+              value={formData.id_municipio}
+              onChange={(e) => updateForm({ id_municipio: e.target.value })}
+              autoFocus
+            >
+              <option value="">Selecciona un municipio</option>
+              {municipios.map((municipio) => (
+                <option key={municipio.id} value={municipio.id}>
+                  {municipio.nombre}
+                </option>
+              ))}
+            </select>
+          </>
+        );
+      case 8:
         return (
           <>
             <h2 className="question-title">Foto o logo del negocio</h2>
@@ -250,58 +481,78 @@ export default function RegisterBusinessWizard() {
                 </div>
               )}
             </label>
+            {formData.logoPreview && (
+              <button 
+                type="button"
+                onClick={(e) => {
+                   e.preventDefault(); 
+                   updateForm({ logoFile: null, logoPreview: null });
+                }}
+                style={{
+                  marginTop: '10px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#ef4444',
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
+              >
+                Eliminar y subir otra
+              </button>
+            )}
           </>
         );
 
       // 4. CONTACTO Y PAGOS
-      case 8:
+      case 9:
         return (
           <>
             <h2 className="question-title">Correo de contacto</h2>
             <p className="question-subtitle">¿A dónde quieres que te escriban los clientes?</p>
             <input className="big-input" type="email" placeholder="contacto@negocio.com"
-              value={formData.contactoEmail} onChange={(e) => updateForm({ contactoEmail: e.target.value })} autoFocus />
-          </>
-        );
-      case 9:
-        return (
-          <>
-            <h2 className="question-title">Teléfono o WhatsApp</h2>
-            <p className="question-subtitle">Para que te llamen o escriban directamente.</p>
-            <input className="big-input" type="tel" placeholder="7000-0000"
-              value={formData.telefonoWhatsApp} onChange={handlePhoneChange} maxLength={9} autoFocus />
+              value={formData.email_contacto} onChange={(e) => updateForm({ email_contacto: e.target.value })} autoFocus />
           </>
         );
       case 10:
         return (
           <>
-            <h2 className="question-title">Métodos de pago</h2>
-            <p className="question-subtitle">Selecciona los que aceptas.</p>
-            <div className="options-container">
-              {['Efectivo', 'Transferencia', 'Tarjetas', 'QR', 'Otros'].map(method => (
-                <div key={method} className={`option-card ${formData.metodosPago.includes(method) ? 'selected' : ''}`}
-                  onClick={() => toggleList('metodosPago', method)}>
-                  <input type="checkbox" className="option-checkbox" checked={formData.metodosPago.includes(method)} readOnly />
-                  <span>{method}</span>
-                </div>
-              ))}
+            <h2 className="question-title">Teléfono o WhatsApp</h2>
+            <p className="question-subtitle">Para que te llamen o escriban directamente.</p>
+            <input 
+              className="big-input" 
+              type="tel" 
+              placeholder="7000-0000"
+              value={formData.telefono} 
+              onChange={handlePhoneChange} 
+              maxLength={9} 
+              autoFocus 
+            />
+            <div className="tip-box" style={{ marginTop: '10px' }}>
+              <span>ℹ️</span>
+              <span>Formato: ####-#### (8 dígitos)</span>
             </div>
           </>
         );
-
-      // 5. RESUMEN
       case 11:
         return (
-          <div style={{width: '100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-            <h2 className="question-title">¡Todo listo!</h2>
-            <p className="question-subtitle">Revisa la información antes de finalizar.</p>
-            <div className="summary-container">
-              <div className="summary-item"><span className="summary-label">Negocio</span><div className="summary-value">{formData.nombreNegocio}</div></div>
-              <div className="summary-item"><span className="summary-label">Ubicación</span><div className="summary-value">{formData.direccionEscrita}</div></div>
-              <div className="summary-item"><span className="summary-label">Contacto</span><div className="summary-value">{formData.telefonoWhatsApp}</div></div>
-              <div className="summary-item"><span className="summary-label">Oferta</span><div className="summary-value">{formData.oferta.join(', ')}</div></div>
+          <>
+            <h2 className="question-title">Métodos de pago</h2>
+            <p className="question-subtitle">Selecciona los que aceptas (opcional).</p>
+            <div className="options-container">
+              {metodosPago.map(metodo => (
+                <div key={metodo.id} className={`option-card ${formData.metodos_pago.includes(metodo.id) ? 'selected' : ''}`}
+                  onClick={() => toggleList('metodos_pago', metodo.id)}>
+                  <input type="checkbox" className="option-checkbox" checked={formData.metodos_pago.includes(metodo.id)} readOnly />
+                  <span>{metodo.nombre}</span>
+                </div>
+              ))}
             </div>
-          </div>
+            <div style={{ marginTop: '10px', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
+              {formData.metodos_pago.length > 0 
+                ? `Seleccionados: ${formData.metodos_pago.length}` 
+                : 'Puedes agregar métodos de pago después'}
+            </div>
+          </>
         );
 
       default: return null;
@@ -310,6 +561,9 @@ export default function RegisterBusinessWizard() {
 
   return (
     <div className="wizard-layout">
+      {/* Barra de progreso */}
+      <ProgressBar currentStep={step} totalSteps={totalSteps} />
+      
       {/* CONTENIDO */}
       <div className="wizard-content">
         {renderScreen()}

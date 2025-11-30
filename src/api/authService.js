@@ -36,6 +36,10 @@ const authService = {
       if (response.data.usuario) {
         localStorage.setItem('user_data', JSON.stringify(response.data.usuario));
       }
+      // Guardar el tipo de usuario que viene del backend
+      if (response.data.type) {
+        localStorage.setItem('user_type', response.data.type);
+      }
       
       return response.data;
     } catch (error) {
@@ -51,20 +55,25 @@ const authService = {
   async registerUser(userData) {
     try {
       const payload = {
-        email: userData.correo || userData.email,
+        email: userData.email,
         password: userData.password,
-        nombres: userData.nombre || userData.nombres,
+        nombres: userData.nombres,
         apellidos: userData.apellidos,
-        fecha_nacimiento: userData.fechaNacimiento || userData.fecha_nacimiento,
-        genero: userData.genero || 'O',
-        telefono: userData.telefono || '',
-        id_municipio: userData.id_municipio || 1,
+        fecha_nacimiento: userData.fecha_nacimiento,
+        genero: userData.genero,
+        telefono: userData.telefono,
+        id_municipio: userData.id_municipio,
         descripcion: userData.descripcion || '',
         foto: userData.foto || '',
-        intereses: userData.intereses || [1]
+        intereses: userData.intereses
       };
 
       const response = await axiosInstance.post('/registrar', payload);
+      
+      // Guardar tipo de usuario
+      if (response.data) {
+        localStorage.setItem('user_type', 'persona');
+      }
       
       return response.data;
     } catch (error) {
@@ -81,39 +90,35 @@ const authService = {
     try {
       const formData = new FormData();
       
-      // Mapear datos del wizard al formato de la API
-      formData.append('nombreNegocio', businessData.nombreNegocio || '');
-      formData.append('email', businessData.email || '');
-      formData.append('password', businessData.password || '');
-      formData.append('descripcion', businessData.descripcionCorta || '');
-      formData.append('direccion', businessData.direccionEscrita || '');
-      formData.append('telefono', businessData.telefonoWhatsApp || '');
+      // Datos de usuario
+      formData.append('email', businessData.email);
+      formData.append('password', businessData.password);
       
-      // Productos/Servicios (oferta)
-      if (businessData.oferta && businessData.oferta.length > 0) {
-        formData.append('productos', businessData.oferta.join(', '));
-      }
+      // Datos del negocio
+      formData.append('nombre_negocio', businessData.nombre_negocio);
+      formData.append('descripcion', businessData.descripcion);
+      formData.append('direccion', businessData.direccion);
+      formData.append('id_municipio', businessData.id_municipio);
+      formData.append('telefono', businessData.telefono);
+      formData.append('email_contacto', businessData.email_contacto);
       
-      // Métodos de pago (debe ser array)
-      if (businessData.metodosPago && businessData.metodosPago.length > 0) {
-        businessData.metodosPago.forEach((metodo, index) => {
-          formData.append(`metodosPago[${index}]`, metodo);
+      // Categorías (array de IDs)
+      if (businessData.id_categoria && businessData.id_categoria.length > 0) {
+        businessData.id_categoria.forEach((catId, index) => {
+          formData.append(`id_categoria[${index}]`, catId);
         });
-      } else {
-        formData.append('metodosPago[]', 'Efectivo'); // Default
       }
       
-      // Email de contacto (usar el mismo email si no hay otro)
-      formData.append('contactoEmail', businessData.contactoEmail || businessData.email);
+      // Métodos de pago (array de IDs)
+      if (businessData.metodos_pago && businessData.metodos_pago.length > 0) {
+        businessData.metodos_pago.forEach((metodoId, index) => {
+          formData.append(`metodos_pago[${index}]`, metodoId);
+        });
+      }
       
       // Logo/Foto
       if (businessData.logoFile) {
-        formData.append('foto', businessData.logoFile);
-      }
-      
-      // Categoría (opcional por ahora)
-      if (businessData.categoria) {
-        formData.append('categoria', businessData.categoria);
+        formData.append('logo', businessData.logoFile);
       }
 
       const response = await axiosInstance.post('/registrar_negocio', formData, {
@@ -121,6 +126,11 @@ const authService = {
           'Content-Type': 'multipart/form-data',
         },
       });
+      
+      // Guardar tipo de usuario
+      if (response.data) {
+        localStorage.setItem('user_type', 'negocio');
+      }
       
       return response.data;
     } catch (error) {

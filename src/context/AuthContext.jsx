@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
   const registerUser = async (userData) => {
     try {
       const response = await authService.registerUser(userData);
+      // El tipo de usuario ya se guarda en authService
       return response;
     } catch (error) {
       throw error;
@@ -50,6 +51,7 @@ export const AuthProvider = ({ children }) => {
   const registerBusiness = async (businessData) => {
     try {
       const response = await authService.registerBusiness(businessData);
+      // El tipo de usuario ya se guarda en authService
       return response;
     } catch (error) {
       throw error;

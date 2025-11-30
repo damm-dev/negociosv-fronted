@@ -112,6 +112,87 @@ function LogrosIcon({ active }) {
   );
 }
 
+function DashboardIcon({ active }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* dashboard con gráficas */}
+      <rect
+        x="3"
+        y="3"
+        width="7"
+        height="7"
+        rx="1.5"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="14"
+        y="3"
+        width="7"
+        height="7"
+        rx="1.5"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="3"
+        y="14"
+        width="7"
+        height="7"
+        rx="1.5"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <rect
+        x="14"
+        y="14"
+        width="7"
+        height="7"
+        rx="1.5"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+    </svg>
+  );
+}
+
+function ResenasIcon({ active }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* estrella de reseñas */}
+      <path
+        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function PromocionesIcon({ active }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
+      {/* etiqueta de promoción */}
+      <path
+        d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+        fill={active ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="7" cy="7" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
 function CuentaIcon({ active }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
@@ -135,35 +216,50 @@ function CuentaIcon({ active }) {
   );
 }
 
-/* ==== TABS EN ESPAÑOL ==== */
-
-const TABS = [
+/* ==== TABS PARA USUARIOS PERSONA ==== */
+const TABS_PERSONA = [
   { id: "inicio", label: "Inicio", icon: HomeIcon, to: "/" },
   { id: "negocios", label: "Negocios", icon: NegociosIcon, to: "/negocios" },
-  { id: "logros", label: "Logros", icon: LogrosIcon },
+  { id: "logros", label: "Logros", icon: LogrosIcon, to: "/logros" },
+  { id: "cuenta", label: "Cuenta", icon: CuentaIcon, to: "/cuenta", mobileOnly: true },
+];
+
+/* ==== TABS PARA USUARIOS NEGOCIO ==== */
+const TABS_NEGOCIO = [
+  { id: "dashboard", label: "Dashboard", icon: DashboardIcon, to: "/dashboard" },
+  { id: "resenas", label: "Reseñas", icon: ResenasIcon, to: "/resenas" },
+  { id: "promociones", label: "Promociones", icon: PromocionesIcon, to: "/promociones" },
+  { id: "cuenta", label: "Cuenta", icon: CuentaIcon, to: "/cuenta", mobileOnly: true },
 ];
 
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { user, userType, isAuthenticated } = useAuth();
   const [_, setDummy] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+
+  // Determinar qué tabs mostrar según el tipo de usuario
+  const TABS = userType === 'negocio' ? TABS_NEGOCIO : TABS_PERSONA;
 
   // Actualizar tab activo basado en la ruta actual
   useEffect(() => {
     const path = location.pathname;
     if (path === '/cuenta') {
-      setActiveTab(''); // No seleccionar ninguna tab en /cuenta
-    } else if (path === '/') {
-      setActiveTab('inicio');
+      setActiveTab('cuenta');
+    } else if (path === '/' || path === '/dashboard') {
+      setActiveTab(userType === 'negocio' ? 'dashboard' : 'inicio');
     } else if (path === '/negocios') {
       setActiveTab('negocios');
     } else if (path.includes('logros')) {
       setActiveTab('logros');
+    } else if (path === '/resenas') {
+      setActiveTab('resenas');
+    } else if (path === '/promociones') {
+      setActiveTab('promociones');
     }
-  }, [location.pathname]);
+  }, [location.pathname, userType]);
 
   // Obtener iniciales del usuario
   const getInitials = () => {
@@ -182,25 +278,35 @@ export default function Navbar() {
   return (
     <header className="layout-header">
       <div className="nav-bar">
-        {/* IZQUIERDA: marca */}
-        <div className="nav-brand">NegocioSV</div>
+        {/* IZQUIERDA: marca con logo */}
+        <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+          <img src="/Banner.svg" alt="NegocioSV" className="nav-brand-logo" />
+        </div>
 
         {/* CENTRO: tabs */}
         <nav className="nav-center">
           <div className="nav-pill">
-            {TABS.map(({ id, label, icon: Icon, to }) => (
+            {TABS.map(({ id, label, icon: Icon, to, mobileOnly }) => (
               <button
                 key={id}
                 type="button"
                 className={`nav-item ${
                   activeTab === id ? "nav-item--active" : ""
-                }`}
+                } ${mobileOnly ? "nav-item--mobile-only" : ""}`}
                 onClick={() => {
                   setActiveTab(id);
                   if (to) navigate(to);
                 }}
               >
-                <span className="nav-icon"><Icon active={activeTab === id} /></span>
+                <span className="nav-icon">
+                  {id === "cuenta" && isAuthenticated() ? (
+                    <div className="nav-mobile-avatar">
+                      <span>{getInitials()}</span>
+                    </div>
+                  ) : (
+                    <Icon active={activeTab === id} />
+                  )}
+                </span>
                 <span className="nav-label">{label}</span>
               </button>
             ))}

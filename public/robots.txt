@@ -1,0 +1,19 @@
+# robots.txt para NegocioSV
+User-agent: *
+Allow: /
+
+# Páginas importantes para indexar
+Allow: /negocios
+Allow: /login
+Allow: /register
+
+# Evitar indexar páginas de administración o privadas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /cuenta/
+
+# Sitemap (cuando lo tengas disponible)
+# Sitemap: https://negociosv.com/sitemap.xml
+
+# Crawl-delay para ser amigable con los bots
+Crawl-delay: 1

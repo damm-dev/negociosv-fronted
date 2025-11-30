@@ -1,0 +1,301 @@
+/* ===========================
+   LOADING SCREEN
+   =========================== */
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.loading-screen--exit {
+  animation: fadeOut 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Contenedor principal */
+.loading-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* ===========================
+   CÍRCULOS ANIMADOS DE FONDO
+   =========================== */
+
+.loading-circles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.loading-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading-circle--1 {
+  width: 300px;
+  height: 300px;
+  border: 2px solid #3b82f6;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-circle--2 {
+  width: 400px;
+  height: 400px;
+  border: 2px solid #60a5fa;
+  animation: pulse 2s ease-in-out infinite 0.5s;
+}
+
+.loading-circle--3 {
+  width: 500px;
+  height: 500px;
+  border: 2px solid #93c5fd;
+  animation: pulse 2s ease-in-out infinite 1s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* ===========================
+   LOGO CON ANIMACIÓN
+   =========================== */
+
+.loading-logo-container {
+  position: relative;
+  z-index: 2;
+  animation: logoEntrance 1s ease-out;
+}
+
+.loading-logo {
+  height: 80px;
+  width: auto;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+  animation: logoFloat 3s ease-in-out infinite, logoGlow 2s ease-in-out infinite;
+}
+
+.loading-logo--exit {
+  animation: logoExit 0.6s ease-out forwards;
+}
+
+@keyframes logoEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-50px);
+  }
+  60% {
+    transform: scale(1.1) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes logoGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.8));
+  }
+}
+
+@keyframes logoExit {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+/* ===========================
+   BARRA DE PROGRESO
+   =========================== */
+
+.loading-progress {
+  width: 200px;
+  height: 4px;
+  background-color: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.loading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+  border-radius: 999px;
+  animation: progressBar 2s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+@keyframes progressBar {
+  0% {
+    width: 0%;
+    transform: translateX(0);
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
+    transform: translateX(0);
+  }
+}
+
+/* ===========================
+   TEXTO DE CARGA (PUNTOS)
+   =========================== */
+
+.loading-text {
+  display: flex;
+  gap: 0.3rem;
+  font-size: 2rem;
+  color: #60a5fa;
+  z-index: 2;
+}
+
+.loading-dot {
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-15px);
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   RESPONSIVE - MÓVIL
+   =========================== */
+
+@media (max-width: 768px) {
+  .loading-logo {
+    height: 60px;
+  }
+
+  .loading-circle--1 {
+    width: 200px;
+    height: 200px;
+  }
+
+  .loading-circle--2 {
+    width: 280px;
+    height: 280px;
+  }
+
+  .loading-circle--3 {
+    width: 360px;
+    height: 360px;
+  }
+
+  .loading-progress {
+    width: 150px;
+  }
+
+  .loading-text {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-logo {
+    height: 50px;
+  }
+
+  .loading-circle--1 {
+    width: 150px;
+    height: 150px;
+  }
+
+  .loading-circle--2 {
+    width: 220px;
+    height: 220px;
+  }
+
+  .loading-circle--3 {
+    width: 290px;
+    height: 290px;
+  }
+
+  .loading-progress {
+    width: 120px;
+  }
+}
