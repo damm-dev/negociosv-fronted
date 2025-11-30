@@ -54,7 +54,7 @@ export default function OnboardingWizard() {
 
   const submitForm = () => {
     console.log("Formulario final:", form);
-    alert("Formulario enviado ✅ (mira la consola)");
+    alert("Formulario enviado  (mira la consola)");
   };
 
   return (

@@ -10,6 +10,7 @@ export default function RegisterPersonWizard() {
 
   const [formData, setFormData] = useState({
     nombre: "",
+    genero: "",
     correo: "",
     password: "",
     fotoFile: null,
@@ -24,7 +25,7 @@ export default function RegisterPersonWizard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const totalSteps = 9;
+  const totalSteps = 10;
 
   const interesesDisponibles = [
     "Tecnología","Música","Programación","Videojuegos","Noticias",
@@ -56,52 +57,72 @@ export default function RegisterPersonWizard() {
 
   const validateCurrentStep = () => {
     switch (currentStep) {
-      case 1:
+      case 1: 
         if (!formData.nombre.trim()) {
           alert("Escribe tu nombre");
           return false;
         }
         return true;
-      case 2:
+      
+      case 2: 
+        if (!formData.genero) {
+          alert("Selecciona tu género");
+          return false;
+        }
+        return true;
+
+      case 3: 
         if (!formData.correo.trim()) {
           alert("Escribe tu correo");
           return false;
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.correo)) {
+          alert("Por favor, ingresa un correo válido (ej: usuario@mail.com)");
+          return false;
+        }
         return true;
-      case 3:
+      case 4: 
         if (!formData.password || formData.password.length < 8) {
           alert("Contraseña mínimo 8 caracteres");
           return false;
         }
         return true;
-      case 4:
+
+      case 5: 
         return true;
-      case 5:
+
+      case 6: 
         if (!formData.intereses.length) {
           alert("Selecciona al menos 1 tema");
           return false;
         }
         return true;
-      case 6:
+
+      case 7: 
         if (!formData.emocionCasa.trim()) {
           alert("Cuéntanos qué te emociona encontrar");
           return false;
         }
         return true;
-      case 7:
+
+      case 8:
         if (!formData.ciudad.trim()) {
           alert("Escribe tu ciudad o municipio");
           return false;
         }
         return true;
-      case 8:
+
+      case 9: 
         return true;
-      case 9:
+
+      case 10: 
         if (!formData.terminos) {
           alert("Debes aceptar términos");
           return false;
         }
         return true;
+
       default:
         return true;
     }
@@ -124,6 +145,7 @@ export default function RegisterPersonWizard() {
       const userData = {
         nombre: formData.nombre,
         apellidos: "",
+        genero: formData.genero,
         correo: formData.correo,
         password: formData.password,
         fotoFile: formData.fotoFile,
@@ -173,7 +195,7 @@ export default function RegisterPersonWizard() {
         return (
           <>
             <h2 className="question-title">¿Cómo te llamas?</h2>
-            <p className="question-subtitle">Queremos conocerte 🙂</p>
+            <p className="question-subtitle">Queremos conocerte</p>
             {error && (
               <div style={{
                 padding: '12px',
@@ -199,12 +221,40 @@ export default function RegisterPersonWizard() {
             />
           </>
         );
+case 2: 
+        return (
+          <>
+            <h2 className="question-title">¿Cómo te identificas?</h2>
+            <p className="question-subtitle">
+              Para dirigirnos a ti correctamente
+            </p>
 
-      case 2:
+            <div className="options-container">
+              {["Hombre", "Mujer", "Otro"].map((opcion) => (
+                <div
+                  key={opcion}
+                  className={`option-card ${
+                    formData.genero === opcion ? "selected" : ""
+                  }`}
+                  onClick={() => updateForm({ genero: opcion })}
+                >
+                  <input
+                    type="radio"
+                    className="option-checkbox"
+                    checked={formData.genero === opcion}
+                    readOnly
+                  />
+                  <span>{opcion}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      case 3:
         return (
           <>
             <h2 className="question-title">¿Cuál es tu correo?</h2>
-            <p className="question-subtitle">Será tu usuario para entrar.</p>
+            <p className="question-subtitle"></p>
             <input
               className="big-input"
               type="email"
@@ -216,7 +266,7 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 3:
+      case 4:
         return (
           <>
             <h2 className="question-title">Crea tu contraseña</h2>
@@ -232,39 +282,63 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 4:
+      case 5: // FOTO
         return (
           <>
             <h2 className="question-title">Sube una foto tuya</h2>
             <p className="question-subtitle">Ayuda a personalizar tu perfil.</p>
 
-            <input
-              className="big-input"
-              style={{ padding: "10px" }}
-              type="file"
-              accept="image/*"
-              onChange={handleFile}
-            />
+            {/* Usamos un label para que toda la caja sea clickeable */}
+            <label className="file-upload-box">
+              {/* Input oculto pero funcional */}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFile}
+                style={{ display: "none" }}
+              />
 
-            {formData.fotoPreview && (
-              <div style={{ marginTop: 16 }}>
+              {formData.fotoPreview ? (
+                // Si hay foto, mostramos la previsualización
                 <img
                   src={formData.fotoPreview}
-                  alt="preview"
-                  style={{
-                    width: 140,
-                    height: 140,
-                    borderRadius: "999px",
-                    objectFit: "cover",
-                    border: "2px solid #e5e7eb",
-                  }}
+                  alt="Previsualización"
+                  className="file-preview-img"
                 />
-              </div>
+              ) : (
+                <div style={{ textAlign: "center", color: "#9ca3af" }}>
+                  <div className="upload-icon" style={{ fontSize: "3rem", marginBottom: "10px" }}>
+                    📷
+                  </div>
+                  <span style={{ display: "block", fontSize: "1.1rem", fontWeight: 500 }}>
+                    Toca para seleccionar
+                  </span>
+                  <span style={{ fontSize: "0.9rem" }}>o arrastra tu foto aquí</span>
+                </div>
+              )}
+            </label>
+            {formData.fotoPreview && (
+              <button 
+                type="button"
+                onClick={(e) => {
+                   e.preventDefault(); 
+                   updateForm({ fotoFile: null, fotoPreview: null });
+                }}
+                style={{
+                  marginTop: '10px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#ef4444',
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
+                }}
+              >
+                Eliminar foto y subir otra
+              </button>
             )}
           </>
         );
-
-      case 5:
+      case 6:
         return (
           <>
             <h2 className="question-title">¿Qué temas te llaman la atención?</h2>
@@ -303,7 +377,7 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 6:
+      case 7:
         return (
           <>
             <h2 className="question-title">
@@ -322,7 +396,7 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 7:
+      case 8:
         return (
           <>
             <h2 className="question-title">¿En qué ciudad o municipio estás?</h2>
@@ -338,7 +412,7 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 8:
+      case 9:
         return (
           <>
             <h2 className="question-title">
@@ -368,7 +442,7 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 9:
+      case 10:
         return (
           <>
             <h2 className="question-title">Términos y servicios</h2>
