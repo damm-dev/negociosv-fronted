@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BusinessHero from "../components/BusinessHero/BusinessHero";
-import FeedCards from "../components/FeedSection/FeedCards"; // ← usa las nuevas cards
+import FeedCards from "../components/FeedSection/FeedCards"; // ahora será el GRID completo
 
 const businessesData = [
   { id: 1, name: "Burger House", image: "/img/burger1.jpg", category: "burger" },
@@ -36,23 +36,14 @@ export default function Businesses() {
 
   return (
     <div className="businesses-page">
-
       <BusinessHero
         categories={categories}
         active={activeCategory}
         onFilter={setActiveCategory}
       />
 
-      <div className="businesses-grid wp-grid-2">
-        {filteredBusinesses.length > 0 ? (
-          filteredBusinesses.map((biz) => (
-            <FeedCards key={biz.id} business={biz} />
-          ))
-        ) : (
-          <p className="no-results">No hay negocios en esta categoría.</p>
-        )}
-      </div>
-
+      {/* FeedCards recibe la lista y se encarga del grid + map */}
+      <FeedCards businesses={filteredBusinesses} />
     </div>
   );
 }

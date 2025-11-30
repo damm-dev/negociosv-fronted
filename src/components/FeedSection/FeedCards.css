@@ -11,7 +11,7 @@
   margin-bottom: 1rem;
 }
 
-/* GRID de 2 columnas estilo WordPress */
+/* GRID de 3 columnas estilo WordPress */
 .wp-style-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -27,39 +27,32 @@
   overflow: hidden; /* Crucial para que la imagen no se salga al crecer */
   display: flex;
   flex-direction: column;
-  /* Solo animamos la sombra aquí. El tamaño lo animará la imagen. */
   transition: box-shadow 0.3s ease-in-out;
 }
 
 /* Hover sobre la tarjeta */
 .wp-card:hover {
-  /* Sombra más pronunciada para efecto de levantar */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  /* YA NO usamos transform: scaleY aquí */
 }
 
 /* Imagen superior */
 .wp-card-image {
   width: 100%;
-  height: 140px; /* Altura inicial "recortada" */
-  background-size: cover; /* Cubre el área, recortando si es necesario */
+  height: 140px;
+  background-size: cover;
   background-position: center;
-  /* AÑADIR: Transición suave para la propiedad height */
-  /* Usamos una curva 'cubic-bezier' para un efecto más dinámico de "apertura" */
   transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* NUEVO: Cuando el cursor está sobre la CARD, afecta a la IMAGEN */
+/* Imagen crece al hacer hover */
 .wp-card:hover .wp-card-image {
-  /* Aumentamos la altura significativamente para mostrar más imagen */
-  /* Ajusta este valor (ej. 250px, 300px) según el tamaño real de tus imágenes */
   height: 280px;
 }
 
 /* Cuerpo del card */
 .wp-card-body {
   padding: 12px;
-  flex-grow: 1; /* Asegura que el contenido ocupe el espacio */
+  flex-grow: 1;
 }
 
 .wp-card-name {
@@ -113,9 +106,86 @@
   background: #165c94;
 }
 
-/* RESPONSIVE: una por fila */
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+/* Laptops/desktop medianos (<= 1200px): reduce padding lateral y pasa a 2 columnas */
+@media (max-width: 1200px) {
+  .cards-section {
+    padding: 2rem 8rem 3rem;
+  }
+
+  .wp-style-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets (<= 992px): aún más compacto */
+@media (max-width: 992px) {
+  .cards-section {
+    padding: 1.8rem 3rem 2.5rem;
+  }
+
+  .cards-section-title {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .wp-style-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Móviles (<= 768px): una tarjeta por fila */
 @media (max-width: 768px) {
+  .cards-section {
+    padding: 1.5rem 1.2rem 2rem;
+  }
+
   .wp-style-grid {
     grid-template-columns: 1fr;
+  }
+
+  .wp-card-image {
+    height: 160px;
+  }
+
+  .wp-card:hover .wp-card-image {
+    height: 220px; /* un poco menos para pantallas pequeñas */
+  }
+}
+
+/* Móviles pequeños (<= 480px): texto más pequeño y layout más compacto */
+@media (max-width: 480px) {
+  .cards-section {
+    padding: 1.2rem 0.8rem 1.8rem;
+  }
+
+  .cards-section-title {
+    font-size: 1.4rem;
+  }
+
+  .wp-card-body {
+    padding: 10px;
+  }
+
+  .wp-card-name {
+    font-size: 1rem;
+  }
+
+  .wp-card-description {
+    font-size: 0.85rem;
+  }
+
+  .wp-card-meta,
+  .wp-card-stats {
+    font-size: 0.8rem;
+  }
+
+  .wp-card-btn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
   }
 }
