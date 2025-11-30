@@ -159,6 +159,49 @@
   transform: translateY(-1px);
 }
 
+/* Perfil de usuario en navbar */
+.nav-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+}
+
+.nav-user-profile:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.nav-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--on-primary);
+  flex-shrink: 0;
+}
+
+.nav-user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--on-surface);
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ===========================
    MÓVIL (navbar abajo solo iconos)
    =========================== */
@@ -174,7 +217,7 @@
     gap: 0;
   }
 
-  /* Ocultamos marca y botones en móvil */
+  /* Ocultamos marca y botones/perfil en móvil */
   .nav-brand,
   .nav-actions {
     display: none;

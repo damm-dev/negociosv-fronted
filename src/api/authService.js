@@ -24,15 +24,17 @@ const authService = {
    */
   async login(email, password) {
     try {
-      const response = await axiosInstance.post('/auth/login', {
+      const response = await axiosInstance.post('/login', {
         email,
         password,
       });
       
-      // Guardar datos en localStorage
-      if (response.data.data) {
-        localStorage.setItem('user_data', JSON.stringify(response.data.data));
-        localStorage.setItem('user_type', response.data.type);
+      // Guardar token y datos en localStorage
+      if (response.data.token) {
+        localStorage.setItem('auth_token', response.data.token);
+      }
+      if (response.data.usuario) {
+        localStorage.setItem('user_data', JSON.stringify(response.data.usuario));
       }
       
       return response.data;
@@ -48,36 +50,21 @@ const authService = {
    */
   async registerUser(userData) {
     try {
-      const formData = new FormData();
-      
-      // Mapear datos del wizard al formato de la API
-      formData.append('nombres', userData.nombre || '');
-      formData.append('apellidos', userData.apellidos || '');
-      formData.append('email', userData.correo || '');
-      formData.append('password', userData.password || '');
-      
-      // Campos opcionales
-      if (userData.fotoFile) {
-        formData.append('photo', userData.fotoFile);
-      }
-      if (userData.ciudad) {
-        formData.append('ciudad', userData.ciudad);
-      }
-      if (userData.municipio) {
-        formData.append('municipio', userData.municipio);
-      }
-      if (userData.departamento) {
-        formData.append('departamento', userData.departamento);
-      }
-      if (userData.activarUbicacion !== undefined) {
-        formData.append('notificaciones', userData.activarUbicacion);
-      }
+      const payload = {
+        email: userData.correo || userData.email,
+        password: userData.password,
+        nombres: userData.nombre || userData.nombres,
+        apellidos: userData.apellidos,
+        fecha_nacimiento: userData.fechaNacimiento || userData.fecha_nacimiento,
+        genero: userData.genero || 'O',
+        telefono: userData.telefono || '',
+        id_municipio: userData.id_municipio || 1,
+        descripcion: userData.descripcion || '',
+        foto: userData.foto || '',
+        intereses: userData.intereses || [1]
+      };
 
-      const response = await axiosInstance.post('/auth/registro_usuario', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axiosInstance.post('/registrar', payload);
       
       return response.data;
     } catch (error) {
@@ -129,7 +116,7 @@ const authService = {
         formData.append('categoria', businessData.categoria);
       }
 
-      const response = await axiosInstance.post('/auth/registro_negocios', formData, {
+      const response = await axiosInstance.post('/registrar_negocio', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -144,10 +131,16 @@ const authService = {
   /**
    * Cerrar sesión
    */
-  logout() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    localStorage.removeItem('user_type');
+  async logout() {
+    try {
+      await axiosInstance.post('/logout');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+      localStorage.removeItem('user_type');
+    }
   },
 
   /**

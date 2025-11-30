@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/navbar.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 /* ==== ICONOS SVG CLAROS ==== */
 
@@ -140,14 +141,43 @@ const TABS = [
   { id: "inicio", label: "Inicio", icon: HomeIcon, to: "/" },
   { id: "negocios", label: "Negocios", icon: NegociosIcon, to: "/negocios" },
   { id: "logros", label: "Logros", icon: LogrosIcon },
-  { id: "cuenta", label: "Cuenta", icon: CuentaIcon, to: "/cuenta" },
 ];
 
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated } = useAuth();
   const [_, setDummy] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+
+  // Actualizar tab activo basado en la ruta actual
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/cuenta') {
+      setActiveTab(''); // No seleccionar ninguna tab en /cuenta
+    } else if (path === '/') {
+      setActiveTab('inicio');
+    } else if (path === '/negocios') {
+      setActiveTab('negocios');
+    } else if (path.includes('logros')) {
+      setActiveTab('logros');
+    }
+  }, [location.pathname]);
+
+  // Obtener iniciales del usuario
+  const getInitials = () => {
+    if (!user?.perfil) return "U";
+    const nombres = user.perfil.nombres || "";
+    const apellidos = user.perfil.apellidos || "";
+    return `${nombres.charAt(0)}${apellidos.charAt(0)}`.toUpperCase();
+  };
+
+  // Obtener nombre completo
+  const getFullName = () => {
+    if (!user?.perfil) return "Usuario";
+    return `${user.perfil.nombres || ""} ${user.perfil.apellidos || ""}`.trim();
+  };
 
   return (
     <header className="layout-header">
@@ -177,10 +207,30 @@ export default function Navbar() {
           </div>
         </nav>
 
-        {/* DERECHA: botones sesión */}
+        {/* DERECHA: botones sesión o perfil de usuario */}
         <div className="nav-actions">
-          <button className="nav-btn nav-btn-outline" type="button" onClick={()=> navigate("/login")}>Iniciar sesión</button>
-          <button className="nav-btn nav-btn-primary" type="button" onClick={()=> navigate("/account-type")}>Registrarse</button>
+          {isAuthenticated() ? (
+            <button 
+              className="nav-user-profile" 
+              type="button" 
+              onClick={() => navigate("/cuenta")}
+              title="Ver mi cuenta"
+            >
+              <div className="nav-user-avatar">
+                <span>{getInitials()}</span>
+              </div>
+              <span className="nav-user-name">{getFullName()}</span>
+            </button>
+          ) : (
+            <>
+              <button className="nav-btn nav-btn-outline" type="button" onClick={() => navigate("/login")}>
+                Iniciar sesión
+              </button>
+              <button className="nav-btn nav-btn-primary" type="button" onClick={() => navigate("/account-type")}>
+                Registrarse
+              </button>
+            </>
+          )}
         </div>
       </div>
     </header>
