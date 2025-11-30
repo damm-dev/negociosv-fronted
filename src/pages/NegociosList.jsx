@@ -14,12 +14,14 @@ const businessesData = [
 export default function Businesses() {
   const categories = [
     { id: "all", name: "Todos" },
-    { id: "burger", name: "Burgers" },
-    { id: "pasta", name: "Pasta" },
-    { id: "salad", name: "Ensaladas" },
-    { id: "pizza", name: "Pizza" },
-    { id: "sandwich", name: "Sandwich" },
-    { id: "fried-rice", name: "Arroz Frito" },
+    { id: "restaurante", name: "Restaurante" },
+    { id: "cafeteria", name: "Cafetería" },
+    { id: "barberia", name: "Barbería" },
+    { id: "clinica", name: "Clínica" },
+    { id: "taller", name: "Taller" },
+    { id: "coworking", name: "Coworking" },
+    { id: "tienda", name: "Tienda" },
+    { id: "servicios", name: "Servicios" },
   ];
 
   const [activeCategory, setActiveCategory] = useState("all");
