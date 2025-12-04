@@ -1,51 +1,37 @@
-import { useState, useEffect } from "react";
-import BusinessHero from "../components/BusinessHero/BusinessHero";
-import FeedCards from "../components/FeedSection/FeedCards"; // ahora será el GRID completo
-
-const businessesData = [
-  { id: 1, name: "Burger House", image: "/img/burger1.jpg", category: "burger" },
-  { id: 2, name: "Pasta Bella", image: "/img/pasta1.jpg", category: "pasta" },
-  { id: 3, name: "Green Salads", image: "/img/salad1.jpg", category: "salad" },
-  { id: 4, name: "Pizza Corner", image: "/img/pizza1.jpg", category: "pizza" },
-  { id: 5, name: "Sandwich Bros", image: "/img/sandwich1.jpg", category: "sandwich" },
-  { id: 6, name: "Fried Rice Town", image: "/img/rice1.jpg", category: "fried-rice" },
-];
+import { useState } from "react";
+import BusinessesHero from "../components/BusinessHero/BusinessHero";
+import FeedCards from "../components/FeedSection/FeedCards";
 
 export default function Businesses() {
+  // Lista FINAL de categorías (IDs y Nombres actualizados)
+  // Usamos el 'nombre' como ID para el filtro de texto
   const categories = [
-    { id: "all", name: "Todos" },
-    { id: "restaurante", name: "Restaurante" },
-    { id: "cafeteria", name: "Cafetería" },
-    { id: "barberia", name: "Barbería" },
-    { id: "clinica", name: "Clínica" },
-    { id: "taller", name: "Taller" },
-    { id: "coworking", name: "Coworking" },
-    { id: "tienda", name: "Tienda" },
-    { id: "servicios", name: "Servicios" },
+    { id: "Todos", name: "Todos" },
+    { id: "Restaurante", name: "Restaurante" },
+    { id: "Cafetería", name: "Cafetería" },
+    { id: "Barbería", name: "Barbería" },
+    { id: "Salón de Belleza", name: "Salón de Belleza" },
+    { id: "Gimnasio", name: "Gimnasio" },
+    { id: "Tienda", name: "Tienda" },
+    { id: "Servicios Profesionales", name: "Servicios Profesionales" },
+    { id: "Entretenimiento", name: "Entretenimiento" },
+    { id: "Educación", name: "Educación" },
+    { id: "Salud", name: "Salud" },
   ];
 
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [businesses, setBusinesses] = useState([]);
-
-  useEffect(() => {
-    setBusinesses(businessesData);
-  }, []);
-
-  const filteredBusinesses =
-    activeCategory === "all"
-      ? businesses
-      : businesses.filter((biz) => biz.category === activeCategory);
+  const [activeCategory, setActiveCategory] = useState("Todos");
 
   return (
     <div className="businesses-page">
-      <BusinessHero
+      {/* HERO: Muestra los botones y actualiza el estado */}
+      <BusinessesHero
         categories={categories}
-        active={activeCategory}
-        onFilter={setActiveCategory}
+        active={activeCategory}      
+        onSelectCategory={setActiveCategory} 
       />
 
-      {/* FeedCards recibe la lista y se encarga del grid + map */}
-      <FeedCards businesses={filteredBusinesses} />
+      {/* FEED: Recibe la categoría y filtra los negocios */}
+      <FeedCards selectedCategory={activeCategory} />
     </div>
   );
 }

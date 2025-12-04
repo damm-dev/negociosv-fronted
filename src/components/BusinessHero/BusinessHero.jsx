@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import "./BusinessHero.css";
 
-export default function BusinessesHero({ categories, onSelectCategory }) {
+export default function BusinessesHero({ categories, onSelectCategory, active }) {
   const subtitleRef = useRef(null);
 
   function splitText(text) {
@@ -21,7 +21,7 @@ export default function BusinessesHero({ categories, onSelectCategory }) {
       { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2, ease: "power4.out" }
     );
 
-    // Animación letra por letra del subtítulo
+    // Animación del subtítulo
     tl.fromTo(
       subtitleRef.current.querySelectorAll(".letter"),
       { y: 20, opacity: 0 },
@@ -29,7 +29,7 @@ export default function BusinessesHero({ categories, onSelectCategory }) {
       "-=0.7"
     );
 
-    // Animación de aparición de categorías
+    // Animación de botones
     tl.fromTo(
       ".hero-category-item",
       { scale: 0.6, opacity: 0 },
@@ -37,10 +37,10 @@ export default function BusinessesHero({ categories, onSelectCategory }) {
       "-=1.4"
     );
 
-    // 🔥 ANIMACIÓN DE PANTALLA (PARALLAX BACKGROUND)
+    // Animación Parallax
     const hero = document.querySelector(".businesses-hero");
-
     function onMouseMove(e) {
+      if (!hero) return;
       const x = e.clientX / window.innerWidth - 0.5;
       const y = e.clientY / window.innerHeight - 0.5;
 
@@ -52,15 +52,13 @@ export default function BusinessesHero({ categories, onSelectCategory }) {
       });
     }
 
-    hero.addEventListener("mousemove", onMouseMove);
-
-    return () => hero.removeEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove);
+    return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
 
   return (
     <section className="businesses-hero">
       <div className="businesses-hero-content">
-
         <h1 className="businesses-hero-title">
           Explora negocios cerca de ti
         </h1>
@@ -73,8 +71,9 @@ export default function BusinessesHero({ categories, onSelectCategory }) {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              className="hero-category-item"
-              onClick={() => onSelectCategory(cat)}
+              // Agregamos la clase 'active' si coincide con el estado del padre
+              className={`hero-category-item ${active === cat.id ? "active" : ""}`}
+              onClick={() => onSelectCategory(cat.id)}
             >
               {cat.name}
             </button>
