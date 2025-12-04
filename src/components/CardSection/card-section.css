@@ -96,7 +96,12 @@
   inset: 0;
   display: flex;
   align-items: stretch;
-  pointer-events: none;
+  pointer-events: none; /* por defecto no interactiva para que los clicks pasen al card */
+}
+
+/* Hacer interactivo el overlay cuando la tarjeta está en hover */
+.business-card:hover .business-card-overlay {
+  pointer-events: auto;
 }
 
 .business-card-overlay-inner {

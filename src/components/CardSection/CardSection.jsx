@@ -1,5 +1,6 @@
 // src/components/CardSection.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./card-section.css";
 
@@ -9,6 +10,7 @@ export default function CardSection() {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBusinesses = async () => {
@@ -19,37 +21,19 @@ export default function CardSection() {
         const response = await axios.get(API_URL);
         console.log("RESPONSE NEGOCIOS:", response.data);
 
+        const body = response.data;
         let raw = [];
 
-        const body = response.data;
-
-        // 1) [ {...}, {...} ]
-        if (Array.isArray(body)) {
-          raw = body;
-        }
-        // 2) { data: [ ... ] }
-        else if (Array.isArray(body.data)) {
-          raw = body.data;
-        }
-        // 3) { status: true, data: { negocios: [ ... ] } }
-        else if (body.data && Array.isArray(body.data.negocios)) {
+        // formatos posibles de tu API
+        if (Array.isArray(body)) raw = body;
+        else if (Array.isArray(body.data)) raw = body.data;
+        else if (body.data && Array.isArray(body.data.negocios))
           raw = body.data.negocios;
-        }
-        // 4) { status: true, data: { ...algunObjeto... } }
-        //    Busca la primera propiedad que sea un array
         else if (body.data && typeof body.data === "object") {
           const firstArray = Object.values(body.data).find((v) =>
             Array.isArray(v)
           );
-          if (firstArray) {
-            raw = firstArray;
-          } else {
-            // si no hay arrays, asumimos que no hay negocios
-            raw = [];
-          }
-        } else {
-          // ya no lanzamos error, solo dejamos la lista vacía
-          raw = [];
+          raw = firstArray || [];
         }
 
         const mapped = raw.map((negocio) => {
@@ -77,8 +61,12 @@ export default function CardSection() {
             negocio.imagen ||
             "https://via.placeholder.com/600x400?text=NegocioSV";
 
+          // intento robusto de obtener un id desde distintas formas que pueda devolver la API
+          const id =
+            negocio.id ?? negocio._id ?? negocio.pk ?? negocio.id_negocio ?? negocio.uuid ?? negocio.nombre_negocio ?? negocio.nombre ?? null;
+
           return {
-            id: negocio.id,
+            id,
             name: negocio.nombre_negocio || negocio.nombre || "Negocio",
             description: negocio.descripcion || "",
             category,
@@ -110,7 +98,6 @@ export default function CardSection() {
           </p>
         </div>
 
-        {/* Estados de carga / error */}
         {loading && <p>Cargando negocios...</p>}
 
         {error && !loading && (
@@ -123,8 +110,8 @@ export default function CardSection() {
 
         {!loading && !error && businesses.length > 0 && (
           <div className="cards-grid">
-            {businesses.map((business) => (
-              <article key={business.id} className="business-card">
+            {businesses.map((business, idx) => (
+              <article key={business.id ?? idx} className="business-card">
                 {/* Fondo con imagen */}
                 <div
                   className="business-card-bg"
@@ -136,10 +123,12 @@ export default function CardSection() {
                   <span>{business.name}</span>
                 </div>
 
-                {/* Panel que se desliza desde la izquierda al hacer hover */}
+                {/* Panel que se desliza al hacer hover */}
                 <div className="business-card-overlay">
                   <div className="business-card-overlay-inner">
-                    <p className="business-card-badge">{business.category}</p>
+                    <p className="business-card-badge">
+                      {business.category}
+                    </p>
                     <h3>{business.name}</h3>
                     <p className="business-card-text">
                       {business.description}
@@ -148,7 +137,16 @@ export default function CardSection() {
                       {business.location}
                     </p>
 
-                    <button type="button" className="business-card-btn">
+                    <button
+                      className="business-card-btn"
+                      onClick={() => {
+                        if (!business.id) {
+                          console.warn("Intento de navegar a detalle sin id:", business);
+                          return;
+                        }
+                        navigate(`/negocios/${business.id}`);
+                      }}
+                    >
                       Ver detalles
                     </button>
                   </div>

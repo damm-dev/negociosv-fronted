@@ -1,32 +1,117 @@
-import { useState } from "react";
+// src/pages/BusinessDetail.jsx
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/business-detail.css";
 
-export default function BusinessDetail() {
-  const [activeTab, setActiveTab] = useState("general");
+const API_URL = "http://127.0.0.1:8000/api/negocio";
 
+export default function BusinessDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState("general");
+  const [business, setBusiness] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchBusiness = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await axios.get(`${API_URL}/${id}`);
+        console.log("DETALLE NEGOCIO:", response.data);
+
+        const body = response.data;
+        const n = body.data || body; // soporta {data: {...}} o {...}
+
+        // categoría
+        let category = "Sin categoría";
+        if (Array.isArray(n.categorias)) {
+          category = n.categorias
+            .map((c) => (typeof c === "string" ? c : c.nombre))
+            .join(", ");
+        } else if (n.categoria) {
+          category = n.categoria;
+        }
+
+        const location =
+          (n.municipio && n.municipio.nombre) ||
+          n.municipio ||
+          n.ubicacion ||
+          "Sin ubicación";
+
+        const image =
+          n.logo_url ||
+          n.logo ||
+          n.imagen ||
+          "https://via.placeholder.com/800x400?text=NegocioSV";
+
+        setBusiness({
+          id: n.id,
+          name: n.nombre_negocio || n.nombre || "Negocio",
+          description: n.descripcion || "",
+          category,
+          location,
+          direccion: n.direccion || location,
+          telefono: n.telefono || "",
+          email_contacto: n.email_contacto || "",
+          image,
+        });
+      } catch (err) {
+        console.error("Error cargando negocio:", err);
+        setError("No se pudo cargar la información del negocio.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBusiness();
+  }, [id]);
+
+  if (loading)
+    return <p style={{ padding: "1rem" }}>Cargando negocio...</p>;
+
+  if (error)
+    return (
+      <p style={{ padding: "1rem", color: "red" }}>
+        {error}
+      </p>
+    );
+
+  if (!business)
+    return (
+      <p style={{ padding: "1rem" }}>
+        Negocio no encontrado.
+      </p>
+    );
+
+  // galería simple: usamos el logo y generamos variantes
   const images = [
-    "https://picsum.photos/600/600?random=101",
-    "https://picsum.photos/600/600?random=102",
-    "https://picsum.photos/600/600?random=103",
-    "https://picsum.photos/600/600?random=104",
+    business.image,
+    business.image,
+    business.image,
+    business.image,
   ];
 
   return (
     <div className="business-detail-container">
+      {/* Botón volver */}
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        ← Volver
+      </button>
 
-      {/* ============================
-           BLOQUE CON EL NOMBRE
-      ============================ */}
+      {/* BLOQUE CON EL NOMBRE */}
       <div className="business-title-box">
-        <h1 className="business-title">Pupusería Doña Ana</h1>
+        <h1 className="business-title">{business.name}</h1>
         <p className="business-category">
-          Comida típica • Col. Miramonte, San Salvador
+          {business.category} • {business.location}
         </p>
       </div>
 
-      {/* ============================
-           GALERÍA DE FOTOS
-      ============================ */}
+      {/* GALERÍA DE FOTOS */}
       <div className="photo-grid">
         {images.map((img, i) => (
           <div className="photo-grid-item" key={i}>
@@ -35,27 +120,31 @@ export default function BusinessDetail() {
         ))}
       </div>
 
-      {/* ============================
-           PESTAÑAS
-      ============================ */}
+      {/* PESTAÑAS */}
       <div className="tabs-container">
         <div className="tabs-header">
           <button
-            className={`tab-btn ${activeTab === "general" ? "active" : ""}`}
+            className={`tab-btn ${
+              activeTab === "general" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("general")}
           >
             Información general
           </button>
 
           <button
-            className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
+            className={`tab-btn ${
+              activeTab === "reviews" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("reviews")}
           >
             Reseñas
           </button>
 
           <button
-            className={`tab-btn ${activeTab === "contact" ? "active" : ""}`}
+            className={`tab-btn ${
+              activeTab === "contact" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("contact")}
           >
             Contáctanos
@@ -63,32 +152,33 @@ export default function BusinessDetail() {
         </div>
 
         <div className="tabs-content">
-
           {/* ----- INFORMACIÓN GENERAL ----- */}
           {activeTab === "general" && (
             <div className="info-flex">
               <div className="info-left">
                 <h2>Sobre el negocio</h2>
-                <p>
-                  Negocio familiar especializado en pupusas hechas a mano,
-                  utilizando ingredientes frescos y recetas tradicionales.
-                </p>
+                <p>{business.description}</p>
 
-                <p><b>Dirección:</b> Col. Miramonte, San Salvador</p>
-                <p><b>Teléfono:</b> +503 7000 0000</p>
-                <p><b>Horario:</b> Lun-Dom · 8:00 AM – 9:00 PM</p>
+                <p>
+                  <b>Dirección:</b> {business.direccion}
+                </p>
+                {business.telefono && (
+                  <p>
+                    <b>Teléfono:</b> {business.telefono}
+                  </p>
+                )}
+                {business.email_contacto && (
+                  <p>
+                    <b>Correo:</b> {business.email_contacto}
+                  </p>
+                )}
               </div>
 
+              {/* si quieres puedes luego hacer el mapa dinámico */}
               <div className="info-map">
-                <iframe
-                  title="mapa"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, borderRadius: "12px" }}
-                  loading="lazy"
-                  allowFullScreen
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.514736315342!2d-89.224!3d13.698!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0000000000000000!2sSan%20Salvador!5e0!3m2!1ses!2ssv!4v1234567890123"
-                ></iframe>
+                <p style={{ padding: "1rem" }}>
+                  Mapa del negocio próximamente.
+                </p>
               </div>
             </div>
           )}
@@ -105,12 +195,23 @@ export default function BusinessDetail() {
           {activeTab === "contact" && (
             <div className="tab-content-box">
               <h2>Contáctanos</h2>
-              <p>Puedes comunicarte con nosotros a través de los siguientes medios:</p>
-              <p><b>Teléfono:</b> +503 7000 0000</p>
-              <p><b>Correo:</b> ejemplo@pupuseriadoana.com</p>
+              {business.telefono && (
+                <p>
+                  <b>Teléfono:</b> {business.telefono}
+                </p>
+              )}
+              {business.email_contacto && (
+                <p>
+                  <b>Correo:</b> {business.email_contacto}
+                </p>
+              )}
+              {!business.telefono && !business.email_contacto && (
+                <p>
+                  Este negocio aún no ha agregado datos de contacto.
+                </p>
+              )}
             </div>
           )}
-
         </div>
       </div>
     </div>

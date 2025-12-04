@@ -119,7 +119,7 @@ export default function FeedCards({ selectedCategory }) {
               <div className="wp-card-actions">
                 <button 
                   className="wp-card-btn"
-                  onClick={() => navigate(`/negocio/${b.id}`)}
+                  onClick={() => navigate(`/negocios/${b.id}`)}
                 >
                   Ver detalles
                 </button>
