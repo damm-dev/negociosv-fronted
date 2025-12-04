@@ -219,7 +219,7 @@ function CuentaIcon({ active }) {
 /* ==== TABS PARA USUARIOS PERSONA ==== */
 const TABS_PERSONA = [
   { id: "inicio", label: "Inicio", icon: HomeIcon, to: "/" },
-  { id: "negocios", label: "Negocios", icon: NegociosIcon, to: "/negocios" },
+  { id: "negocios", label: "Descubrir", icon: NegociosIcon, to: "/negocios" },
   { id: "logros", label: "Logros", icon: LogrosIcon, to: "/logros" },
   { id: "cuenta", label: "Cuenta", icon: CuentaIcon, to: "/cuenta", mobileOnly: true },
 ];
