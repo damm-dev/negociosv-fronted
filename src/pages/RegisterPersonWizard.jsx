@@ -137,7 +137,7 @@ export default function RegisterPersonWizard() {
           return false;
         }
         return true;
-      
+
       case 2: // Apellidos
         if (!formData.apellidos.trim()) {
           alert("Por favor, escribe tus apellidos");
@@ -297,28 +297,32 @@ export default function RegisterPersonWizard() {
       };
 
       const response = await registerUser(userData);
-      
+
       alert("¡Registro completado exitosamente! 🎉");
       console.log("Respuesta del servidor:", response);
-      
+
       navigate('/login');
     } catch (err) {
       console.error("Error en registro:", err);
-      
       if (err.response?.data) {
-        const errors = err.response.data;
+        const data = err.response.data;
         let errorMessage = "Error en el registro:\n";
-        
-        if (typeof errors === 'object') {
-          Object.keys(errors).forEach(key => {
-            if (Array.isArray(errors[key])) {
-              errorMessage += `${errors[key].join(', ')}\n`;
-            }
-          });
+
+        // Si viene en el formato típico de Laravel (message + errors)
+        if (data.errors && typeof data.errors === "object") {
+          const mensajes = Object.values(data.errors) // arrays de mensajes
+            .flat()                                   // un solo array
+            .join("\n");                              // unir con saltos de línea
+
+          errorMessage += mensajes;
+        } else if (data.message) {
+          // Otro tipo de error desde Laravel
+          errorMessage += data.message;
         } else {
-          errorMessage = errors.message || "Error desconocido";
+          errorMessage += "Ocurrió un error desconocido.";
         }
-        
+
+
         setError(errorMessage);
         alert(errorMessage);
       } else {
@@ -392,9 +396,8 @@ export default function RegisterPersonWizard() {
               ].map((opcion) => (
                 <div
                   key={opcion.value}
-                  className={`option-card ${
-                    formData.genero === opcion.value ? "selected" : ""
-                  }`}
+                  className={`option-card ${formData.genero === opcion.value ? "selected" : ""
+                    }`}
                   onClick={() => updateForm({ genero: opcion.value })}
                 >
                   <input
@@ -510,11 +513,11 @@ export default function RegisterPersonWizard() {
               )}
             </label>
             {formData.fotoPreview && (
-              <button 
+              <button
                 type="button"
                 onClick={(e) => {
-                   e.preventDefault(); 
-                   updateForm({ fotoFile: null, fotoPreview: null });
+                  e.preventDefault();
+                  updateForm({ fotoFile: null, fotoPreview: null });
                 }}
                 style={{
                   marginTop: '10px',
@@ -631,7 +634,7 @@ export default function RegisterPersonWizard() {
     <div className="wizard-layout">
       {/* Barra de progreso */}
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-      
+
       <div className="wizard-content">
         {renderStep()}
       </div>
@@ -650,8 +653,8 @@ export default function RegisterPersonWizard() {
             Siguiente →
           </button>
         ) : (
-          <button 
-            className="btn-next" 
+          <button
+            className="btn-next"
             onClick={submitForm}
             disabled={loading}
             style={{ opacity: loading ? 0.7 : 1 }}

@@ -7,7 +7,7 @@ import '../styles/formNegocio.css';
 export default function RegisterBusinessWizard() {
   const navigate = useNavigate();
   const { registerBusiness } = useAuth();
-  
+
   const [step, setStep] = useState(1);
   const totalSteps = 11;
 
@@ -81,7 +81,7 @@ export default function RegisterBusinessWizard() {
   }, []);
 
   // --- HELPERS PARA ACTUALIZAR DATOS ---
-  
+
   const updateForm = (newData) => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
@@ -128,7 +128,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 2: // Password
         if (!formData.password) {
           alert("Por favor, crea una contraseña");
@@ -144,7 +144,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 3: // Nombre Negocio
         if (!formData.nombre_negocio.trim()) {
           alert("Por favor, escribe el nombre del negocio");
@@ -159,7 +159,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 4: // Categoría
         if (formData.id_categoria.length === 0) {
           alert("Por favor, selecciona al menos una categoría");
@@ -170,7 +170,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 5: // Descripción
         if (!formData.descripcion.trim()) {
           alert("Por favor, escribe una descripción del negocio");
@@ -185,7 +185,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 6: // Dirección
         if (!formData.direccion.trim()) {
           alert("Por favor, escribe la dirección del negocio");
@@ -196,21 +196,21 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 7: // Municipio
         if (!formData.id_municipio) {
           alert("Por favor, selecciona el municipio donde está ubicado el negocio");
           return false;
         }
         return true;
-        
+
       case 8: // Foto
         if (!formData.logoPreview) {
           alert("Por favor, sube una foto o logo del negocio");
           return false;
         }
         return true;
-        
+
       case 9: // Email Contacto
         if (!formData.email_contacto.trim()) {
           alert("Por favor, escribe el correo de contacto del negocio");
@@ -222,7 +222,7 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 10: // Teléfono
         if (!formData.telefono.trim()) {
           alert("Por favor, escribe el número de teléfono del negocio");
@@ -241,15 +241,15 @@ export default function RegisterBusinessWizard() {
           return false;
         }
         return true;
-        
+
       case 11: // Métodos de pago (opcional pero recomendado)
         if (formData.metodos_pago.length === 0) {
           const confirmar = window.confirm("No has seleccionado ningún método de pago. ¿Deseas continuar sin seleccionar métodos de pago?");
           return confirmar;
         }
         return true;
-        
-      default: 
+
+      default:
         return true;
     }
   };
@@ -286,41 +286,42 @@ export default function RegisterBusinessWizard() {
       };
 
       const response = await registerBusiness(businessData);
-      
+
       alert("¡Registro de Negocio Completado! 🚀");
       console.log("Respuesta del servidor:", response);
-      
+
       navigate('/login');
     } catch (err) {
       console.error("Error completo en registro:", err);
       console.error("Error response:", err.response);
-      
+
       let errorMessage = "Error en el registro:\n\n";
-      
+
       if (err.response?.data) {
-        const errors = err.response.data;
-        console.log("Errores del servidor:", errors);
-        
-        if (typeof errors === 'object' && !errors.message) {
-          Object.keys(errors).forEach(key => {
-            const errorValue = errors[key];
-            if (Array.isArray(errorValue)) {
-              errorMessage += `• ${key}: ${errorValue.join(', ')}\n`;
-            } else if (typeof errorValue === 'string') {
-              errorMessage += `• ${key}: ${errorValue}\n`;
-            }
-          });
-        } else if (errors.message) {
-          errorMessage = errors.message;
+        const data = err.response.data;
+        console.log("Respuesta del servidor:", data);
+
+        // Formato típico de validación de Laravel
+        if (data.errors && typeof data.errors === "object") {
+          const mensajes = Object.values(data.errors)   // arrays de mensajes
+            .flat()                                     // los junto en un solo array
+            .join("\n");                                // los uno con saltos de línea
+
+          errorMessage += mensajes;
+        } else if (data.message) {
+          // Otro tipo de error de Laravel
+          errorMessage += data.message;
+        } else if (typeof data === "string") {
+          errorMessage += data;
         } else {
-          errorMessage = "Error desconocido en el servidor";
+          errorMessage += "Ocurrió un error desconocido en el servidor.";
         }
       } else if (err.message) {
-        errorMessage = `Error: ${err.message}`;
+        errorMessage += err.message;
       } else {
-        errorMessage = "Error al conectar con el servidor. Verifica tu conexión.";
+        errorMessage += "Error al conectar con el servidor. Verifica tu conexión.";
       }
-      
+
       setError(errorMessage);
       alert(errorMessage);
     } finally {
@@ -371,14 +372,14 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">Nombre del negocio</h2>
             <p className="question-subtitle">Es el nombre que verán tus clientes.</p>
-            <input 
-              className="big-input" 
-              type="text" 
+            <input
+              className="big-input"
+              type="text"
               placeholder="Ej: Café La Esquina"
-              value={formData.nombre_negocio} 
-              onChange={(e) => updateForm({ nombre_negocio: e.target.value })} 
+              value={formData.nombre_negocio}
+              onChange={(e) => updateForm({ nombre_negocio: e.target.value })}
               maxLength={100}
-              autoFocus 
+              autoFocus
             />
             <div className="tip-box">
               <span>ℹ️</span>
@@ -410,14 +411,14 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">Descripción del negocio</h2>
             <p className="question-subtitle">Describe tu negocio en pocas palabras (20-500 caracteres).</p>
-            <textarea 
-              className="big-input" 
+            <textarea
+              className="big-input"
               placeholder="Ej: Cafetería especializada en café de altura con ambiente acogedor..."
-              value={formData.descripcion} 
-              onChange={(e) => updateForm({ descripcion: e.target.value })} 
+              value={formData.descripcion}
+              onChange={(e) => updateForm({ descripcion: e.target.value })}
               maxLength={500}
               rows={4}
-              autoFocus 
+              autoFocus
             />
             <div style={{ marginTop: '5px', textAlign: 'right', color: '#6b7280', fontSize: '0.85rem' }}>
               {formData.descripcion.length} / 500 caracteres
@@ -431,13 +432,13 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">Dirección del negocio</h2>
             <p className="question-subtitle">Escríbela tal como aparece en Maps.</p>
-            <textarea 
-              className="big-input" 
+            <textarea
+              className="big-input"
               placeholder="Ej: Calle La Mascota #24, Colonia San Benito, San Salvador"
-              value={formData.direccion} 
-              onChange={(e) => updateForm({ direccion: e.target.value })} 
+              value={formData.direccion}
+              onChange={(e) => updateForm({ direccion: e.target.value })}
               rows={3}
-              autoFocus 
+              autoFocus
             />
             <div className="tip-box" style={{ marginTop: '10px' }}>
               <span>ℹ️</span>
@@ -482,11 +483,11 @@ export default function RegisterBusinessWizard() {
               )}
             </label>
             {formData.logoPreview && (
-              <button 
+              <button
                 type="button"
                 onClick={(e) => {
-                   e.preventDefault(); 
-                   updateForm({ logoFile: null, logoPreview: null });
+                  e.preventDefault();
+                  updateForm({ logoFile: null, logoPreview: null });
                 }}
                 style={{
                   marginTop: '10px',
@@ -518,14 +519,14 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">Teléfono o WhatsApp</h2>
             <p className="question-subtitle">Para que te llamen o escriban directamente.</p>
-            <input 
-              className="big-input" 
-              type="tel" 
+            <input
+              className="big-input"
+              type="tel"
               placeholder="7000-0000"
-              value={formData.telefono} 
-              onChange={handlePhoneChange} 
-              maxLength={9} 
-              autoFocus 
+              value={formData.telefono}
+              onChange={handlePhoneChange}
+              maxLength={9}
+              autoFocus
             />
             <div className="tip-box" style={{ marginTop: '10px' }}>
               <span>ℹ️</span>
@@ -548,8 +549,8 @@ export default function RegisterBusinessWizard() {
               ))}
             </div>
             <div style={{ marginTop: '10px', textAlign: 'center', color: '#6b7280', fontSize: '0.9rem' }}>
-              {formData.metodos_pago.length > 0 
-                ? `Seleccionados: ${formData.metodos_pago.length}` 
+              {formData.metodos_pago.length > 0
+                ? `Seleccionados: ${formData.metodos_pago.length}`
                 : 'Puedes agregar métodos de pago después'}
             </div>
           </>
@@ -563,7 +564,7 @@ export default function RegisterBusinessWizard() {
     <div className="wizard-layout">
       {/* Barra de progreso */}
       <ProgressBar currentStep={step} totalSteps={totalSteps} />
-      
+
       {/* CONTENIDO */}
       <div className="wizard-content">
         {renderScreen()}
@@ -574,9 +575,9 @@ export default function RegisterBusinessWizard() {
         <button className="btn-prev" onClick={prevStep} disabled={step === 1} style={{ opacity: step === 1 ? 0.5 : 1 }}>
           ← Anterior
         </button>
-        
-        <button 
-          className="btn-next" 
+
+        <button
+          className="btn-next"
           onClick={nextStep}
           disabled={loading}
           style={{ opacity: loading ? 0.7 : 1 }}
