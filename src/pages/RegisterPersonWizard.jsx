@@ -458,16 +458,6 @@ export default function RegisterPersonWizard() {
           <>
             <h2 className="question-title">¿Cuál es tu fecha de nacimiento?</h2>
             <p className="question-subtitle">Para verificar tu edad</p>
-<<<<<<< HEAD
-            <input
-              className="big-input"
-              type="date"
-              value={formData.fecha_nacimiento}
-              onChange={(e) => updateForm({ fecha_nacimiento: e.target.value })}
-              onKeyPress={handleKeyPress}
-              max={new Date().toISOString().split('T')[0]}
-              autoFocus
-=======
             <DatePicker
               selected={selectedDate} // Usa el objeto Date de Moment
               onChange={(date) => {
@@ -482,7 +472,6 @@ export default function RegisterPersonWizard() {
               yearDropdownItemNumber={100} // Muestra 100 años en el desplegable
               placeholderText="Selecciona tu fecha"
               className="big-input date-picker-custom" // Aplica estilos para que se vea bien
->>>>>>> 9775aae6c1013b3e2ca1060f796aff10e2beefd2
             />
             <style jsx="true">{`
                 .date-picker-custom {
