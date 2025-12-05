@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { initDraggableClosing } from '../utils/draggableInit';
 import ProgressBar from '../components/ProgressBar';
 import '../styles/formNegocio.css';
 
@@ -10,6 +11,7 @@ export default function RegisterBusinessWizard() {
 
   const [step, setStep] = useState(1);
   const totalSteps = 11;
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -32,8 +34,11 @@ export default function RegisterBusinessWizard() {
   const [categorias, setCategorias] = useState([]);
   const [metodosPago, setMetodosPago] = useState([]);
 
-  // Cargar datos al montar el componente
+  // Cargar datos e inicializar draggable al montar el componente
   useEffect(() => {
+    // Inicializar draggable
+    initDraggableClosing();
+    
     // Municipios de El Salvador
     const municipiosSV = [
       { id: 1, nombre: "San Salvador" },
@@ -266,6 +271,25 @@ export default function RegisterBusinessWizard() {
     if (step > 1) setStep(s => s - 1);
   };
 
+  const handleCancelClick = () => {
+    setShowCancelModal(true);
+  };
+
+  const handleCancelConfirm = () => {
+    navigate('/account-type');
+  };
+
+  const handleCancelClose = () => {
+    setShowCancelModal(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextStep();
+    }
+  };
+
   const submitForm = async () => {
     setLoading(true);
     setError("");
@@ -353,7 +377,7 @@ export default function RegisterBusinessWizard() {
               </div>
             )}
             <input className="big-input" type="email" placeholder="ejemplo@correo.com"
-              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} autoFocus disabled={loading} />
+              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} onKeyPress={handleKeyPress} autoFocus disabled={loading} />
           </>
         );
       case 2:
@@ -362,7 +386,7 @@ export default function RegisterBusinessWizard() {
             <h2 className="question-title">Crea tu contraseña</h2>
             <p className="question-subtitle">Al menos 8 caracteres.</p>
             <input className="big-input" type="password" placeholder="••••••••"
-              value={formData.password} onChange={(e) => updateForm({ password: e.target.value })} autoFocus />
+              value={formData.password} onChange={(e) => updateForm({ password: e.target.value })} onKeyPress={handleKeyPress} autoFocus />
           </>
         );
 
@@ -378,6 +402,7 @@ export default function RegisterBusinessWizard() {
               placeholder="Ej: Café La Esquina"
               value={formData.nombre_negocio}
               onChange={(e) => updateForm({ nombre_negocio: e.target.value })}
+              onKeyPress={handleKeyPress}
               maxLength={100}
               autoFocus
             />
@@ -455,6 +480,7 @@ export default function RegisterBusinessWizard() {
               className="big-input"
               value={formData.id_municipio}
               onChange={(e) => updateForm({ id_municipio: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
             >
               <option value="">Selecciona un municipio</option>
@@ -511,7 +537,7 @@ export default function RegisterBusinessWizard() {
             <h2 className="question-title">Correo de contacto</h2>
             <p className="question-subtitle">¿A dónde quieres que te escriban los clientes?</p>
             <input className="big-input" type="email" placeholder="contacto@negocio.com"
-              value={formData.email_contacto} onChange={(e) => updateForm({ email_contacto: e.target.value })} autoFocus />
+              value={formData.email_contacto} onChange={(e) => updateForm({ email_contacto: e.target.value })} onKeyPress={handleKeyPress} autoFocus />
           </>
         );
       case 10:
@@ -525,6 +551,7 @@ export default function RegisterBusinessWizard() {
               placeholder="7000-0000"
               value={formData.telefono}
               onChange={handlePhoneChange}
+              onKeyPress={handleKeyPress}
               maxLength={9}
               autoFocus
             />
@@ -561,12 +588,21 @@ export default function RegisterBusinessWizard() {
   };
 
   return (
-    <div className="wizard-layout">
+    <div className="wizard-layout" data-draggable-closing="true">
+      {/* Botón de cancelar - X simple */}
+      <button className="cancel-button" onClick={handleCancelClick} title="Cancelar registro">
+        ✕
+      </button>
+
       {/* Barra de progreso */}
       <ProgressBar currentStep={step} totalSteps={totalSteps} />
 
       {/* CONTENIDO */}
       <div className="wizard-content">
+        {/* Indicador de arrastrar para cerrar (solo móvil) */}
+        <div className="drag-indicator" data-draggable-handle>
+          <div className="drag-indicator-bar"></div>
+        </div>
         {renderScreen()}
       </div>
 
@@ -585,6 +621,29 @@ export default function RegisterBusinessWizard() {
           {loading ? "Registrando..." : (step === totalSteps ? "Confirmar Registro ✨" : "Siguiente →")}
         </button>
       </div>
+
+      {/* Modal de confirmación de cancelación */}
+      {showCancelModal && (
+        <div className="modal-overlay" onClick={handleCancelClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-icon">⚠️</span>
+              <h2 className="modal-title">¿Cancelar registro?</h2>
+            </div>
+            <p className="modal-message">
+              Estás a punto de cancelar la creación de tu cuenta de negocio. Se perderán todos los datos ingresados hasta el momento.
+            </p>
+            <div className="modal-buttons">
+              <button className="modal-btn modal-btn-cancel" onClick={handleCancelClose}>
+                Continuar registrándome
+              </button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleCancelConfirm}>
+                Sí, cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

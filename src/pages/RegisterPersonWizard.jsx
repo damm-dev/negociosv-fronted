@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { initDraggableClosing } from "../utils/draggableInit";
 import ProgressBar from "../components/ProgressBar";
 import "../styles/formNegocio.css";
 
@@ -8,6 +9,7 @@ export default function RegisterPersonWizard() {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const [formData, setFormData] = useState({
     nombres: "",
@@ -32,8 +34,11 @@ export default function RegisterPersonWizard() {
 
   const totalSteps = 11;
 
-  // Cargar municipios al montar el componente
+  // Cargar municipios e inicializar draggable al montar el componente
   useEffect(() => {
+    // Inicializar draggable
+    initDraggableClosing();
+    
     // Lista de municipios de El Salvador (simplificada)
     const municipiosSV = [
       { id: 1, nombre: "San Salvador" },
@@ -276,6 +281,29 @@ export default function RegisterPersonWizard() {
   const prevStep = () =>
     setCurrentStep((prev) => Math.max(prev - 1, 1));
 
+  const handleCancelClick = () => {
+    setShowCancelModal(true);
+  };
+
+  const handleCancelConfirm = () => {
+    navigate('/account-type');
+  };
+
+  const handleCancelClose = () => {
+    setShowCancelModal(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentStep < totalSteps) {
+        nextStep();
+      } else {
+        submitForm();
+      }
+    }
+  };
+
   const submitForm = async () => {
     setLoading(true);
     setError("");
@@ -361,6 +389,7 @@ export default function RegisterPersonWizard() {
               placeholder="Ej: Juan Carlos"
               value={formData.nombres}
               onChange={(e) => updateForm({ nombres: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
               disabled={loading}
             />
@@ -378,6 +407,7 @@ export default function RegisterPersonWizard() {
               placeholder="Ej: Pérez García"
               value={formData.apellidos}
               onChange={(e) => updateForm({ apellidos: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
             />
           </>
@@ -423,6 +453,7 @@ export default function RegisterPersonWizard() {
               type="date"
               value={formData.fecha_nacimiento}
               onChange={(e) => updateForm({ fecha_nacimiento: e.target.value })}
+              onKeyPress={handleKeyPress}
               max={new Date().toISOString().split('T')[0]}
               autoFocus
             />
@@ -440,6 +471,7 @@ export default function RegisterPersonWizard() {
               placeholder="correo@ejemplo.com"
               value={formData.correo}
               onChange={(e) => updateForm({ correo: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
             />
           </>
@@ -456,6 +488,7 @@ export default function RegisterPersonWizard() {
               placeholder="••••••••"
               value={formData.password}
               onChange={(e) => updateForm({ password: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
             />
           </>
@@ -472,6 +505,7 @@ export default function RegisterPersonWizard() {
               placeholder="7000-0000"
               value={formData.telefono}
               onChange={handlePhoneChange}
+              onKeyPress={handleKeyPress}
               maxLength={9}
               autoFocus
             />
@@ -584,6 +618,7 @@ export default function RegisterPersonWizard() {
               className="big-input"
               value={formData.id_municipio}
               onChange={(e) => updateForm({ id_municipio: e.target.value })}
+              onKeyPress={handleKeyPress}
               autoFocus
             >
               <option value="">Selecciona tu municipio</option>
@@ -631,11 +666,20 @@ export default function RegisterPersonWizard() {
   };
 
   return (
-    <div className="wizard-layout">
+    <div className="wizard-layout" data-draggable-closing="true">
+      {/* Botón de cancelar - X simple */}
+      <button className="cancel-button" onClick={handleCancelClick} title="Cancelar registro">
+        ✕
+      </button>
+
       {/* Barra de progreso */}
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
 
       <div className="wizard-content">
+        {/* Indicador de arrastrar para cerrar (solo móvil) */}
+        <div className="drag-indicator" data-draggable-handle>
+          <div className="drag-indicator-bar"></div>
+        </div>
         {renderStep()}
       </div>
 
@@ -663,6 +707,29 @@ export default function RegisterPersonWizard() {
           </button>
         )}
       </div>
+
+      {/* Modal de confirmación de cancelación */}
+      {showCancelModal && (
+        <div className="modal-overlay" onClick={handleCancelClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-icon">⚠️</span>
+              <h2 className="modal-title">¿Cancelar registro?</h2>
+            </div>
+            <p className="modal-message">
+              Estás a punto de cancelar la creación de tu cuenta. Se perderán todos los datos ingresados hasta el momento.
+            </p>
+            <div className="modal-buttons">
+              <button className="modal-btn modal-btn-cancel" onClick={handleCancelClose}>
+                Continuar registrándome
+              </button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleCancelConfirm}>
+                Sí, cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

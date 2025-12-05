@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { initDraggableClosing } from "../utils/draggableInit";
 import "../styles/account-type.css";
 
 function BusinessIcon() {
@@ -57,6 +58,11 @@ function PersonIcon() {
 
 export default function AccountTypePage() {
   const navigate = useNavigate();
+  
+  // Inicializar draggable cuando el componente se monta
+  useEffect(() => {
+    initDraggableClosing();
+  }, []);
 
   const handleBusinessClick = () => {
     navigate("/register/negocio");
@@ -67,7 +73,7 @@ export default function AccountTypePage() {
   };
 
   return (
-    <div className="account-type-page">
+    <div className="account-type-page" data-draggable-closing="true">
       <button 
         className="account-type-close-btn"
         onClick={() => navigate('/')}
@@ -79,6 +85,12 @@ export default function AccountTypePage() {
         </svg>
       </button>
 
+      <div className="account-type-content">
+      {/* Indicador de arrastrar para cerrar (solo móvil) */}
+      <div className="drag-indicator" data-draggable-handle>
+        <div className="drag-indicator-bar"></div>
+      </div>
+      
       <div className="account-type-header">
         <h1>Bienvenido</h1>
         <p>¿Qué tipo de cuenta deseas crear?</p>
@@ -126,6 +138,7 @@ export default function AccountTypePage() {
         Podrás cambiar información de tu perfil más adelante desde la sección
         <span> Cuenta</span>.
       </p>
+      </div>
     </div>
   );
 }

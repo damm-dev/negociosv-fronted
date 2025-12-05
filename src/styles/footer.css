@@ -9,33 +9,9 @@
   font-size: 0.85rem;
 }
 
-/* Parte superior: redes + correo */
-.footer-top {
-  padding: 2rem 2rem 1.5rem;
-  text-align: center;
-}
-
-.footer-email {
-  display: inline-block;
-  text-decoration: none;
-  color: #ffffff;
-  opacity: 0.9;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-}
-
-.footer-email:hover {
-  opacity: 1;
-  background-color: rgba(255, 255, 255, 0.1);
-  text-decoration: none;
-}
-
 /* Franja inferior */
 .footer-bottom {
   background-color: #010409;
-  border-top: 1px solid #1e293b;
   padding: 1rem 2rem;
   text-align: center;
 }
@@ -56,10 +32,6 @@
    =========================== */
 
 @media (max-width: 768px) {
-  .footer-top {
-    padding: 1.5rem 1rem 1rem;
-  }
-
   .footer-bottom {
     padding: 0.875rem 1rem;
   }

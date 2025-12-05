@@ -25,56 +25,30 @@ function HomeIcon({ active }) {
 function NegociosIcon({ active }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
-      {/* cuadricula 3x2 */}
-      <rect
-        x="3"
-        y="4"
-        width="6"
-        height="6"
-        rx="1.3"
+      {/* brújula */}
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
         fill={active ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <rect
-        x="10"
-        y="4"
-        width="6"
-        height="6"
-        rx="1.3"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
+      <circle
+        cx="12"
+        cy="12"
+        r="2"
+        fill="currentColor"
       />
-      <rect
-        x="17"
-        y="4"
-        width="4"
-        height="6"
-        rx="1.3"
+      <path
+        d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"
         fill={active ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth="1.6"
-      />
-      <rect
-        x="3"
-        y="13"
-        width="8"
-        height="7"
-        rx="1.5"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <rect
-        x="13"
-        y="13"
-        width="8"
-        height="7"
-        rx="1.5"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -295,8 +269,14 @@ export default function Navbar() {
                 } ${mobileOnly ? "nav-item--mobile-only" : ""}`}
                 onClick={() => {
                   setActiveTab(id);
-                  if (to) navigate(to);
+                  // Si es el botón de cuenta y no está autenticado, redirigir a crear cuenta
+                  if (id === "cuenta" && !isAuthenticated()) {
+                    navigate("/account-type");
+                  } else if (to) {
+                    navigate(to);
+                  }
                 }}
+                data-tooltip={label}
               >
                 <span className="nav-icon">
                   {id === "cuenta" && isAuthenticated() ? (

@@ -38,7 +38,38 @@ html, body {
   position: fixed; 
   top: 0;
   left: 0;
-  z-index: 9999; 
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+/* Indicador de arrastrar para cerrar */
+.drag-indicator {
+  display: block;
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+  padding: 0.5rem;
+  cursor: grab;
+}
+
+.drag-indicator:active {
+  cursor: grabbing;
+}
+
+.drag-indicator-bar {
+  width: 40px;
+  height: 4px;
+  background: rgba(2, 6, 23, 0.3);
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.drag-indicator:hover .drag-indicator-bar {
+  background: rgba(2, 6, 23, 0.5);
 }
 
 /* ... el resto de tu css (botones, inputs, etc.) ... */
@@ -54,6 +85,18 @@ html, body {
   width: 100%;
   overflow-y: auto; /* Scroll interno si la pantalla es muy pequeña */
   text-align: center;
+}
+
+/* Estilos para draggable en móvil */
+@media (max-width: 768px) {
+  .wizard-content {
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .wizard-content:active {
+    cursor: grabbing;
+  }
 }
 
 /* Contenedor interno para limitar el ancho máximo de todo */
@@ -324,4 +367,200 @@ textarea.big-input {
   padding: 10px 40px;
   min-width: 180px; /* evita que queden muy juntos */
   border-radius: 8px;
+}
+
+/* =========================
+   BOTÓN CANCELAR Y MODAL
+========================= */
+
+/* Botón cancelar - Consistente con account-type */
+.cancel-button {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(2, 6, 23, 0.1);
+  background: #ffffff;
+  color: #020617;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.1);
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+
+.cancel-button:hover {
+  background: #020617;
+  color: #ffffff;
+  border-color: #020617;
+  transform: rotate(90deg);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.2);
+}
+
+/* Overlay del modal - Minimalista */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(2, 6, 23, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  animation: fadeIn 0.2s ease-in-out;
+  backdrop-filter: blur(4px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Contenedor del modal - Minimalista */
+.modal-container {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 
+    0 4px 6px rgba(2, 6, 23, 0.05),
+    0 10px 20px rgba(2, 6, 23, 0.08);
+  border: 2px solid rgba(2, 6, 23, 0.1);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Contenido del modal */
+.modal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #020617;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Botones del modal - Minimalista */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  letter-spacing: -0.2px;
+}
+
+.modal-btn-cancel {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: rgba(2, 6, 23, 0.1);
+}
+
+.modal-btn-cancel:hover {
+  background-color: #e5e7eb;
+  color: #020617;
+  border-color: rgba(2, 6, 23, 0.2);
+}
+
+.modal-btn-confirm {
+  background-color: #020617;
+  color: #ffffff;
+  border-color: #020617;
+}
+
+.modal-btn-confirm:hover {
+  background-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.3);
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .cancel-button {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+  }
+
+  .modal-container {
+    padding: 2rem;
+    width: 95%;
+    border-radius: 16px;
+  }
+
+  .modal-icon {
+    font-size: 2.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.35rem;
+  }
+
+  .modal-message {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .modal-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+  }
 }
