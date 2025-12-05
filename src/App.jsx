@@ -28,25 +28,24 @@ function App() {
   }
 
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/account-type" element={<AccountTypePage />} />
-        <Route path="/register/persona" element={<RegisterPersonWizard />} />
-        <Route path="/register/negocio" element={<RegisterBusinessWizard />} />
-        <Route path="/cuenta" element={<CuentaPage />} />
-        
-        {/* Rutas para Negocios */}
-        <Route path="/dashboard" element={<DashboardNegocioPage />} />
-        <Route path="/resenas" element={<ResenasNegocioPage />} />
-        <Route path="/promociones" element={<PromocionesPage />} />
-        <Route path="/negocios" element={<NegociosList />} />
-        <Route path="/negocios/:id" element={<BusinessDetail />} />
-        <Route path="/logros" element={<LogrosPage />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      {/* Rutas sin layout (fullscreen) - Login y Registro */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/account-type" element={<AccountTypePage />} />
+      <Route path="/register/persona" element={<RegisterPersonWizard />} />
+      <Route path="/register/negocio" element={<RegisterBusinessWizard />} />
+
+      {/* Rutas con MainLayout (navbar + footer) */}
+      <Route path="/" element={<MainLayout><Home /></MainLayout>} />
+      <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
+      <Route path="/cuenta" element={<MainLayout><CuentaPage /></MainLayout>} />
+      <Route path="/dashboard" element={<MainLayout><DashboardNegocioPage /></MainLayout>} />
+      <Route path="/resenas" element={<MainLayout><ResenasNegocioPage /></MainLayout>} />
+      <Route path="/promociones" element={<MainLayout><PromocionesPage /></MainLayout>} />
+      <Route path="/negocios" element={<MainLayout><NegociosList /></MainLayout>} />
+      <Route path="/negocios/:id" element={<MainLayout><BusinessDetail /></MainLayout>} />
+      <Route path="/logros" element={<MainLayout><LogrosPage /></MainLayout>} />
+    </Routes>
   );
 }
 

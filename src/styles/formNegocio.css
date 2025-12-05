@@ -2,12 +2,12 @@
 
 :root {
   --bg-color: #ffffff;       /* Fondo Blanco */
-  --text-color: #1f2937;     /* Texto oscuro */
+  --text-color: #020617;     /* Texto oscuro elegante */
   --subtitle-color: #6b7280; /* Gris */
   --input-border: #e5e7eb;   /* Borde gris claro */
-  --primary-color: #3b82f6;  /* AZUL Principal */
-  --primary-hover: #2563eb;  /* Azul oscuro al pasar mouse */
-  --primary-light: #eff6ff;  /* Azul muy clarito (fondos) */
+  --primary-color: #020617;  /* Azul oscuro elegante */
+  --primary-hover: #0f172a;  /* Azul oscuro al pasar mouse */
+  --primary-light: #f1f5f9;  /* Gris muy clarito (fondos) */
 }
 
 /* --- RESET GLOBAL IMPORTANTE --- */

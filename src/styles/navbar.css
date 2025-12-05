@@ -2,35 +2,35 @@
    HEADER / NAVBAR (DESKTOP)
    =========================== */
 
-/* El header usa el mismo fondo del layout
-   y centra el contenido principal */
 .layout-header {
   background-color: var(--surface);
-  padding: 0.75rem 2.5rem;   /* un poco más de aire lateral */
+  padding: 0.75rem 2rem;
   display: flex;
   justify-content: center;
+  border-bottom: 1px solid var(--line);
 }
 
 /* Barra principal: marca | tabs | botones */
 .nav-bar {
   width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-
-  /* separación entre marca, tabs y acciones */
-  gap: 4.5rem;
+  gap: 2rem;
 }
 
 /* IZQUIERDA: marca */
 .nav-brand {
-  flex: 1;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
 
-  /* la separamos aún más de los tabs */
-  margin-right: 3rem;
+.nav-brand:hover {
+  transform: scale(1.02);
 }
 
 /* Logo del navbar */
@@ -38,29 +38,24 @@
   height: 40px;
   width: auto;
   object-fit: contain;
-  transition: transform 0.2s ease;
-}
-
-.nav-brand-logo:hover {
-  transform: scale(1.05);
 }
 
 /* CENTRO: tabs */
 .nav-center {
-  flex: 2;
+  flex: 1;
   display: flex;
   justify-content: center;
+  min-width: 0; /* Permite que se encoja si es necesario */
 }
 
-/* “Píldora” que contiene los tabs */
+/* "Píldora" que contiene los tabs */
 .nav-pill {
-  /*background-color: #020617; /* mismo color que el fondo */
   border-radius: 999px;
-  padding: 0.6rem 2rem;
+  padding: 0.5rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);*/
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 /* Cada tab */
@@ -68,25 +63,21 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-
-  /* más padding lateral para que respiren */
   gap: 0.5rem;
-  padding: 0.5rem 1.2rem;
-
+  padding: 0.5rem 1rem;
   border-radius: 999px;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--on-surface);
-  transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    transform 0.1s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
-  background-color: rgba(148, 163, 184, 0.12);
+  background-color: rgba(2, 6, 23, 0.05);
   transform: translateY(-1px);
 }
 
@@ -95,6 +86,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-svg-icon {
@@ -105,13 +97,15 @@
 
 /* Texto de cada tab */
 .nav-label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 /* Tab activo */
 .nav-item--active {
-  color: var(--on-primary);
-  font-weight: 500;
+  color: var(--primary);
+  font-weight: 600;
+  background-color: rgba(2, 6, 23, 0.05);
 }
 
 .nav-item--active::after {
@@ -119,55 +113,55 @@
   position: absolute;
   left: 12px;
   right: 12px;
-  bottom: -6px;
+  bottom: -2px;
   height: 3px;
   border-radius: 999px;
-  background: var(--on-primary);
+  background: var(--primary);
 }
 
 /* DERECHA: botones de sesión */
 .nav-actions {
-  flex: 1;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-
-  /* la separamos aún más de los tabs */
-  margin-left: 3rem;
 }
 
 .nav-btn {
-  font-size: 0.85rem;
-  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 999px;
   cursor: pointer;
   border: none;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease,
-    box-shadow 0.15s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .nav-btn-outline {
   background: transparent;
-  color: var(--on-surface);
-  border: 1px solid var(--line);
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .nav-btn-outline:hover {
-  background-color: var(--on-surface);
-  color: var(--background);
-  transform: translateY(-1px);
+  background-color: var(--primary);
+  color: var(--on-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.2);
 }
 
 .nav-btn-primary {
   background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.2);
 }
+
 .nav-btn-primary:hover {
   background: var(--primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.3);
 }
 
 /* Perfil de usuario en navbar */
@@ -175,25 +169,25 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.4rem 0.9rem;
+  padding: 0.5rem 1rem;
   border-radius: 999px;
   background: transparent;
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .nav-user-profile:hover {
-  background-color: rgba(148, 163, 184, 0.12);
+  background-color: rgba(2, 6, 23, 0.05);
   border-color: var(--primary);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .nav-user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,7 +217,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -233,18 +227,82 @@
 }
 
 /* ===========================
+   RESPONSIVE - TABLETS
+   =========================== */
+
+@media (max-width: 1024px) {
+  .nav-bar {
+    gap: 1.5rem;
+  }
+
+  .nav-pill {
+    padding: 0.5rem 1rem;
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .nav-label {
+    font-size: 0.85rem;
+  }
+
+  .nav-btn {
+    font-size: 0.8rem;
+    padding: 0.45rem 1rem;
+  }
+
+  .nav-user-name {
+    max-width: 120px;
+  }
+}
+
+/* Ocultar labels de tabs en pantallas medianas */
+@media (max-width: 900px) {
+  .nav-bar {
+    gap: 1rem;
+  }
+
+  .nav-pill {
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    padding: 0.5rem;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .nav-svg-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-user-name {
+    display: none;
+  }
+}
+
+/* ===========================
    MÓVIL (navbar abajo solo iconos)
    =========================== */
 
 @media (max-width: 768px) {
   .layout-header {
     padding: 0;
-    background-color: #0c1c5b;
+    background-color: var(--surface);
+    border-top: 1px solid var(--line);
+    border-bottom: none;
   }
 
   .nav-bar {
     padding: 0;
     gap: 0;
+    max-width: 100%;
   }
 
   /* Ocultamos marca y botones/perfil en móvil */
@@ -260,7 +318,7 @@
   .nav-pill {
     width: 100%;
     border-radius: 0;
-    padding: 0.25rem 0;
+    padding: 0.5rem 0;
     justify-content: space-around;
     gap: 0;
   }
@@ -268,9 +326,9 @@
   .nav-item {
     flex: 1;
     justify-content: center;
-    padding: 0.35rem 0.2rem;
+    padding: 0.5rem 0.25rem;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.25rem;
     font-size: 0.7rem;
   }
 
@@ -279,9 +337,36 @@
     display: inline-flex;
   }
 
-  /* En móvil solo iconos */
   .nav-label {
-    display: none;
+    display: block;
+    font-size: 0.7rem;
+  }
+
+  .nav-svg-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-item--active::after {
+    left: 25%;
+    right: 25%;
+    bottom: 0;
+    height: 3px;
+  }
+
+  /* Avatar en móvil */
+  .nav-mobile-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 0.65rem;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 400px) {
+  .nav-item {
+    font-size: 0.65rem;
+    padding: 0.4rem 0.2rem;
   }
 
   .nav-svg-icon {
@@ -289,17 +374,7 @@
     height: 20px;
   }
 
-  .nav-item--active::after {
-    left: 30%;
-    right: 30%;
-    bottom: -2px;
-    height: 3px;
-  }
-
-  /* Avatar en móvil un poco más pequeño */
-  .nav-mobile-avatar {
-    width: 22px;
-    height: 22px;
+  .nav-label {
     font-size: 0.65rem;
   }
 }

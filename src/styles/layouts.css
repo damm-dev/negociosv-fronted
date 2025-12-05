@@ -5,41 +5,44 @@
 /* Define CSS variables for colors and theming */
 :root {
   /* Default to light theme variables */
-  --primary: #3b82f6;           /* Primary blue */
-  --on-primary: #020617;        /* Text on primary */
+  --primary: #020617;           /* Primary dark blue elegant */
+  --on-primary: #ffffff;        /* Text on primary (white) */
   --background: #ffffff;        /* Light background */
   --on-background: #020617;     /* Text on light background */
   --surface: #f9fafb;           /* Light surface */
   --on-surface: #020617;        /* Text on surface */
   --muted: #6b7280;             /* Muted text */
   --line: #e5e7eb;              /* Lines and borders */
-  --primary-hover: #2563eb;     /* Primary hover */
+  --primary-hover: #0f172a;     /* Primary hover (slightly lighter) */
+  --accent: #1e293b;            /* Accent color for subtle highlights */
 }
 
 body.light-theme {
   /* Light theme overrides */
-  --primary: #3b82f6;
-  --on-primary: #020617;
+  --primary: #020617;
+  --on-primary: #ffffff;
   --background: #ffffff;
   --on-background: #020617;
   --surface: #f9fafb;
   --on-surface: #020617;
   --muted: #6b7280;
   --line: #e5e7eb;
-  --primary-hover: #2563eb;
+  --primary-hover: #0f172a;
+  --accent: #1e293b;
 }
 
 body.dark-theme {
   /* Dark theme overrides */
-  --primary: #3b82f6;
-  --on-primary: #e5e7eb;
+  --primary: #020617;
+  --on-primary: #ffffff;
   --background: #020617;
   --on-background: #e5e7eb;
-  --surface: #0c1c5b;
+  --surface: #0f172a;
   --on-surface: #e5e7eb;
   --muted: #9ca3af;
-  --line: #4b5563;
-  --primary-hover: #2563eb;
+  --line: #334155;
+  --primary-hover: #1e293b;
+  --accent: #334155;
 }
 
 .layout {
