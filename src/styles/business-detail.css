@@ -8,6 +8,36 @@
 }
 
 /* ===============================
+   BOTÓN VOLVER
+================================ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #e5e7eb);
+  background: rgba(15, 23, 42, 0.02);
+  color: var(--muted, #6b7280);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.back-btn:hover {
+  background: rgba(59, 130, 246, 0.06);
+  color: var(--primary, #3b82f6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ===============================
    TÍTULO DEL NEGOCIO
 ================================ */
 .business-title-box {
@@ -16,7 +46,6 @@
   border-radius: 14px;
   box-shadow: 0 4px 18px rgba(4, 3, 58, 0.61);
   margin-bottom: 35px;
-  
 }
 
 .business-title {
@@ -52,7 +81,7 @@
   height: 100%;
   object-fit: cover;
   border-radius: 14px;
-  transition: transform .35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
   position: relative;
   z-index: 1;
 }
@@ -66,8 +95,13 @@
 /* ===============================
    PESTAÑAS
 ================================ */
+.tabs-container {
+  margin-top: 10px;
+}
+
 .tabs-header {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   border-bottom: 2px solid var(--line);
   margin-bottom: 20px;
@@ -81,7 +115,7 @@
   color: var(--muted);
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: .25s ease;
+  transition: 0.25s ease;
 }
 
 .tab-btn:hover {
@@ -120,4 +154,237 @@
   padding: 25px;
   border-radius: 14px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+/* ===============================
+   RESEÑAS: LISTA
+================================ */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.review-item {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.02);
+  border: 1px solid var(--line, #e5e7eb);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.review-header strong {
+  font-size: 0.95rem;
+}
+
+.review-stars {
+  font-size: 0.95rem;
+  color: #fbbf24; /* amarillo */
+}
+
+.review-comment {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--on-background);
+}
+
+/* ===============================
+   RESEÑAS: FORMULARIO
+================================ */
+.review-form {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line, #e5e7eb);
+}
+
+.review-form h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+/* Estrellas clickeables */
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.star-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0;
+  color: #9ca3af; /* gris */
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.1);
+  color: #facc15;
+}
+
+.star-btn.active {
+  color: #fbbf24;
+}
+
+/* Textarea comentario */
+.review-textarea {
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line, #e5e7eb);
+  padding: 10px 12px;
+  resize: vertical;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-textarea:focus {
+  border-color: var(--primary, #3b82f6);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
+}
+
+/* Botón enviar reseña */
+.review-submit-btn {
+  margin-top: 10px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary, #3b82f6);
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.review-submit-btn:hover:not(:disabled) {
+  background: #2563eb;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+.review-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 1024px) {
+  .business-detail-container {
+    padding: 20px 5%;
+  }
+
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .photo-grid-item {
+    height: 180px;
+  }
+
+  .info-flex {
+    flex-direction: column;
+  }
+
+  .info-map {
+    height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .business-detail-container {
+    padding: 16px 16px 24px;
+  }
+
+  .business-title-box {
+    padding: 18px 16px;
+  }
+
+  .business-title {
+    font-size: 1.5rem;
+  }
+
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .photo-grid-item {
+    height: 150px;
+  }
+}
+
+.my-review-box {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.03);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.my-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.my-review-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary, #3b82f6);
+}
+
+.review-my-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.review-edit-btn,
+.review-delete-btn {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Editar = azul suave */
+.review-edit-btn {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--primary, #2563eb);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.review-edit-btn:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* Eliminar = rojo suave */
+.review-delete-btn {
+  background: rgba(239, 68, 68, 0.06);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.review-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
 }
