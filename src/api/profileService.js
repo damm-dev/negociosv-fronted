@@ -5,7 +5,7 @@ import axiosInstance from './axiosConfig';
  */
 const profileService = {
   /**
-   * Obtener perfil del usuario autenticado
+   * Obtener perfil del usuario autenticado (persona)
    * @returns {Promise} Datos del perfil
    */
   async getProfile() {
@@ -19,7 +19,21 @@ const profileService = {
   },
 
   /**
-   * Actualizar perfil del usuario
+   * Obtener perfil del negocio autenticado
+   * @returns {Promise} Datos del negocio
+   */
+  async getBusinessProfile() {
+    try {
+      const response = await axiosInstance.get('/perfil/negocio');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener perfil de negocio:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Actualizar perfil del usuario (persona)
    * @param {Object} profileData - Datos del perfil a actualizar
    * @returns {Promise} Respuesta del servidor
    */
@@ -46,6 +60,38 @@ const profileService = {
       return response.data;
     } catch (error) {
       console.error('Error al actualizar perfil:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Actualizar perfil del negocio
+   * @param {Object} businessData - Datos del negocio a actualizar
+   * @returns {Promise} Respuesta del servidor
+   */
+  async updateBusinessProfile(businessData) {
+    try {
+      const payload = {
+        nombre: businessData.nombre,
+        descripcion: businessData.descripcion,
+        direccion: businessData.direccion,
+        telefono: businessData.telefono,
+        email_contacto: businessData.email_contacto,
+        logo: businessData.logo,
+        id_municipio: businessData.id_municipio
+      };
+
+      // Remover campos undefined o null
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined || payload[key] === null) {
+          delete payload[key];
+        }
+      });
+
+      const response = await axiosInstance.put(`/negocio/${businessData.id}`, payload);
+      return response.data;
+    } catch (error) {
+      console.error('Error al actualizar perfil de negocio:', error);
       throw error;
     }
   },

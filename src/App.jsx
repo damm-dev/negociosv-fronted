@@ -15,6 +15,8 @@ import NegociosList from "./pages/NegociosList.jsx";
 import BusinessDetail from "./pages/BusinessDetail.jsx";
 import LogrosPage from "./pages/LogrosPage.jsx";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +36,10 @@ function App() {
       <Route path="/account-type" element={<AccountTypePage />} />
       <Route path="/register/persona" element={<RegisterPersonWizard />} />
       <Route path="/register/negocio" element={<RegisterBusinessWizard />} />
+
+      {/* Rutas de Administrador (sin layout) */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
       {/* Rutas con MainLayout (navbar + footer) */}
       <Route path="/" element={<MainLayout><Home /></MainLayout>} />

@@ -34,33 +34,53 @@ export default function RegisterPersonWizard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
 
   const totalSteps = 11;
 
-  // Cargar municipios e inicializar draggable al montar el componente
+  // Cargar municipios desde la API al montar el componente
   useEffect(() => {
     // Inicializar draggable
     initDraggableClosing();
     
-    // Lista de municipios de El Salvador (simplificada)
-    const municipiosSV = [
-      { id: 1, nombre: "San Salvador" },
-      { id: 2, nombre: "Santa Tecla" },
-      { id: 3, nombre: "Soyapango" },
-      { id: 4, nombre: "San Miguel" },
-      { id: 5, nombre: "Santa Ana" },
-      { id: 6, nombre: "Mejicanos" },
-      { id: 7, nombre: "Apopa" },
-      { id: 8, nombre: "Delgado" },
-      { id: 9, nombre: "Sonsonate" },
-      { id: 10, nombre: "Ahuachapán" },
-      { id: 11, nombre: "Usulután" },
-      { id: 12, nombre: "La Unión" },
-      { id: 13, nombre: "Chalatenango" },
-      { id: 14, nombre: "Cojutepeque" },
-      { id: 15, nombre: "Zacatecoluca" },
-    ];
-    setMunicipios(municipiosSV);
+    // Cargar municipios desde la API
+    const cargarMunicipios = async () => {
+      try {
+        setLoadingMunicipios(true);
+        const response = await fetch('http://localhost:8000/api/municipios');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Mapear los datos al formato esperado
+          const municipiosFormateados = data.data.map(m => ({
+            id: m.id,
+            nombre: m.nombre,
+            departamento: m.departamento
+          }));
+          setMunicipios(municipiosFormateados);
+        } else {
+          console.error('Error al cargar municipios:', data);
+          // Fallback a lista básica si falla la API
+          setMunicipios([
+            { id: 1, nombre: "San Salvador" },
+            { id: 20, nombre: "Santa Tecla" },
+            { id: 18, nombre: "Soyapango" },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error al cargar municipios:', error);
+        // Fallback a lista básica si falla la API
+        setMunicipios([
+          { id: 1, nombre: "San Salvador" },
+          { id: 20, nombre: "Santa Tecla" },
+          { id: 18, nombre: "Soyapango" },
+        ]);
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
+
+    cargarMunicipios();
   }, []);
 
   // Categorías/Intereses disponibles (IDs de la tabla categorias)
@@ -123,10 +143,16 @@ export default function RegisterPersonWizard() {
       return;
     }
 
-    updateForm({
-      fotoFile: file,
-      fotoPreview: URL.createObjectURL(file),
-    });
+    // Convertir a base64 para enviar al backend
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateForm({
+        fotoFile: file,
+        fotoPreview: URL.createObjectURL(file),
+        fotoBase64: reader.result, // Guardar base64
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   const validateCurrentStep = () => {
@@ -323,7 +349,7 @@ export default function RegisterPersonWizard() {
         fecha_nacimiento: formData.fecha_nacimiento,
         genero: formData.genero,
         telefono: formData.telefono,
-        foto: formData.fotoFile ? "foto_perfil.jpg" : "",
+        foto: formData.fotoBase64 || "", // Enviar base64 si existe
         id_municipio: parseInt(formData.id_municipio),
         descripcion: formData.descripcion || "",
         intereses: formData.intereses,
@@ -646,20 +672,26 @@ export default function RegisterPersonWizard() {
           <>
             <h2 className="question-title">¿En qué municipio vives?</h2>
             <p className="question-subtitle">Para mostrarte opciones cercanas</p>
-            <select
-              className="big-input"
-              value={formData.id_municipio}
-              onChange={(e) => updateForm({ id_municipio: e.target.value })}
-              onKeyPress={handleKeyPress}
-              autoFocus
-            >
-              <option value="">Selecciona tu municipio</option>
-              {municipios.map((municipio) => (
-                <option key={municipio.id} value={municipio.id}>
-                  {municipio.nombre}
-                </option>
-              ))}
-            </select>
+            {loadingMunicipios ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p>Cargando municipios...</p>
+              </div>
+            ) : (
+              <select
+                className="big-input"
+                value={formData.id_municipio}
+                onChange={(e) => updateForm({ id_municipio: e.target.value })}
+                onKeyPress={handleKeyPress}
+                autoFocus
+              >
+                <option value="">Selecciona tu municipio</option>
+                {municipios.map((municipio) => (
+                  <option key={municipio.id} value={municipio.id}>
+                    {municipio.nombre} {municipio.departamento ? `(${municipio.departamento})` : ''}
+                  </option>
+                ))}
+              </select>
+            )}
             <div style={{ marginTop: 16 }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
                 <input
