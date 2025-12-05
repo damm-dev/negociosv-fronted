@@ -10,40 +10,25 @@
 - [x] Modificar Navbar.jsx para redirigir a registro si no está logueado
 
 ### 3. Implementar Draggable GSAP ✅
-- [x] Crear hook useDraggableClose.js
+- [x] Crear script draggableInit.js con atributos data
 - [x] Aplicar a LoginPage.jsx
 - [x] Aplicar a AccountTypePage.jsx
 - [x] Aplicar a RegisterPersonWizard.jsx
 - [x] Aplicar a RegisterBusinessWizard.jsx
 - [x] Actualizar estilos CSS correspondientes
+- [x] Habilitar en desktop y móvil
 
-### 4. Verificación Final ⏳
-- [ ] Probar en móvil
-- [ ] Verificar animaciones
-- [ ] Confirmar funcionalidad completa
+### 4. Mejoras Adicionales de Navbar ✅
+- [x] Cambiar ícono de "Descubrir" por brújula SVG
+- [x] Añadir tooltips minimalistas con paleta de colores
+- [x] Implementar animación de barrita indicadora
+- [x] Tooltips visibles solo cuando labels están ocultos
+
+### 5. Verificación Final ⏳
+- [ ] Probar draggable en todas las páginas
+- [ ] Verificar tooltips en navbar
+- [ ] Confirmar animación de barrita indicadora
+- [ ] Probar navegación sin login
 
 ---
-**Última actualización:** ¡Implementación completada! Lista para pruebas.
-
-## Resumen de Cambios Realizados
-
-### Archivos Modificados:
-1. **negociosv-fronted/src/layouts/Footer.jsx** - Eliminado email de contacto
-2. **negociosv-fronted/src/styles/footer.css** - Limpieza de estilos
-3. **negociosv-fronted/src/layouts/Navbar.jsx** - Redirección a registro si no está logueado
-4. **negociosv-fronted/src/hooks/useDraggableClose.js** - Hook personalizado GSAP (NUEVO)
-5. **negociosv-fronted/src/pages/LoginPage.jsx** - Implementado draggable
-6. **negociosv-fronted/src/styles/login.css** - Estilos para draggable
-7. **negociosv-fronted/src/pages/AccountTypePage.jsx** - Implementado draggable
-8. **negociosv-fronted/src/styles/account-type.css** - Estilos para draggable
-9. **negociosv-fronted/src/pages/RegisterPersonWizard.jsx** - Implementado draggable
-10. **negociosv-fronted/src/pages/RegisterBusinessWizard.jsx** - Implementado draggable
-11. **negociosv-fronted/src/styles/formNegocio.css** - Estilos para draggable
-
-### Funcionalidades Implementadas:
-- ✅ Footer limpio sin email
-- ✅ Navegación móvil mejorada (botón cuenta redirige a registro)
-- ✅ Funcionalidad drag-to-close en todos los formularios fullscreen
-- ✅ Indicador visual de "arrastrar para cerrar"
-- ✅ Animaciones suaves con GSAP
-- ✅ Solo activo en dispositivos móviles (max-width: 768px)
+**Última actualización:** Implementación completa - Listo para pruebas

@@ -25,7 +25,7 @@ function HomeIcon({ active }) {
 function NegociosIcon({ active }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
-      {/* brújula */}
+      {/* brújula - círculo se rellena cuando está activo */}
       <circle
         cx="12"
         cy="12"
@@ -36,16 +36,17 @@ function NegociosIcon({ active }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {/* Centro y aguja - blanco cuando activo */}
       <circle
         cx="12"
         cy="12"
         r="2"
-        fill="currentColor"
+        fill={active ? "#ffffff" : "currentColor"}
       />
       <path
         d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
+        fill={active ? "#ffffff" : "none"}
+        stroke={active ? "#ffffff" : "currentColor"}
         strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -213,9 +214,37 @@ export default function Navbar() {
   const { user, userType, isAuthenticated } = useAuth();
   const [_, setDummy] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+  const pillRef = useState(null)[0];
 
   // Determinar qué tabs mostrar según el tipo de usuario
   const TABS = userType === 'negocio' ? TABS_NEGOCIO : TABS_PERSONA;
+
+  // Actualizar posición de la barrita indicadora
+  useEffect(() => {
+    const updateIndicator = () => {
+      const pill = document.querySelector('.nav-pill');
+      const activeButton = document.querySelector('.nav-item--active');
+      
+      if (pill && activeButton) {
+        const pillRect = pill.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+        
+        const left = buttonRect.left - pillRect.left + 12;
+        const width = buttonRect.width - 24;
+        
+        pill.style.setProperty('--indicator-left', `${left}px`);
+        pill.style.setProperty('--indicator-width', `${width}px`);
+      }
+    };
+
+    // Actualizar inmediatamente y después de un pequeño delay para asegurar que el DOM esté listo
+    updateIndicator();
+    setTimeout(updateIndicator, 100);
+    
+    // Actualizar en resize
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [activeTab, userType]);
 
   // Actualizar tab activo basado en la ruta actual
   useEffect(() => {
