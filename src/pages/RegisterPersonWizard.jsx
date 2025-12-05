@@ -4,9 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import { initDraggableClosing } from "../utils/draggableInit";
 import ProgressBar from "../components/ProgressBar";
 import "../styles/formNegocio.css";
-import DatePicker from "react-datepicker"; //
-import "react-datepicker/dist/react-datepicker.css"; // Estilos CSS
-import moment from "moment"; // Para facilitar el manejo de fechas
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 
 export default function RegisterPersonWizard() {
   const navigate = useNavigate();
