@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ProgressBar from "../components/ProgressBar";
 import "../styles/formNegocio.css";
+import DatePicker from "react-datepicker"; //
+import "react-datepicker/dist/react-datepicker.css"; // Estilos CSS
+import moment from "moment"; // Para facilitar el manejo de fechas
 
 export default function RegisterPersonWizard() {
   const navigate = useNavigate();
@@ -91,8 +94,10 @@ export default function RegisterPersonWizard() {
 
   // Función para calcular edad
   const calcularEdad = (fechaNacimiento) => {
+    const nacimiento = fechaNacimiento instanceof Date 
+        ? fechaNacimiento
+        : new Date(fechaNacimiento);
     const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
     let edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
     if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
@@ -162,25 +167,26 @@ export default function RegisterPersonWizard() {
         }
         return true;
 
-      case 4: // Fecha de nacimiento
+      case 4: // Fecha de nacimiento (Validación actualizada)
         if (!formData.fecha_nacimiento) {
           alert("Por favor, selecciona tu fecha de nacimiento");
           return false;
         }
-        // Validar que no sea fecha futura
+
+        // Convertir la fecha almacenada (string) a objeto Date para validación
+        const fechaNacDate = new Date(formData.fecha_nacimiento);
         const hoy = new Date();
-        const fechaNac = new Date(formData.fecha_nacimiento);
-        if (fechaNac > hoy) {
+        
+        if (fechaNacDate > hoy) {
           alert("La fecha de nacimiento no puede ser futura");
           return false;
         }
-        // Validar edad mínima (18 años)
-        const edad = calcularEdad(formData.fecha_nacimiento);
+        
+        const edad = calcularEdad(fechaNacDate);
         if (edad < 18) {
           alert("Debes ser mayor de 18 años para registrarte");
           return false;
         }
-        // Validar edad máxima razonable (120 años)
         if (edad > 120) {
           alert("Por favor, verifica tu fecha de nacimiento");
           return false;
@@ -413,19 +419,46 @@ export default function RegisterPersonWizard() {
           </>
         );
 
-      case 4: // Fecha de nacimiento
+      case 4: // Fecha de nacimiento (Implementación con DatePicker)
+        const selectedDate = formData.fecha_nacimiento 
+            ? moment(formData.fecha_nacimiento).toDate() 
+            : null;
+
         return (
           <>
             <h2 className="question-title">¿Cuál es tu fecha de nacimiento?</h2>
             <p className="question-subtitle">Para verificar tu edad</p>
-            <input
-              className="big-input"
-              type="date"
-              value={formData.fecha_nacimiento}
-              onChange={(e) => updateForm({ fecha_nacimiento: e.target.value })}
-              max={new Date().toISOString().split('T')[0]}
-              autoFocus
+            <DatePicker
+              selected={selectedDate} // Usa el objeto Date de Moment
+              onChange={(date) => {
+                // Guarda la fecha en el formato 'YYYY-MM-DD' esperado por la API
+                const dateString = date ? moment(date).format("YYYY-MM-DD") : "";
+                updateForm({ fecha_nacimiento: dateString });
+              }}
+              dateFormat="dd/MM/yyyy"
+              maxDate={new Date()} // No permite seleccionar fechas futuras
+              showYearDropdown // Muestra un selector de año desplegable
+              scrollableYearDropdown // Permite desplazarse por los años
+              yearDropdownItemNumber={100} // Muestra 100 años en el desplegable
+              placeholderText="Selecciona tu fecha"
+              className="big-input date-picker-custom" // Aplica estilos para que se vea bien
             />
+            <style jsx="true">{`
+                .date-picker-custom {
+                    width: 100%;
+                    padding: 12px 16px;
+                    font-size: 1.1em;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    transition: border-color 0.3s;
+                    text-align: center;
+                    cursor: pointer;
+                }
+                /* Sobrescribe estilos del datepicker para coincidir con big-input */
+                .react-datepicker-wrapper {
+                  width: 100%;
+                }
+            `}</style>
           </>
         );
 
