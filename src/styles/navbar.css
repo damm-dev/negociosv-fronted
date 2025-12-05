@@ -123,6 +123,7 @@
   background: var(--primary);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  will-change: transform, width; /* Optimización para evitar layout shifts */
 }
 
 /* DERECHA: botones de sesión */
@@ -272,11 +273,11 @@
   }
 
   .nav-pill {
-    gap: 0.25rem;
+    gap: 1rem; /* Aumentado de 0.25rem a 1rem para mejor espaciado */
   }
 
   .nav-item {
-    padding: 0.5rem;
+    padding: 0.75rem; /* Aumentado de 0.5rem a 0.75rem */
   }
 
   .nav-label {

@@ -217,7 +217,12 @@ export default function Navbar() {
   const pillRef = useState(null)[0];
 
   // Determinar qué tabs mostrar según el tipo de usuario
-  const TABS = userType === 'negocio' ? TABS_NEGOCIO : TABS_PERSONA;
+  // Si es persona y NO está autenticado, filtrar el tab de logros
+  const TABS = userType === 'negocio' 
+    ? TABS_NEGOCIO 
+    : isAuthenticated() 
+      ? TABS_PERSONA 
+      : TABS_PERSONA.filter(tab => tab.id !== 'logros');
 
   // Actualizar posición de la barrita indicadora
   useEffect(() => {
@@ -244,7 +249,7 @@ export default function Navbar() {
     // Actualizar en resize
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
-  }, [activeTab, userType]);
+  }, [activeTab, userType, isAuthenticated()]); // Agregado isAuthenticated para recalcular cuando cambia
 
   // Actualizar tab activo basado en la ruta actual
   useEffect(() => {

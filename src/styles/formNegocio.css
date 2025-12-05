@@ -42,6 +42,20 @@ html, body {
   bottom: 0;
   z-index: 99999;
   overflow: hidden;
+  
+  /* Animación de entrada desde abajo */
+  animation: slideUpEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpEnter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Indicador de arrastrar para cerrar */
