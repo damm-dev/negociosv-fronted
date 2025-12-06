@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { initDraggableClosing } from "../utils/draggableInit";
 import "../styles/login.css";
+// 1. Ya tenías el import, lo dejamos igual
+import SuccessModal from "../components/SuccessModal";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   
-  // Inicializar draggable cuando el componente se monta
   useEffect(() => {
     initDraggableClosing();
   }, []);
@@ -22,6 +23,10 @@ export default function LoginPage() {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  // 2. Ya tenías estos estados, los usamos para controlar el flujo
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('/home');
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -31,28 +36,34 @@ export default function LoginPage() {
     }));
   };
 
+  // 3. AQUÍ ESTÁ EL CAMBIO CLAVE (Solo visual)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
+      // Lógica de Backend INTACTA:
       const response = await login(formData.email, formData.password);
       
-      // Mostrar mensaje de éxito
-      alert(`¡Bienvenido! ${response.message}`);
+      // En lugar de alert() y navigate() inmediato, preparamos el modal:
       
-      // Redirigir según el tipo de usuario
+      // A. Decidimos a dónde ir (igual que antes)
       if (response.type === 'user') {
-        navigate('/cuenta');
+        setRedirectPath('/cuenta');
       } else if (response.type === 'negocio') {
-        navigate('/cuenta');
+        setRedirectPath('/cuenta');
       } else {
-        navigate('/home');
+        setRedirectPath('/home');
       }
+
+      // B. Detenemos la carga y mostramos el modal
+      setLoading(false);
+      setShowSuccessModal(true);
+
     } catch (err) {
       console.error("Error en login:", err);
-      
+      // Tu manejo de errores se mantiene idéntico
       if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else if (err.response?.status === 401) {
@@ -62,9 +73,14 @@ export default function LoginPage() {
       } else {
         setError("Error al conectar con el servidor. Verifica tu conexión.");
       }
-    } finally {
-      setLoading(false);
+      setLoading(false); // Aseguramos quitar el loading si falla
     }
+  };
+
+  // 4. Nueva función para ejecutar la redirección al cerrar el modal
+  const handleCloseModal = () => {
+    setShowSuccessModal(false);
+    navigate(redirectPath); // Aquí se ejecuta la navegación que guardamos antes
   };
 
   const handleCreateAccount = () => {
@@ -85,7 +101,6 @@ export default function LoginPage() {
       </button>
 
       <div className="login-card">
-        {/* Indicador de arrastrar para cerrar (solo móvil) */}
         <div className="drag-indicator" data-draggable-handle>
           <div className="drag-indicator-bar"></div>
         </div>
@@ -179,6 +194,16 @@ export default function LoginPage() {
           </p>
         </form>
       </div>
+
+      {/* 5. Agregamos el componente Modal al final del render */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseModal}
+        title="¡Bienvenido de nuevo!"
+        message={`Has iniciado sesión correctamente como ${formData.email}.`}
+        btnText="Continuar a mi cuenta"
+      />
+
     </div>
   );
 }

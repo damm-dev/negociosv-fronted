@@ -7,12 +7,14 @@ import "../styles/formNegocio.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
+import SuccessModal from "../components/SuccessModal";
 
 export default function RegisterPersonWizard() {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [formData, setFormData] = useState({
     nombres: "",
@@ -358,10 +360,11 @@ export default function RegisterPersonWizard() {
 
       const response = await registerUser(userData);
 
-      alert("¡Registro completado exitosamente! 🎉");
+      setLoading(false); // Dejamos de cargar
+      setShowSuccessModal(true); // Mostramos el modal
       console.log("Respuesta del servidor:", response);
 
-      navigate('/login');
+      
     } catch (err) {
       console.error("Error en registro:", err);
       if (err.response?.data) {
@@ -394,6 +397,10 @@ export default function RegisterPersonWizard() {
     }
   };
 
+const handleSuccessClose = () => {
+  setShowSuccessModal(false);
+  navigate('/login'); // O a donde quieras redirigir
+};
   const renderStep = () => {
     switch (currentStep) {
       case 1: // Nombres
@@ -794,6 +801,14 @@ export default function RegisterPersonWizard() {
           </div>
         </div>
       )}
+      {/* Modal de Éxito al Registrarse */}
+<SuccessModal
+  isOpen={showSuccessModal}
+  onClose={handleSuccessClose}
+  title="¡Cuenta creada!"
+  message="Tu registro se ha completado exitosamente. Ahora puedes iniciar sesión y explorar."
+  btnText="Ir a Iniciar Sesión"
+/>
     </div>
   );
 }
