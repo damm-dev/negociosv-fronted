@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { initDraggableClosing } from '../utils/draggableInit';
 import ProgressBar from '../components/ProgressBar';
 import '../styles/formNegocio.css';
+import axios from 'axios';
 
 export default function RegisterBusinessWizard() {
   const navigate = useNavigate();
@@ -39,25 +40,20 @@ export default function RegisterBusinessWizard() {
     // Inicializar draggable
     initDraggableClosing();
     
-    // Municipios de El Salvador
-    const municipiosSV = [
-      { id: 1, nombre: "San Salvador" },
-      { id: 2, nombre: "Santa Tecla" },
-      { id: 3, nombre: "Soyapango" },
-      { id: 4, nombre: "San Miguel" },
-      { id: 5, nombre: "Santa Ana" },
-      { id: 6, nombre: "Mejicanos" },
-      { id: 7, nombre: "Apopa" },
-      { id: 8, nombre: "Delgado" },
-      { id: 9, nombre: "Sonsonate" },
-      { id: 10, nombre: "Ahuachapán" },
-      { id: 11, nombre: "Usulután" },
-      { id: 12, nombre: "La Unión" },
-      { id: 13, nombre: "Chalatenango" },
-      { id: 14, nombre: "Cojutepeque" },
-      { id: 15, nombre: "Zacatecoluca" },
-    ];
-    setMunicipios(municipiosSV);
+    const fetchMunicipios = async () => {
+    try {
+      // Petición a tu API Laravel
+      // Asegúrate que la URL sea la correcta de tu servidor local
+      const response = await axios.get('http://localhost:8000/api/municipios');
+      // Guardamos ese array DIRECTAMENTE en la variable de estado
+      setMunicipios(response.data); 
+
+    } catch (error) {
+      console.error("Error al cargar municipios:", error);
+      alert("No se pudieron cargar los municipios. Verifica que el backend esté corriendo.");
+    }
+  };
+  fetchMunicipios();
 
     // Categorías de negocios (IDs de la tabla categorias)
     const categoriasNegocio = [
@@ -294,26 +290,43 @@ export default function RegisterBusinessWizard() {
     setLoading(true);
     setError("");
 
-    try {
-      const businessData = {
-        email: formData.email,
-        password: formData.password,
-        nombre_negocio: formData.nombre_negocio,
-        id_categoria: formData.id_categoria,
-        descripcion: formData.descripcion,
-        direccion: formData.direccion,
-        id_municipio: parseInt(formData.id_municipio),
-        logoFile: formData.logoFile,
-        email_contacto: formData.email_contacto,
-        telefono: formData.telefono,
-        metodos_pago: formData.metodos_pago,
-      };
+    // 1. Convertimos a número. Si es "undefined", esto dará NaN.
+    let municipioId = parseInt(formData.id_municipio);
 
-      const response = await registerBusiness(businessData);
+    // 2. Verificamos si es un número válido.
+    // Si es NaN, null, 0 o la palabra "undefined", entra al error.
+    if (!municipioId || isNaN(municipioId) || formData.id_municipio === "undefined") {
+      alert("⚠️ Error: El municipio seleccionado no es válido. Por favor, selecciona el municipio nuevamente.");
+      setLoading(false);
+      return; // ¡AQUÍ DETENEMOS EL ENVÍO! No llega al servidor.
+    }
+    // ---------------------------
+
+    try {
+      const data = new FormData();
+      data.append('email', formData.email);
+      data.append('password', formData.password);
+      data.append('nombre_negocio', formData.nombre_negocio);
+      data.append('descripcion', formData.descripcion);
+      data.append('direccion', formData.direccion);
+      data.append('email_contacto', formData.email_contacto);
+      data.append('telefono', formData.telefono);
+      
+      // Enviamos el ID limpio (será un número como 94)
+      data.append('id_municipio', municipioId);
+
+      // Imagen
+      if (formData.logoFile) {
+        data.append('logoFile', formData.logoFile);
+      }
+
+      // Arrays
+      formData.id_categoria.forEach(id => data.append('id_categoria[]', id));
+      formData.metodos_pago.forEach(id => data.append('metodos_pago[]', id));
+
+      const response = await registerBusiness(data);
 
       alert("¡Registro de Negocio Completado! 🚀");
-      console.log("Respuesta del servidor:", response);
-
       navigate('/login');
     } catch (err) {
       console.error("Error completo en registro:", err);
@@ -480,12 +493,16 @@ export default function RegisterBusinessWizard() {
               className="big-input"
               value={formData.id_municipio}
               onChange={(e) => updateForm({ id_municipio: e.target.value })}
-              onKeyPress={handleKeyPress}
               autoFocus
             >
               <option value="">Selecciona un municipio</option>
+              
+              {/* ESTA ES LA PARTE IMPORTANTE */}
               {municipios.map((municipio) => (
-                <option key={municipio.id} value={municipio.id}>
+                <option 
+                  key={municipio.id_municipio}   
+                  value={municipio.id_municipio} 
+                >
                   {municipio.nombre}
                 </option>
               ))}

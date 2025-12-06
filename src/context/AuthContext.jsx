@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import authService from '../api/authService';
+import axios from 'axios';
 
 const AuthContext = createContext(null);
 
@@ -48,15 +49,11 @@ export const AuthProvider = ({ children }) => {
   /**
    * Registro de negocio
    */
-  const registerBusiness = async (businessData) => {
-    try {
-      const response = await authService.registerBusiness(businessData);
-      // El tipo de usuario ya se guarda en authService
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  };
+  const registerBusiness = async (data) => {
+    // Pasa 'data' DIRECTAMENTE. 
+    // Axios detectará que es FormData y pondrá las cabeceras correctas.
+    return axios.post('http://localhost:8000/api/registrar_negocio', data);
+};
 
   /**
    * Cerrar sesión
