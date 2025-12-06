@@ -11,6 +11,45 @@
   background: #ffffff;
   position: relative;
   overflow: hidden;
+  /* Animación de entrada desde abajo */
+  animation: slideUpEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpEnter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Indicador de arrastrar para cerrar */
+.drag-indicator {
+  display: block;
+  width: 100%;
+  padding: 1rem 0 0.5rem;
+  text-align: center;
+  cursor: grab;
+}
+
+.drag-indicator:active {
+  cursor: grabbing;
+}
+
+.drag-indicator-bar {
+  width: 40px;
+  height: 4px;
+  background: rgba(2, 6, 23, 0.3);
+  border-radius: 2px;
+  margin: 0 auto;
+  transition: background 0.2s ease;
+}
+
+.drag-indicator:hover .drag-indicator-bar {
+  background: rgba(2, 6, 23, 0.5);
 }
 
 /* Botón de cerrar/volver */
@@ -32,6 +71,7 @@
   z-index: 10;
   box-shadow: 0 2px 8px rgba(2, 6, 23, 0.1);
 }
+
 
 .login-close-btn:hover {
   background: #020617;
@@ -268,11 +308,19 @@
 @media (max-width: 600px) {
   .login-page {
     padding: 1.5rem 1rem;
+    align-items: flex-start;
+    padding-top: 3rem;
   }
 
   .login-card {
     padding: 2rem 1.5rem;
     border-radius: 20px;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .login-card:active {
+    cursor: grabbing;
   }
 
   .login-greeting-main {

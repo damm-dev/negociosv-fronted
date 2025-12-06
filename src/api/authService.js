@@ -88,44 +88,21 @@ const authService = {
    */
   async registerBusiness(businessData) {
     try {
-      const formData = new FormData();
-      
-      // Datos de usuario
-      formData.append('email', businessData.email);
-      formData.append('password', businessData.password);
-      
-      // Datos del negocio
-      formData.append('nombre_negocio', businessData.nombre_negocio);
-      formData.append('descripcion', businessData.descripcion);
-      formData.append('direccion', businessData.direccion);
-      formData.append('id_municipio', businessData.id_municipio);
-      formData.append('telefono', businessData.telefono);
-      formData.append('email_contacto', businessData.email_contacto);
-      
-      // Categorías (array de IDs)
-      if (businessData.id_categoria && businessData.id_categoria.length > 0) {
-        businessData.id_categoria.forEach((catId, index) => {
-          formData.append(`id_categoria[${index}]`, catId);
-        });
-      }
-      
-      // Métodos de pago (array de IDs)
-      if (businessData.metodos_pago && businessData.metodos_pago.length > 0) {
-        businessData.metodos_pago.forEach((metodoId, index) => {
-          formData.append(`metodos_pago[${index}]`, metodoId);
-        });
-      }
-      
-      // Logo/Foto
-      if (businessData.logoFile) {
-        formData.append('logo', businessData.logoFile);
-      }
+      const payload = {
+        email: businessData.email,
+        password: businessData.password,
+        nombre_negocio: businessData.nombre_negocio,
+        descripcion: businessData.descripcion,
+        direccion: businessData.direccion,
+        id_municipio: businessData.id_municipio,
+        telefono: businessData.telefono,
+        email_contacto: businessData.email_contacto,
+        id_categoria: businessData.id_categoria || [],
+        metodos_pago: businessData.metodos_pago || [],
+        logo: businessData.logoBase64 || '', // Enviar base64 si existe
+      };
 
-      const response = await axiosInstance.post('/registrar_negocio', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axiosInstance.post('/registrar_negocio', payload);
       
       // Guardar tipo de usuario
       if (response.data) {

@@ -25,56 +25,31 @@ function HomeIcon({ active }) {
 function NegociosIcon({ active }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="nav-svg-icon">
-      {/* cuadricula 3x2 */}
-      <rect
-        x="3"
-        y="4"
-        width="6"
-        height="6"
-        rx="1.3"
+      {/* brújula - círculo se rellena cuando está activo */}
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
         fill={active ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <rect
-        x="10"
-        y="4"
-        width="6"
-        height="6"
-        rx="1.3"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
+      {/* Centro y aguja - blanco cuando activo */}
+      <circle
+        cx="12"
+        cy="12"
+        r="2"
+        fill={active ? "#ffffff" : "currentColor"}
       />
-      <rect
-        x="17"
-        y="4"
-        width="4"
-        height="6"
-        rx="1.3"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
+      <path
+        d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"
+        fill={active ? "#ffffff" : "none"}
+        stroke={active ? "#ffffff" : "currentColor"}
         strokeWidth="1.6"
-      />
-      <rect
-        x="3"
-        y="13"
-        width="8"
-        height="7"
-        rx="1.5"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <rect
-        x="13"
-        y="13"
-        width="8"
-        height="7"
-        rx="1.5"
-        fill={active ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -239,9 +214,42 @@ export default function Navbar() {
   const { user, userType, isAuthenticated } = useAuth();
   const [_, setDummy] = useState(false);
   const [activeTab, setActiveTab] = useState("inicio");
+  const pillRef = useState(null)[0];
 
   // Determinar qué tabs mostrar según el tipo de usuario
-  const TABS = userType === 'negocio' ? TABS_NEGOCIO : TABS_PERSONA;
+  // Si es persona y NO está autenticado, filtrar el tab de logros
+  const TABS = userType === 'negocio' 
+    ? TABS_NEGOCIO 
+    : isAuthenticated() 
+      ? TABS_PERSONA 
+      : TABS_PERSONA.filter(tab => tab.id !== 'logros');
+
+  // Actualizar posición de la barrita indicadora
+  useEffect(() => {
+    const updateIndicator = () => {
+      const pill = document.querySelector('.nav-pill');
+      const activeButton = document.querySelector('.nav-item--active');
+      
+      if (pill && activeButton) {
+        const pillRect = pill.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+        
+        const left = buttonRect.left - pillRect.left + 12;
+        const width = buttonRect.width - 24;
+        
+        pill.style.setProperty('--indicator-left', `${left}px`);
+        pill.style.setProperty('--indicator-width', `${width}px`);
+      }
+    };
+
+    // Actualizar inmediatamente y después de un pequeño delay para asegurar que el DOM esté listo
+    updateIndicator();
+    setTimeout(updateIndicator, 100);
+    
+    // Actualizar en resize
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [activeTab, userType, isAuthenticated()]); // Agregado isAuthenticated para recalcular cuando cambia
 
   // Actualizar tab activo basado en la ruta actual
   useEffect(() => {
@@ -295,8 +303,14 @@ export default function Navbar() {
                 } ${mobileOnly ? "nav-item--mobile-only" : ""}`}
                 onClick={() => {
                   setActiveTab(id);
-                  if (to) navigate(to);
+                  // Si es el botón de cuenta y no está autenticado, redirigir a crear cuenta
+                  if (id === "cuenta" && !isAuthenticated()) {
+                    navigate("/account-type");
+                  } else if (to) {
+                    navigate(to);
+                  }
                 }}
+                data-tooltip={label}
               >
                 <span className="nav-icon">
                   {id === "cuenta" && isAuthenticated() ? (

@@ -1,0 +1,75 @@
+/* ===========================
+   ANIMACIONES GLOBALES
+   =========================== */
+
+/* Animación de entrada desde abajo (slide up) */
+@keyframes slideUpEnter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animación de salida hacia abajo (slide down) */
+@keyframes slideDownExit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Animación de fade in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animación de fade out */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animación de scale in */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Clase helper para aplicar slide-up a páginas fullscreen */
+.page-slide-up {
+  animation: slideUpEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Clase helper para fade in */
+.page-fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+/* Optimización de rendimiento para animaciones */
+.page-slide-up,
+.page-fade-in {
+  will-change: transform, opacity;
+}

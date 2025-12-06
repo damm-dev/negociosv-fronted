@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { initDraggableClosing } from '../utils/draggableInit';
 import ProgressBar from '../components/ProgressBar';
 import '../styles/formNegocio.css';
 
@@ -10,6 +11,7 @@ export default function RegisterBusinessWizard() {
 
   const [step, setStep] = useState(1);
   const totalSteps = 11;
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -29,55 +31,111 @@ export default function RegisterBusinessWizard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
   const [categorias, setCategorias] = useState([]);
   const [metodosPago, setMetodosPago] = useState([]);
 
-  // Cargar datos al montar el componente
+  // Cargar datos e inicializar draggable al montar el componente
   useEffect(() => {
-    // Municipios de El Salvador
-    const municipiosSV = [
-      { id: 1, nombre: "San Salvador" },
-      { id: 2, nombre: "Santa Tecla" },
-      { id: 3, nombre: "Soyapango" },
-      { id: 4, nombre: "San Miguel" },
-      { id: 5, nombre: "Santa Ana" },
-      { id: 6, nombre: "Mejicanos" },
-      { id: 7, nombre: "Apopa" },
-      { id: 8, nombre: "Delgado" },
-      { id: 9, nombre: "Sonsonate" },
-      { id: 10, nombre: "Ahuachapán" },
-      { id: 11, nombre: "Usulután" },
-      { id: 12, nombre: "La Unión" },
-      { id: 13, nombre: "Chalatenango" },
-      { id: 14, nombre: "Cojutepeque" },
-      { id: 15, nombre: "Zacatecoluca" },
-    ];
-    setMunicipios(municipiosSV);
+    // Inicializar draggable
+    initDraggableClosing();
+    
+    // Cargar municipios desde la API
+    const cargarMunicipios = async () => {
+      try {
+        setLoadingMunicipios(true);
+        const response = await fetch('http://localhost:8000/api/municipios');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          const municipiosFormateados = data.data.map(m => ({
+            id: m.id,
+            nombre: m.nombre,
+            departamento: m.departamento
+          }));
+          setMunicipios(municipiosFormateados);
+        } else {
+          console.error('Error al cargar municipios:', data);
+          // Fallback a lista básica si falla la API
+          setMunicipios([
+            { id: 1, nombre: "San Salvador" },
+            { id: 20, nombre: "Santa Tecla" },
+            { id: 18, nombre: "Soyapango" },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error al cargar municipios:', error);
+        // Fallback a lista básica si falla la API
+        setMunicipios([
+          { id: 1, nombre: "San Salvador" },
+          { id: 20, nombre: "Santa Tecla" },
+          { id: 18, nombre: "Soyapango" },
+        ]);
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
 
-    // Categorías de negocios (IDs de la tabla categorias)
-    const categoriasNegocio = [
-      { id: 1, nombre: "Restaurante" },
-      { id: 2, nombre: "Cafetería" },
-      { id: 3, nombre: "Barbería" },
-      { id: 4, nombre: "Salón de Belleza" },
-      { id: 5, nombre: "Gimnasio" },
-      { id: 6, nombre: "Tienda" },
-      { id: 7, nombre: "Servicios Profesionales" },
-      { id: 8, nombre: "Entretenimiento" },
-      { id: 9, nombre: "Educación" },
-      { id: 10, nombre: "Salud" },
-    ];
-    setCategorias(categoriasNegocio);
+    cargarMunicipios();
 
-    // Métodos de pago (IDs de la tabla metodos_pago)
-    const metodosPagoDisponibles = [
-      { id: 1, nombre: "Efectivo" },
-      { id: 2, nombre: "Tarjeta" },
-      { id: 3, nombre: "Transferencia" },
-      { id: 4, nombre: "Bitcoin" },
-      { id: 5, nombre: "Otros" },
-    ];
-    setMetodosPago(metodosPagoDisponibles);
+    // Cargar categorías desde la API
+    const cargarCategorias = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/categorias');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          setCategorias(data.data);
+        } else {
+          console.error('Error al cargar categorías:', data);
+          // Fallback a lista básica si falla la API
+          setCategorias([
+            { id: 1, nombre: "Restaurante" },
+            { id: 2, nombre: "Cafetería" },
+            { id: 3, nombre: "Tienda" },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error al cargar categorías:', error);
+        // Fallback a lista básica si falla la API
+        setCategorias([
+          { id: 1, nombre: "Restaurante" },
+          { id: 2, nombre: "Cafetería" },
+          { id: 3, nombre: "Tienda" },
+        ]);
+      }
+    };
+
+    // Cargar métodos de pago desde la API
+    const cargarMetodosPago = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/metodos-pago');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          setMetodosPago(data.data);
+        } else {
+          console.error('Error al cargar métodos de pago:', data);
+          // Fallback a lista básica si falla la API
+          setMetodosPago([
+            { id: 1, nombre: "Efectivo" },
+            { id: 2, nombre: "Tarjeta" },
+            { id: 3, nombre: "Transferencia" },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error al cargar métodos de pago:', error);
+        // Fallback a lista básica si falla la API
+        setMetodosPago([
+          { id: 1, nombre: "Efectivo" },
+          { id: 2, nombre: "Tarjeta" },
+          { id: 3, nombre: "Transferencia" },
+        ]);
+      }
+    };
+
+    cargarCategorias();
+    cargarMetodosPago();
   }, []);
 
   // --- HELPERS PARA ACTUALIZAR DATOS ---
@@ -102,16 +160,26 @@ export default function RegisterBusinessWizard() {
 
   const handleFile = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validar tamaño del archivo (máximo 2MB)
-      const maxSize = 2 * 1024 * 1024; // 2MB en bytes
-      if (file.size > maxSize) {
-        alert('La imagen es demasiado grande. Por favor selecciona una imagen menor a 2MB.');
-        e.target.value = ''; // Limpiar el input
-        return;
-      }
-      updateForm({ logoFile: file, logoPreview: URL.createObjectURL(file) });
+    if (!file) return;
+
+    // Validar tamaño del archivo (máximo 2MB)
+    const maxSize = 2 * 1024 * 1024; // 2MB en bytes
+    if (file.size > maxSize) {
+      alert('La imagen es demasiado grande. Por favor selecciona una imagen menor a 2MB.');
+      e.target.value = ''; // Limpiar el input
+      return;
     }
+
+    // Convertir a base64 para enviar al backend
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      updateForm({
+        logoFile: file,
+        logoPreview: URL.createObjectURL(file),
+        logoBase64: reader.result, // Guardar base64
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   // --- VALIDACIONES ---
@@ -266,6 +334,25 @@ export default function RegisterBusinessWizard() {
     if (step > 1) setStep(s => s - 1);
   };
 
+  const handleCancelClick = () => {
+    setShowCancelModal(true);
+  };
+
+  const handleCancelConfirm = () => {
+    navigate('/account-type');
+  };
+
+  const handleCancelClose = () => {
+    setShowCancelModal(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextStep();
+    }
+  };
+
   const submitForm = async () => {
     setLoading(true);
     setError("");
@@ -279,7 +366,7 @@ export default function RegisterBusinessWizard() {
         descripcion: formData.descripcion,
         direccion: formData.direccion,
         id_municipio: parseInt(formData.id_municipio),
-        logoFile: formData.logoFile,
+        logoBase64: formData.logoBase64 || '', // Enviar base64 en lugar del archivo
         email_contacto: formData.email_contacto,
         telefono: formData.telefono,
         metodos_pago: formData.metodos_pago,
@@ -353,7 +440,7 @@ export default function RegisterBusinessWizard() {
               </div>
             )}
             <input className="big-input" type="email" placeholder="ejemplo@correo.com"
-              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} autoFocus disabled={loading} />
+              value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} onKeyPress={handleKeyPress} autoFocus disabled={loading} />
           </>
         );
       case 2:
@@ -362,7 +449,7 @@ export default function RegisterBusinessWizard() {
             <h2 className="question-title">Crea tu contraseña</h2>
             <p className="question-subtitle">Al menos 8 caracteres.</p>
             <input className="big-input" type="password" placeholder="••••••••"
-              value={formData.password} onChange={(e) => updateForm({ password: e.target.value })} autoFocus />
+              value={formData.password} onChange={(e) => updateForm({ password: e.target.value })} onKeyPress={handleKeyPress} autoFocus />
           </>
         );
 
@@ -378,6 +465,7 @@ export default function RegisterBusinessWizard() {
               placeholder="Ej: Café La Esquina"
               value={formData.nombre_negocio}
               onChange={(e) => updateForm({ nombre_negocio: e.target.value })}
+              onKeyPress={handleKeyPress}
               maxLength={100}
               autoFocus
             />
@@ -451,19 +539,26 @@ export default function RegisterBusinessWizard() {
           <>
             <h2 className="question-title">¿En qué municipio está ubicado?</h2>
             <p className="question-subtitle">Selecciona el municipio.</p>
-            <select
-              className="big-input"
-              value={formData.id_municipio}
-              onChange={(e) => updateForm({ id_municipio: e.target.value })}
-              autoFocus
-            >
-              <option value="">Selecciona un municipio</option>
-              {municipios.map((municipio) => (
-                <option key={municipio.id} value={municipio.id}>
-                  {municipio.nombre}
-                </option>
-              ))}
-            </select>
+            {loadingMunicipios ? (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <p>Cargando municipios...</p>
+              </div>
+            ) : (
+              <select
+                className="big-input"
+                value={formData.id_municipio}
+                onChange={(e) => updateForm({ id_municipio: e.target.value })}
+                onKeyPress={handleKeyPress}
+                autoFocus
+              >
+                <option value="">Selecciona un municipio</option>
+                {municipios.map((municipio) => (
+                  <option key={municipio.id} value={municipio.id}>
+                    {municipio.nombre} {municipio.departamento ? `(${municipio.departamento})` : ''}
+                  </option>
+                ))}
+              </select>
+            )}
           </>
         );
       case 8:
@@ -511,7 +606,7 @@ export default function RegisterBusinessWizard() {
             <h2 className="question-title">Correo de contacto</h2>
             <p className="question-subtitle">¿A dónde quieres que te escriban los clientes?</p>
             <input className="big-input" type="email" placeholder="contacto@negocio.com"
-              value={formData.email_contacto} onChange={(e) => updateForm({ email_contacto: e.target.value })} autoFocus />
+              value={formData.email_contacto} onChange={(e) => updateForm({ email_contacto: e.target.value })} onKeyPress={handleKeyPress} autoFocus />
           </>
         );
       case 10:
@@ -525,6 +620,7 @@ export default function RegisterBusinessWizard() {
               placeholder="7000-0000"
               value={formData.telefono}
               onChange={handlePhoneChange}
+              onKeyPress={handleKeyPress}
               maxLength={9}
               autoFocus
             />
@@ -561,12 +657,21 @@ export default function RegisterBusinessWizard() {
   };
 
   return (
-    <div className="wizard-layout">
+    <div className="wizard-layout" data-draggable-closing="true">
+      {/* Botón de cancelar - X simple */}
+      <button className="cancel-button" onClick={handleCancelClick} title="Cancelar registro">
+        ✕
+      </button>
+
       {/* Barra de progreso */}
       <ProgressBar currentStep={step} totalSteps={totalSteps} />
 
       {/* CONTENIDO */}
       <div className="wizard-content">
+        {/* Indicador de arrastrar para cerrar (solo móvil) */}
+        <div className="drag-indicator" data-draggable-handle>
+          <div className="drag-indicator-bar"></div>
+        </div>
         {renderScreen()}
       </div>
 
@@ -585,6 +690,29 @@ export default function RegisterBusinessWizard() {
           {loading ? "Registrando..." : (step === totalSteps ? "Confirmar Registro ✨" : "Siguiente →")}
         </button>
       </div>
+
+      {/* Modal de confirmación de cancelación */}
+      {showCancelModal && (
+        <div className="modal-overlay" onClick={handleCancelClose}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-icon">⚠️</span>
+              <h2 className="modal-title">¿Cancelar registro?</h2>
+            </div>
+            <p className="modal-message">
+              Estás a punto de cancelar la creación de tu cuenta de negocio. Se perderán todos los datos ingresados hasta el momento.
+            </p>
+            <div className="modal-buttons">
+              <button className="modal-btn modal-btn-cancel" onClick={handleCancelClose}>
+                Continuar registrándome
+              </button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleCancelConfirm}>
+                Sí, cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

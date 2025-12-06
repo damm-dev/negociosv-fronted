@@ -77,18 +77,56 @@ function LogoutIcon() {
   );
 }
 
-function Badge({ label, description }) {
+function ChartIcon() {
   return (
-    <div className="profile-badge">
-      <div className="profile-badge-icon">★</div>
-      <div>
-        <h4>{label}</h4>
+    <svg viewBox="0 0 24 24" fill="none" className="profile-menu-svg">
+      <path
+        d="M3 3v18h18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18 17V9M13 17V5M8 17v-3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ReviewIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="profile-menu-svg">
+      <path
+        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// Componente para logros (persona)
+function Achievement({ title, description, icon, unlocked }) {
+  return (
+    <div className={`profile-achievement ${unlocked ? 'unlocked' : 'locked'}`}>
+      <div className="profile-achievement-icon">{icon}</div>
+      <div className="profile-achievement-info">
+        <h4>{title}</h4>
         <p>{description}</p>
       </div>
+      {unlocked && <span className="profile-achievement-badge">✓</span>}
     </div>
   );
 }
 
+// Componente para favoritos (persona)
 function FavoriteItem({ name, category, location }) {
   return (
     <div className="profile-favorite">
@@ -105,20 +143,45 @@ function FavoriteItem({ name, category, location }) {
   );
 }
 
+// Componente para estadísticas (negocio)
+function StatCard({ label, value, icon }) {
+  return (
+    <div className="profile-stat-card">
+      <div className="profile-stat-icon">{icon}</div>
+      <div className="profile-stat-info">
+        <h3>{value}</h3>
+        <p>{label}</p>
+      </div>
+    </div>
+  );
+}
+
+// Componente para reseñas (negocio)
+function ReviewItem({ author, rating, comment, date }) {
+  return (
+    <div className="profile-review">
+      <div className="profile-review-header">
+        <div>
+          <h4>{author}</h4>
+          <div className="profile-review-rating">
+            {'★'.repeat(rating)}{'☆'.repeat(5 - rating)}
+          </div>
+        </div>
+        <span className="profile-review-date">{date}</span>
+      </div>
+      <p className="profile-review-comment">{comment}</p>
+    </div>
+  );
+}
+
 export default function CuentaPage() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [activeSection, setActiveSection] = useState("insignias");
+  const { logout, userType } = useAuth();
+  const [activeSection, setActiveSection] = useState(userType === 'negocio' ? 'estadisticas' : 'logros');
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    nombres: '',
-    apellidos: '',
-    telefono: '',
-    descripcion: '',
-    id_municipio: null
-  });
+  const [formData, setFormData] = useState({});
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -129,25 +192,43 @@ export default function CuentaPage() {
   // Cargar datos del perfil al montar el componente
   useEffect(() => {
     loadProfile();
-  }, []);
+  }, [userType]);
 
   const loadProfile = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await profileService.getProfile();
-      setProfileData(data);
       
-      // Inicializar formulario con datos del perfil
-      if (data.perfil) {
-        setFormData({
-          nombres: data.perfil.nombres || '',
-          apellidos: data.perfil.apellidos || '',
-          telefono: data.perfil.telefono || '',
-          descripcion: data.perfil.descripcion || '',
-          id_municipio: data.perfil.id_municipio || null
-        });
+      let data;
+      if (userType === 'negocio') {
+        data = await profileService.getBusinessProfile();
+        // Inicializar formulario con datos del negocio
+        if (data.negocio) {
+          setFormData({
+            id: data.negocio.id,
+            nombre: data.negocio.nombre || '',
+            descripcion: data.negocio.descripcion || '',
+            direccion: data.negocio.direccion || '',
+            telefono: data.negocio.telefono || '',
+            email_contacto: data.negocio.email_contacto || '',
+            id_municipio: data.negocio.id_municipio || null
+          });
+        }
+      } else {
+        data = await profileService.getProfile();
+        // Inicializar formulario con datos del perfil
+        if (data.perfil) {
+          setFormData({
+            nombres: data.perfil.nombres || '',
+            apellidos: data.perfil.apellidos || '',
+            telefono: data.perfil.telefono || '',
+            descripcion: data.perfil.descripcion || '',
+            id_municipio: data.perfil.id_municipio || null
+          });
+        }
       }
+      
+      setProfileData(data);
     } catch (err) {
       setError('Error al cargar el perfil. Por favor, intenta de nuevo.');
       console.error('Error cargando perfil:', err);
@@ -176,9 +257,15 @@ export default function CuentaPage() {
     e.preventDefault();
     try {
       setUpdateMessage('');
-      await profileService.updateProfile(formData);
+      
+      if (userType === 'negocio') {
+        await profileService.updateBusinessProfile(formData);
+      } else {
+        await profileService.updateProfile(formData);
+      }
+      
       setUpdateMessage('Perfil actualizado correctamente');
-      await loadProfile(); // Recargar datos
+      await loadProfile();
       setTimeout(() => setUpdateMessage(''), 3000);
     } catch (err) {
       setUpdateMessage('Error al actualizar el perfil');
@@ -220,18 +307,36 @@ export default function CuentaPage() {
     }
   };
 
-  // Obtener iniciales para el avatar
-  const getInitials = () => {
-    if (!profileData?.perfil) return 'U';
-    const nombres = profileData.perfil.nombres || '';
-    const apellidos = profileData.perfil.apellidos || '';
-    return `${nombres.charAt(0)}${apellidos.charAt(0)}`.toUpperCase();
+  // Obtener iniciales o logo para el avatar
+  const getAvatarContent = () => {
+    if (userType === 'negocio') {
+      // Si hay logo, mostrarlo
+      if (profileData?.logo_url) {
+        return <img src={profileData.logo_url} alt="Logo" className="profile-avatar-img" />;
+      }
+      // Si no hay logo, mostrar inicial del nombre del negocio
+      const nombre = profileData?.negocio?.nombre || 'N';
+      return <span>{nombre.charAt(0).toUpperCase()}</span>;
+    } else {
+      // Si hay foto, mostrarla
+      if (profileData?.foto_url) {
+        return <img src={profileData.foto_url} alt="Foto" className="profile-avatar-img" />;
+      }
+      // Si no hay foto, mostrar iniciales
+      const nombres = profileData?.perfil?.nombres || '';
+      const apellidos = profileData?.perfil?.apellidos || '';
+      return <span>{`${nombres.charAt(0)}${apellidos.charAt(0)}`.toUpperCase() || 'U'}</span>;
+    }
   };
 
-  // Obtener nombre completo
-  const getFullName = () => {
-    if (!profileData?.perfil) return 'Usuario';
-    return `${profileData.perfil.nombres || ''} ${profileData.perfil.apellidos || ''}`.trim();
+  // Obtener nombre completo o nombre del negocio
+  const getDisplayName = () => {
+    if (userType === 'negocio') {
+      return profileData?.negocio?.nombre || 'Negocio';
+    } else {
+      if (!profileData?.perfil) return 'Usuario';
+      return `${profileData.perfil.nombres || ''} ${profileData.perfil.apellidos || ''}`.trim();
+    }
   };
 
   if (loading) {
@@ -261,8 +366,12 @@ export default function CuentaPage() {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h1>Tu perfil</h1>
-        <p>Gestiona tu cuenta y personaliza tu experiencia en NegocioSV.</p>
+        <h1>{userType === 'negocio' ? 'Perfil de Negocio' : 'Tu perfil'}</h1>
+        <p>
+          {userType === 'negocio' 
+            ? 'Gestiona la información de tu negocio y revisa tus estadísticas.'
+            : 'Gestiona tu cuenta y personaliza tu experiencia en NegocioSV.'}
+        </p>
       </div>
 
       <div className="profile-container">
@@ -270,43 +379,82 @@ export default function CuentaPage() {
         <aside className="profile-sidebar">
           <div className="profile-user-summary">
             <div className="profile-avatar">
-              <span>{getInitials()}</span>
+              {getAvatarContent()}
             </div>
             <div className="profile-user-info">
-              <h3>{getFullName()}</h3>
+              <h3>{getDisplayName()}</h3>
               <p>{profileData?.usuario?.email || 'Sin email'}</p>
             </div>
           </div>
 
           <nav className="profile-menu">
-            <button
-              type="button"
-              className={
-                "profile-menu-item" +
-                (activeSection === "insignias" ? " profile-menu-item--active" : "")
-              }
-              onClick={() => setActiveSection("insignias")}
-            >
-              <span className="profile-menu-icon">
-                <BadgeIcon />
-              </span>
-              <span>Insignias</span>
-            </button>
+            {/* Menú para PERSONA */}
+            {userType === 'persona' && (
+              <>
+                <button
+                  type="button"
+                  className={
+                    "profile-menu-item" +
+                    (activeSection === "logros" ? " profile-menu-item--active" : "")
+                  }
+                  onClick={() => setActiveSection("logros")}
+                >
+                  <span className="profile-menu-icon">
+                    <BadgeIcon />
+                  </span>
+                  <span>Logros</span>
+                </button>
 
-            <button
-              type="button"
-              className={
-                "profile-menu-item" +
-                (activeSection === "favoritos" ? " profile-menu-item--active" : "")
-              }
-              onClick={() => setActiveSection("favoritos")}
-            >
-              <span className="profile-menu-icon">
-                <HeartIcon />
-              </span>
-              <span>Favoritos</span>
-            </button>
+                <button
+                  type="button"
+                  className={
+                    "profile-menu-item" +
+                    (activeSection === "favoritos" ? " profile-menu-item--active" : "")
+                  }
+                  onClick={() => setActiveSection("favoritos")}
+                >
+                  <span className="profile-menu-icon">
+                    <HeartIcon />
+                  </span>
+                  <span>Favoritos</span>
+                </button>
+              </>
+            )}
 
+            {/* Menú para NEGOCIO */}
+            {userType === 'negocio' && (
+              <>
+                <button
+                  type="button"
+                  className={
+                    "profile-menu-item" +
+                    (activeSection === "estadisticas" ? " profile-menu-item--active" : "")
+                  }
+                  onClick={() => setActiveSection("estadisticas")}
+                >
+                  <span className="profile-menu-icon">
+                    <ChartIcon />
+                  </span>
+                  <span>Estadísticas</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    "profile-menu-item" +
+                    (activeSection === "resenas" ? " profile-menu-item--active" : "")
+                  }
+                  onClick={() => setActiveSection("resenas")}
+                >
+                  <span className="profile-menu-icon">
+                    <ReviewIcon />
+                  </span>
+                  <span>Reseñas</span>
+                </button>
+              </>
+            )}
+
+            {/* Configuración (común para ambos) */}
             <button
               type="button"
               className={
@@ -334,36 +482,61 @@ export default function CuentaPage() {
             </span>
             <span>Cerrar sesión</span>
           </button>
-
         </aside>
 
         {/* CONTENIDO PRINCIPAL */}
         <section className="profile-content">
-          {activeSection === "insignias" && (
+          {/* LOGROS (solo para persona) */}
+          {userType === 'persona' && activeSection === "logros" && (
             <div className="profile-card">
-              <h2>Insignias</h2>
+              <h2>Tus Logros</h2>
               <p className="profile-card-sub">
-                Gana insignias al apoyar negocios y usar la plataforma.
+                Completa desafíos y gana logros mientras apoyas negocios locales.
               </p>
 
-              <div className="profile-badges-grid">
-                <Badge
-                  label="Explorador"
-                  description="Visitaste 10 negocios distintos."
+              <div className="profile-achievements-grid">
+                <Achievement
+                  title="Explorador"
+                  description="Visita 10 negocios distintos"
+                  icon="🗺️"
+                  unlocked={false}
                 />
-                <Badge
-                  label="Cliente fiel"
-                  description="Guardaste 5 negocios como favoritos."
+                <Achievement
+                  title="Cliente Fiel"
+                  description="Guarda 5 negocios como favoritos"
+                  icon="❤️"
+                  unlocked={false}
                 />
-                <Badge
-                  label="Apoyo local"
-                  description="Recomendaste negocios a otras personas."
+                <Achievement
+                  title="Apoyo Local"
+                  description="Recomienda 3 negocios"
+                  icon="🤝"
+                  unlocked={false}
+                />
+                <Achievement
+                  title="Social"
+                  description="Sigue a 10 negocios"
+                  icon="👥"
+                  unlocked={false}
+                />
+                <Achievement
+                  title="Crítico"
+                  description="Deja 5 reseñas"
+                  icon="⭐"
+                  unlocked={false}
+                />
+                <Achievement
+                  title="Influencer"
+                  description="20 personas visitaron negocios por tu recomendación"
+                  icon="📢"
+                  unlocked={false}
                 />
               </div>
             </div>
           )}
 
-          {activeSection === "favoritos" && (
+          {/* FAVORITOS (solo para persona) */}
+          {userType === 'persona' && activeSection === "favoritos" && (
             <div className="profile-card">
               <h2>Favoritos</h2>
               <p className="profile-card-sub">
@@ -390,11 +563,89 @@ export default function CuentaPage() {
             </div>
           )}
 
+          {/* ESTADÍSTICAS (solo para negocio) */}
+          {userType === 'negocio' && activeSection === "estadisticas" && (
+            <div className="profile-card">
+              <h2>Estadísticas</h2>
+              <p className="profile-card-sub">
+                Resumen del rendimiento de tu negocio en la plataforma.
+              </p>
+
+              <div className="profile-stats-grid">
+                <StatCard
+                  label="Visualizaciones"
+                  value="1,234"
+                  icon="👁️"
+                />
+                <StatCard
+                  label="Guardados"
+                  value="89"
+                  icon="❤️"
+                />
+                <StatCard
+                  label="Reseñas"
+                  value="45"
+                  icon="⭐"
+                />
+                <StatCard
+                  label="Seguidores"
+                  value="156"
+                  icon="👥"
+                />
+              </div>
+
+              <div className="profile-stats-chart">
+                <h3>Actividad reciente</h3>
+                <p>Próximamente: Gráfico de visualizaciones y engagement</p>
+              </div>
+            </div>
+          )}
+
+          {/* RESEÑAS (solo para negocio) */}
+          {userType === 'negocio' && activeSection === "resenas" && (
+            <div className="profile-card">
+              <h2>Reseñas</h2>
+              <p className="profile-card-sub">
+                Lo que tus clientes dicen sobre tu negocio.
+              </p>
+
+              <div className="profile-reviews-summary">
+                <div className="profile-reviews-rating">
+                  <h3>4.5</h3>
+                  <div className="profile-reviews-stars">★★★★☆</div>
+                  <p>Basado en 45 reseñas</p>
+                </div>
+              </div>
+
+              <div className="profile-reviews-list">
+                <ReviewItem
+                  author="María González"
+                  rating={5}
+                  comment="Excelente servicio y productos de calidad. Muy recomendado!"
+                  date="Hace 2 días"
+                />
+                <ReviewItem
+                  author="Carlos Martínez"
+                  rating={4}
+                  comment="Buena atención, aunque el tiempo de espera fue un poco largo."
+                  date="Hace 1 semana"
+                />
+                <ReviewItem
+                  author="Ana López"
+                  rating={5}
+                  comment="Me encanta este lugar! Siempre encuentro lo que busco."
+                  date="Hace 2 semanas"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* CONFIGURACIÓN (común para ambos) */}
           {activeSection === "config" && (
             <div className="profile-card">
               <h2>Configuración de perfil</h2>
               <p className="profile-card-sub">
-                Actualiza tu información personal y preferencias.
+                Actualiza tu información {userType === 'negocio' ? 'del negocio' : 'personal'} y preferencias.
               </p>
 
               {updateMessage && (
@@ -404,66 +655,135 @@ export default function CuentaPage() {
               )}
 
               <form className="profile-form" onSubmit={handleSubmit}>
-                <div className="profile-form-row">
-                  <div className="profile-form-group">
-                    <label htmlFor="nombres">Nombres</label>
-                    <input
-                      id="nombres"
-                      name="nombres"
-                      type="text"
-                      value={formData.nombres}
-                      onChange={handleInputChange}
-                      placeholder="Tus nombres"
-                    />
-                  </div>
-                  <div className="profile-form-group">
-                    <label htmlFor="apellidos">Apellidos</label>
-                    <input
-                      id="apellidos"
-                      name="apellidos"
-                      type="text"
-                      value={formData.apellidos}
-                      onChange={handleInputChange}
-                      placeholder="Tus apellidos"
-                    />
-                  </div>
-                </div>
+                {userType === 'persona' ? (
+                  <>
+                    {/* Formulario para PERSONA */}
+                    <div className="profile-form-row">
+                      <div className="profile-form-group">
+                        <label htmlFor="nombres">Nombres</label>
+                        <input
+                          id="nombres"
+                          name="nombres"
+                          type="text"
+                          value={formData.nombres || ''}
+                          onChange={handleInputChange}
+                          placeholder="Tus nombres"
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label htmlFor="apellidos">Apellidos</label>
+                        <input
+                          id="apellidos"
+                          name="apellidos"
+                          type="text"
+                          value={formData.apellidos || ''}
+                          onChange={handleInputChange}
+                          placeholder="Tus apellidos"
+                        />
+                      </div>
+                    </div>
 
-                <div className="profile-form-row">
-                  <div className="profile-form-group">
-                    <label htmlFor="telefono">Teléfono</label>
-                    <input
-                      id="telefono"
-                      name="telefono"
-                      type="tel"
-                      value={formData.telefono}
-                      onChange={handleInputChange}
-                      placeholder="+503 7000 0000"
-                    />
-                  </div>
-                  <div className="profile-form-group">
-                    <label htmlFor="email">Correo electrónico</label>
-                    <input
-                      id="email"
-                      type="email"
-                      value={profileData?.usuario?.email || ''}
-                      disabled
-                      placeholder="correo@ejemplo.com"
-                    />
-                  </div>
-                </div>
+                    <div className="profile-form-row">
+                      <div className="profile-form-group">
+                        <label htmlFor="telefono">Teléfono</label>
+                        <input
+                          id="telefono"
+                          name="telefono"
+                          type="tel"
+                          value={formData.telefono || ''}
+                          onChange={handleInputChange}
+                          placeholder="+503 7000 0000"
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label htmlFor="email">Correo electrónico</label>
+                        <input
+                          id="email"
+                          type="email"
+                          value={profileData?.usuario?.email || ''}
+                          disabled
+                          placeholder="correo@ejemplo.com"
+                        />
+                      </div>
+                    </div>
 
-                <div className="profile-form-group">
-                  <label htmlFor="descripcion">Descripción</label>
-                  <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    value={formData.descripcion}
-                    onChange={handleInputChange}
-                    placeholder="Cuéntanos sobre ti..."
-                    rows="3"
-                  />
-                </div>
+                    <div className="profile-form-group">
+                      <label htmlFor="descripcion">Descripción</label>
+                      <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        value={formData.descripcion || ''}
+                        onChange={handleInputChange}
+                        placeholder="Cuéntanos sobre ti..."
+                        rows="3"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Formulario para NEGOCIO */}
+                    <div className="profile-form-group">
+                      <label htmlFor="nombre">Nombre del negocio</label>
+                      <input
+                        id="nombre"
+                        name="nombre"
+                        type="text"
+                        value={formData.nombre || ''}
+                        onChange={handleInputChange}
+                        placeholder="Nombre de tu negocio"
+                      />
+                    </div>
+
+                    <div className="profile-form-group">
+                      <label htmlFor="descripcion">Descripción</label>
+                      <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        value={formData.descripcion || ''}
+                        onChange={handleInputChange}
+                        placeholder="Describe tu negocio..."
+                        rows="3"
+                      />
+                    </div>
+
+                    <div className="profile-form-group">
+                      <label htmlFor="direccion">Dirección</label>
+                      <input
+                        id="direccion"
+                        name="direccion"
+                        type="text"
+                        value={formData.direccion || ''}
+                        onChange={handleInputChange}
+                        placeholder="Dirección completa"
+                      />
+                    </div>
+
+                    <div className="profile-form-row">
+                      <div className="profile-form-group">
+                        <label htmlFor="telefono">Teléfono</label>
+                        <input
+                          id="telefono"
+                          name="telefono"
+                          type="tel"
+                          value={formData.telefono || ''}
+                          onChange={handleInputChange}
+                          placeholder="0000-0000"
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label htmlFor="email_contacto">Email de contacto</label>
+                        <input
+                          id="email_contacto"
+                          name="email_contacto"
+                          type="email"
+                          value={formData.email_contacto || ''}
+                          onChange={handleInputChange}
+                          placeholder="contacto@negocio.com"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <div className="profile-form-group">
                   <p><strong>Ubicación:</strong> {profileData?.municipio || 'No especificado'}, {profileData?.departamento || ''}</p>

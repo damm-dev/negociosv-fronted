@@ -50,12 +50,15 @@
 
 /* "Píldora" que contiene los tabs */
 .nav-pill {
+  position: relative;
   border-radius: 999px;
   padding: 0.5rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: nowrap;
+  --indicator-left: 0px;
+  --indicator-width: 0px;
 }
 
 /* Cada tab */
@@ -108,15 +111,19 @@
   background-color: rgba(2, 6, 23, 0.05);
 }
 
-.nav-item--active::after {
+/* Barrita indicadora animada */
+.nav-pill::after {
   content: "";
   position: absolute;
-  left: 12px;
-  right: 12px;
   bottom: -2px;
+  left: var(--indicator-left);
+  width: var(--indicator-width);
   height: 3px;
   border-radius: 999px;
   background: var(--primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  will-change: transform, width; /* Optimización para evitar layout shifts */
 }
 
 /* DERECHA: botones de sesión */
@@ -266,11 +273,11 @@
   }
 
   .nav-pill {
-    gap: 0.25rem;
+    gap: 1rem; /* Aumentado de 0.25rem a 1rem para mejor espaciado */
   }
 
   .nav-item {
-    padding: 0.5rem;
+    padding: 0.75rem; /* Aumentado de 0.5rem a 0.75rem */
   }
 
   .nav-label {
@@ -345,13 +352,6 @@
   .nav-svg-icon {
     width: 22px;
     height: 22px;
-  }
-
-  .nav-item--active::after {
-    left: 25%;
-    right: 25%;
-    bottom: 0;
-    height: 3px;
   }
 
   /* Avatar en móvil */

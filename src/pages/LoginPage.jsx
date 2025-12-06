@@ -1,12 +1,18 @@
 // src/pages/LoginPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { initDraggableClosing } from "../utils/draggableInit";
 import "../styles/login.css";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  
+  // Inicializar draggable cuando el componente se monta
+  useEffect(() => {
+    initDraggableClosing();
+  }, []);
   
   const [formData, setFormData] = useState({
     email: "",
@@ -66,7 +72,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page" data-draggable-closing="true">
       <button 
         className="login-close-btn"
         onClick={() => navigate('/')}
@@ -79,6 +85,10 @@ export default function LoginPage() {
       </button>
 
       <div className="login-card">
+        {/* Indicador de arrastrar para cerrar (solo móvil) */}
+        <div className="drag-indicator" data-draggable-handle>
+          <div className="drag-indicator-bar"></div>
+        </div>
         <div className="login-form-header">
           <p className="login-greeting-top">¡Hola!</p>
           <h1 className="login-greeting-main">Bienvenido de nuevo</h1>
