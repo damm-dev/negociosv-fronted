@@ -189,7 +189,7 @@ textarea.big-input {
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
+  background: rgb(245, 229, 229);
   padding: 12px 18px;
   border-top: 1px solid #e5e7eb;
 
@@ -200,6 +200,20 @@ textarea.big-input {
   
   flex-shrink: 0;          /* Evita que se encoja */
   z-index: 100;
+}
+ 
+@media (max-width: 430px) {
+  .bottom-bar {
+    gap: 8px !important;       
+    padding-left: 8px !important;  
+    padding-right: 8px !important;
+  }
+  
+  
+  .bottom-bar button {
+     font-size: 14px; 
+     padding: 10px 12px; 
+  }
 }
 
 
@@ -217,7 +231,7 @@ textarea.big-input {
 }
 
 .btn-prev:hover {
-  background-color: #e5e7eb;
+  background-color: #f1f5f3;
   color: var(--text-color);
 }
 
@@ -301,8 +315,7 @@ textarea.big-input {
   text-align: center;
 }
 
-/* Barra inferior igual a la de negocio:
-   botones lejos y con aire */
+
 .bottom-bar{
   position: fixed;
   bottom: 0;
@@ -318,7 +331,7 @@ textarea.big-input {
   gap: 24px;                    /* distancia extra entre botones */
 }
 
-/* Botones más grandes tipo negocio */
+
 .btn-prev,
 .btn-next{
   padding: 10px 40px;
