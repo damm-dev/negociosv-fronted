@@ -8,6 +8,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export default function RegisterPersonWizard() {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
@@ -47,7 +49,7 @@ export default function RegisterPersonWizard() {
     const cargarMunicipios = async () => {
       try {
         setLoadingMunicipios(true);
-        const response = await fetch('http://localhost:8000/api/municipios');
+        const response = await fetch(`${API_BASE}/municipios`);
         const data = await response.json();
         
         if (data.success && data.data) {

@@ -8,7 +8,7 @@
   text-align: center;
 
   /* Fondo */
-  background: url("src/assets/ciudad.jpg") center/cover no-repeat;
+  background: url("../../assets/ciudad.jpg") center/cover no-repeat;
   color: #ffffff;
   position: relative;
   overflow: hidden;
