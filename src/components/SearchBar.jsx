@@ -20,8 +20,9 @@ export default function SearchBar() {
        className="searchbar-input"
       ></input>
 
-      <button type="submit" className="searchbar-button">
-        Buscar
+     <button type="submit" className="searchbar-button">
+         <span className="btn-text">Buscar</span>
+         <span className="btn-icon">🔍</span>
       </button>
 
     </form>

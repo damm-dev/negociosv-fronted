@@ -13,6 +13,7 @@
 
 /* Input */
 .searchbar-input {
+  min-width: 0;
   flex: 1;
   padding: 12px 16px;
   font-size: 16px;
@@ -40,4 +41,32 @@
 
 .searchbar-button:active {
   background: #020617;
+}
+
+@media (max-width: 600px) {
+  
+  .searchbar-form {
+    /* Reducimos el padding del contenedor general */
+    padding: 6px 8px; 
+    /* Aseguramos que no toque los bordes de la pantalla */
+    width: 95%; 
+    /* Centramos el contenedor */
+    margin: 0 auto; 
+  }
+
+  .searchbar-input {
+    /* Importante: permite que el input se encoja si falta espacio */
+    min-width: 0; 
+    /* Reducimos un poco el texto y padding */
+    font-size: 14px; 
+    padding: 10px 8px; 
+  }
+
+  .searchbar-button {
+    /* Hacemos el botón un poco más compacto */
+    padding: 8px 16px;
+    font-size: 14px;
+    /* Evita que el botón se aplaste */
+    flex-shrink: 0; 
+  }
 }
