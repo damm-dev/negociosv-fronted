@@ -1,0 +1,214 @@
+/* src/styles/business-reviews.css */
+
+.business-reviews {
+  margin-top: 1rem;
+}
+
+/* Lista de reseñas */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.review-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.review-header strong {
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.review-stars {
+  font-size: 0.9rem;
+  color: #f59e0b; /* amarillo suave */
+}
+
+.review-comment {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+/* Bloque "mi reseña" */
+.my-review-box {
+  margin-top: 1.25rem;
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  background: #f3f4ff;
+  border: 1px solid #c7d2fe;
+}
+
+.my-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.my-review-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.review-my-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.review-edit-btn,
+.review-delete-btn {
+  border: none;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.review-edit-btn {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.review-edit-btn:hover {
+  background-color: #bae6fd;
+  transform: translateY(-1px);
+}
+
+.review-delete-btn {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.review-delete-btn:hover {
+  background-color: #fecaca;
+  transform: translateY(-1px);
+}
+
+/* Formulario reseñas */
+.review-form {
+  margin-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.review-form h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rating-input span:first-child {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+/* Botones de estrellas */
+.star-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.3rem;
+  line-height: 1;
+  padding: 0;
+  transition: transform 0.07s ease, text-shadow 0.07s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.1);
+  text-shadow: 0 0 4px rgba(249, 115, 22, 0.4);
+}
+
+.star-btn.active {
+  color: #f59e0b;
+}
+
+/* textarea y botón enviar */
+.review-textarea {
+  width: 100%;
+  margin-top: 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #d1d5db;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  outline: none;
+}
+
+.review-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+}
+
+.review-submit-btn {
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: linear-gradient(to right, #4f46e5, #6366f1);
+  color: #ffffff;
+  transition: transform 0.08s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+}
+
+.review-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25);
+}
+
+.review-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* mensajes */
+.review-error {
+  color: #b91c1c;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.review-login-message {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .review-item,
+  .my-review-box {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .review-submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

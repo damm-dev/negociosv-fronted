@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/business-detail.css";
 import { useAuth } from "../context/AuthContext";
+import BusinessReviews from "../components/BusinessReviews/BusinessReviews";
 
 const API_URL = "http://127.0.0.1:8000/api/negocio";
 
@@ -16,38 +17,6 @@ export default function BusinessDetail() {
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Estado reseñas
-  const [reviews, setReviews] = useState([]);
-  const [userRating, setUserRating] = useState(0);
-  const [userComment, setUserComment] = useState("");
-  const [hasReviewed, setHasReviewed] = useState(false);
-  const [isEditingReview, setIsEditingReview] = useState(false);
-
-  // ===== ID y nombre del usuario actual =====
-  // Ajusta estas líneas a tu estructura real de usuario si es necesario.
-  const currentUserId =
-    user?.perfil?.id ??
-    user?.id ??
-    user?.perfil_id ??
-    user?.user_id ??
-    null;
-
-  const currentUserName =
-    ((user?.perfil?.nombres || "") + " " + (user?.perfil?.apellidos || "")).trim() ||
-    user?.name ||
-    user?.nombre ||
-    user?.email ||
-    "Usuario";
-
-  // Identificador estable usado en localStorage para asociar la reseña a este visitante/usuario.
-  // Si no hay un id real, usamos el email como fallback (anon_email) cuando esté disponible.
-  const storageUserId =
-    currentUserId ?? (user?.email ? `anon_${user.email}` : null);
-
-  // Solo usuarios "persona" pueden dejar reseñas
-  // Si en tu AuthContext el tipo se llama "perfil" o algo así, cámbialo aquí:
-  const isPerfilUser = isAuthenticated() && userType === "persona";
 
   // ========== CARGAR NEGOCIO DESDE API ==========
   useEffect(() => {
@@ -85,7 +54,10 @@ export default function BusinessDetail() {
           "https://via.placeholder.com/800x400?text=NegocioSV";
 
         setBusiness({
-          id: n.id,
+          // 👇 AQUI EL CAMBIO IMPORTANTE
+          id_negocio: n.id_negocio ?? n.id ?? null,
+          id: n.id_negocio ?? n.id ?? null,
+
           name: n.nombre_negocio || n.nombre || "Negocio",
           description: n.descripcion || "",
           category,
@@ -94,6 +66,8 @@ export default function BusinessDetail() {
           telefono: n.telefono || "",
           email_contacto: n.email_contacto || "",
           image,
+          // Si quieres, puedes guardar también el objeto crudo:
+          raw: n,
         });
       } catch (err) {
         console.error("Error cargando negocio:", err);
@@ -105,111 +79,6 @@ export default function BusinessDetail() {
 
     fetchBusiness();
   }, [id]);
-
-  // ========== CARGAR Y "MIGRAR" RESEÑAS DESDE localStorage ==========
-  useEffect(() => {
-    if (!business) return;
-    const safeId = business.id ?? business.name ?? "unknown";
-    const key = `reviews_${String(safeId)}`;
-    const stored = localStorage.getItem(key);
-    let parsed = [];
-
-    if (stored) {
-      try {
-        parsed = JSON.parse(stored);
-      } catch {
-        parsed = [];
-      }
-    }
-
-    // MIGRACIÓN: si hay reseñas viejas sin userId pero con el mismo nombre que el usuario actual,
-    // les asignamos currentUserId para que queden bien ligadas.
-    if (currentUserId && currentUserName) {
-      let changed = false;
-      parsed = parsed.map((r) => {
-        if (!r.userId && r.userName === currentUserName) {
-          changed = true;
-          return { ...r, userId: currentUserId };
-        }
-        return r;
-      });
-
-      if (changed) {
-        localStorage.setItem(key, JSON.stringify(parsed));
-      }
-    }
-
-    setReviews(parsed);
-
-    if (storageUserId && isAuthenticated()) {
-      const existing = parsed.find((r) => r.userId === storageUserId);
-      if (existing) {
-        setHasReviewed(true);
-        setUserRating(existing.rating);
-        setUserComment(existing.comment);
-        setIsEditingReview(false);
-      } else {
-        setHasReviewed(false);
-        setUserRating(0);
-        setUserComment("");
-        setIsEditingReview(false);
-      }
-    }
-  }, [business, currentUserId, currentUserName, isAuthenticated]);
-
-  // ========== ENVIAR / ACTUALIZAR RESEÑA ==========
-  const handleSubmitReview = (e) => {
-    e.preventDefault();
-    if (!business) return;
-    if (!userRating || !userComment.trim()) return;
-    if (!isAuthenticated()) return; // solo usuarios autenticados pueden guardar
-
-    const safeId = business.id ?? business.name ?? "unknown";
-    const key = `reviews_${String(safeId)}`;
-
-    // userId fallback para usuarios que no tengan un id claro en el objeto user
-    // Use the same storageUserId as above; if missing, create a temporary anon id
-    const storageUserIdLocal = storageUserId ?? `anon_${Date.now()}`;
-
-    console.log("[Reviews] Guardando reseña -> key:", key, "userId:", storageUserId);
-
-    const newReview = {
-      userId: storageUserIdLocal,
-      userName: currentUserName.trim() || "Usuario",
-      rating: userRating,
-      comment: userComment.trim(),
-      createdAt: new Date().toISOString(),
-    };
-
-    // Reemplazamos la reseña de este usuario (o la creamos si no existía)
-    const filtered = reviews.filter((r) => r.userId !== currentUserId);
-    const updated = [...filtered, newReview];
-
-    setReviews(updated);
-    setHasReviewed(true);
-    setIsEditingReview(false);
-    localStorage.setItem(key, JSON.stringify(updated));
-    console.log("[Reviews] Guardado localStorage:", localStorage.getItem(key));
-  };
-
-  // ========== ELIMINAR RESEÑA ==========
-  const handleDeleteReview = () => {
-    if (!business) return;
-
-    const safeId = business.id ?? business.name ?? "unknown";
-    const key = `reviews_${String(safeId)}`;
-    const storageUserIdLocal = storageUserId ?? (user?.email ? `anon_${user.email}` : null);
-    const updated = storageUserIdLocal
-      ? reviews.filter((r) => r.userId !== storageUserIdLocal)
-      : reviews;
-
-    setReviews(updated);
-    setHasReviewed(false);
-    setIsEditingReview(false);
-    setUserRating(0);
-    setUserComment("");
-    localStorage.setItem(key, JSON.stringify(updated));
-  };
 
   // ========== ESTADOS BÁSICOS ==========
   if (loading)
@@ -235,13 +104,6 @@ export default function BusinessDetail() {
     business.image,
     business.image,
   ];
-
-  const renderStars = (value) =>
-    Array.from({ length: 5 }, (_, i) => (
-      <span key={i}>{i < value ? "★" : "☆"}</span>
-    ));
-
-  const myReview = storageUserId && reviews.find((r) => r.userId === storageUserId);
 
   return (
     <div className="business-detail-container">
@@ -331,123 +193,12 @@ export default function BusinessDetail() {
 
           {/* ----- RESEÑAS ----- */}
           {activeTab === "reviews" && (
-            <div className="tab-content-box">
-              <h2>Reseñas</h2>
-
-              {/* Lista de reseñas */}
-              {reviews.length === 0 && (
-                <p>Aún no hay reseñas para este negocio.</p>
-              )}
-
-              {reviews.length > 0 && (
-                <div className="reviews-list">
-                  {reviews.map((r) => (
-                    <div key={r.userId ?? r.userName} className="review-item">
-                      <div className="review-header">
-                        <strong>{r.userName}</strong>
-                        <span className="review-stars">
-                          {renderStars(r.rating)}
-                        </span>
-                      </div>
-                      <p className="review-comment">{r.comment}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Bloque "tu reseña" con editar / eliminar */}
-              {isPerfilUser && myReview && !isEditingReview && (
-                <div className="my-review-box">
-                  <div className="my-review-header">
-                    <span className="my-review-label">Tu reseña</span>
-                    <span className="review-stars">
-                      {renderStars(myReview.rating)}
-                    </span>
-                  </div>
-                  <p className="review-comment">{myReview.comment}</p>
-                  <div className="review-my-actions">
-                    <button
-                      type="button"
-                      className="review-edit-btn"
-                      onClick={() => {
-                        setIsEditingReview(true);
-                        setUserRating(myReview.rating);
-                        setUserComment(myReview.comment);
-                      }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className="review-delete-btn"
-                      onClick={handleDeleteReview}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Formulario (crear o editar reseña) */}
-              {isPerfilUser ? (
-                (!hasReviewed || isEditingReview) && (
-                  <form
-                    className="review-form"
-                    onSubmit={handleSubmitReview}
-                    style={{ marginTop: "1.5rem" }}
-                  >
-                    <h3>
-                      {isEditingReview
-                        ? "Editar tu reseña"
-                        : "Deja tu reseña"}
-                    </h3>
-
-                    <div className="rating-input">
-                      <span>Tu calificación: </span>
-                      {Array.from({ length: 5 }, (_, i) => {
-                        const value = i + 1;
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            className={
-                              value <= userRating
-                                ? "star-btn active"
-                                : "star-btn"
-                            }
-                            onClick={() => setUserRating(value)}
-                          >
-                            {value <= userRating ? "★" : "☆"}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <textarea
-                      className="review-textarea"
-                      placeholder="Escribe tu comentario..."
-                      value={userComment}
-                      onChange={(e) => setUserComment(e.target.value)}
-                      rows={4}
-                    />
-
-                    <button
-                      className="review-submit-btn"
-                      type="submit"
-                      disabled={!userRating || !userComment.trim()}
-                    >
-                      {isEditingReview
-                        ? "Actualizar reseña"
-                        : "Enviar reseña"}
-                    </button>
-                  </form>
-                )
-              ) : (
-                <p style={{ marginTop: "1rem", color: "#6b7280" }}>
-                  Inicia sesión con un perfil para dejar tu reseña.
-                </p>
-              )}
-            </div>
+            <BusinessReviews
+              business={business}
+              user={user}
+              userType={userType}
+              isAuthenticated={isAuthenticated}
+            />
           )}
 
           {/* ----- CONTÁCTANOS ----- */}
