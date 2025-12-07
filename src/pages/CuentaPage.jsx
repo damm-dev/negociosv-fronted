@@ -132,16 +132,21 @@ function UploadIcon() {
 
 // Componente para logros (persona) - CON DATOS REALES
 function Achievement({ logro, progreso }) {
-  const porcentaje = progreso ? (progreso.progreso_actual / logro.meta) * 100 : 0;
+  // Validar que el logro tenga datos
+  if (!logro) {
+    return null;
+  }
+
+  const porcentaje = progreso && logro.meta ? (progreso.progreso_actual / logro.meta) * 100 : 0;
   const completado = progreso?.completado || false;
 
   return (
     <div className={`profile-achievement ${completado ? 'unlocked' : 'locked'}`}>
       <div className="profile-achievement-icon">{logro.icono || '🏆'}</div>
       <div className="profile-achievement-info">
-        <h4>{logro.nombre}</h4>
-        <p>{logro.descripcion}</p>
-        {!completado && progreso && (
+        <h4>{logro.nombre || 'Logro sin nombre'}</h4>
+        <p>{logro.descripcion || 'Sin descripción'}</p>
+        {!completado && progreso && logro.meta && (
           <div className="profile-achievement-progress">
             <div className="profile-progress-bar">
               <div 
@@ -164,6 +169,11 @@ function Achievement({ logro, progreso }) {
 function FavoriteItem({ favorito, onEliminar, onVer }) {
   const [eliminando, setEliminando] = useState(false);
 
+  // Validar que el favorito tenga datos del negocio
+  if (!favorito || !favorito.negocio) {
+    return null;
+  }
+
   const handleEliminar = async () => {
     if (window.confirm('¿Estás seguro de eliminar este favorito?')) {
       setEliminando(true);
@@ -179,7 +189,7 @@ function FavoriteItem({ favorito, onEliminar, onVer }) {
   return (
     <div className="profile-favorite">
       <div>
-        <h4>{favorito.negocio.nombre}</h4>
+        <h4>{favorito.negocio.nombre || 'Negocio sin nombre'}</h4>
         <p>
           {favorito.negocio.categoria?.nombre || 'Sin categoría'} · {favorito.negocio.municipio?.nombre || 'Sin ubicación'}
         </p>
@@ -843,14 +853,16 @@ export default function CuentaPage() {
                 <p>Cargando favoritos...</p>
               ) : favoritos.length > 0 ? (
                 <div className="profile-favorites-list">
-                  {favoritos.map((favorito) => (
-                    <FavoriteItem
-                      key={favorito.id}
-                      favorito={favorito}
-                      onEliminar={handleEliminarFavorito}
-                      onVer={handleVerNegocio}
-                    />
-                  ))}
+                  {favoritos
+                    .filter(favorito => favorito && favorito.negocio)
+                    .map((favorito) => (
+                      <FavoriteItem
+                        key={favorito.id}
+                        favorito={favorito}
+                        onEliminar={handleEliminarFavorito}
+                        onVer={handleVerNegocio}
+                      />
+                    ))}
                 </div>
               ) : (
                 <p>No tienes favoritos guardados aún.</p>
