@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./SearchResults.css";
 
-const SERVER_URL = "http://127.0.0.1:8000";
+const SERVER_URL = import.meta.env.VITE_API_URL;
 
 export default function SearchResults({ resultados, filtros, loading }) {
   const navigate = useNavigate();
