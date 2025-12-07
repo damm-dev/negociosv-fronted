@@ -12,15 +12,21 @@ export const initDraggableClosing = () => {
 
   // Buscar todos los elementos con data-draggable-closing
   const containers = document.querySelectorAll('[data-draggable-closing="true"]');
-  
+
   containers.forEach(container => {
     // Buscar el handle dentro del contenedor
     const handle = container.querySelector('[data-draggable-handle]');
-    
+
     if (!handle) {
       console.warn('No se encontró data-draggable-handle en:', container);
       return;
     }
+
+    // Limpiar animación CSS para evitar conflictos con GSAP
+    // La propiedad 'animation: forwards' mantiene el transform y bloquea a GSAP
+    container.style.animation = 'none';
+    container.style.transform = 'translateY(0)';
+    container.style.opacity = '1';
 
     // Obtener la función de cierre (navegar hacia atrás)
     const closeAction = () => {
@@ -35,19 +41,19 @@ export const initDraggableClosing = () => {
       inertia: true,
       dragResistance: 0.3,
       edgeResistance: 0.65,
-      
-      onDrag: function() {
+
+      onDrag: function () {
         // Aplicar opacidad basada en la posición
         const threshold = 150;
         const progress = Math.min(this.y / threshold, 1);
-        gsap.set(container, { 
+        gsap.set(container, {
           opacity: 1 - (progress * 0.5)
         });
       },
-      
-      onDragEnd: function() {
+
+      onDragEnd: function () {
         const threshold = 150;
-        
+
         // Si se arrastró más allá del threshold, cerrar
         if (this.y > threshold) {
           gsap.to(container, {

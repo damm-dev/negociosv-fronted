@@ -25,25 +25,25 @@ export default function HeroSection({ onSearch, onLoading }) {
   useEffect(() => {
     const tl = gsap.timeline();
 
-    // Animación título
+    // Animación título (más rápida)
     tl.fromTo(
       ".hero-title",
-      { y: 80, opacity: 0, filter: "blur(4px)" },
-      { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2, ease: "power4.out" }
+      { y: 50, opacity: 0, filter: "blur(4px)" },
+      { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "power4.out" }
     );
 
-    // Animación subtítulo letra a letra
+    // Animación subtítulo letra a letra (mucho más rápida)
     tl.fromTo(
       subtitleRef.current.querySelectorAll(".letter"),
-      { y: 20, opacity: 0 },
+      { y: 15, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        duration: 1,
+        duration: 0.5,
         ease: "power2.out",
-        stagger: 0.05,
+        stagger: 0.015, // Reducido de 0.05 a 0.015 para velocidad
       },
-      "-=0.6"
+      "-=0.5"
     );
 
     // Animación pulsante sutil al subtítulo (loop infinito)
@@ -56,20 +56,20 @@ export default function HeroSection({ onSearch, onLoading }) {
         repeat: -1,
         yoyo: true,
       },
-      "+=0.3"
+      "+=0.1"
     );
 
-    // Animación searchbar
+    // Animación searchbar (aparece antes)
     tl.fromTo(
       ".search-bar",
-      { scale: 0.6, opacity: 0 },
+      { scale: 0.8, opacity: 0 },
       {
         scale: 1,
         opacity: 1,
-        duration: 1,
-        ease: "elastic.out(1, 0.7)",
+        duration: 0.6,
+        ease: "back.out(1.5)",
       },
-      "-=1.8"
+      "-=1.2"
     );
 
     // Animacion Fondo - efecto parallax sutil
