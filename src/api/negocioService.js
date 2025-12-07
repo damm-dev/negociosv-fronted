@@ -143,6 +143,56 @@ const negocioService = {
       return `${Math.round(distancia * 1000)} m`;
     }
     return `${distancia.toFixed(1)} km`;
+  },
+
+  /**
+   * Subir foto adicional del negocio (máximo 4)
+   * @param {number} idNegocio - ID del negocio
+   * @param {File} file - Archivo de imagen
+   * @param {number} orden - Orden de la foto (1-4)
+   * @param {string} descripcion - Descripción opcional
+   * @returns {Promise} Respuesta del servidor con URL de la foto
+   */
+  subirFotoNegocio: async (idNegocio, file, orden = 1, descripcion = '') => {
+    try {
+      const formData = new FormData();
+      formData.append('foto', file);
+      formData.append('orden', orden);
+      if (descripcion) {
+        formData.append('descripcion', descripcion);
+      }
+
+      const response = await axios.post(`${API_URL}/negocio/${idNegocio}/foto`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al subir foto de negocio:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Eliminar foto del negocio
+   * @param {number} idNegocio - ID del negocio
+   * @param {number} idFoto - ID de la foto
+   * @returns {Promise} Respuesta del servidor
+   */
+  eliminarFotoNegocio: async (idNegocio, idFoto) => {
+    try {
+      const response = await axios.delete(`${API_URL}/negocio/${idNegocio}/foto/${idFoto}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al eliminar foto de negocio:', error);
+      throw error;
+    }
   }
 };
 

@@ -2,6 +2,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import profileService from "../api/profileService";
+import favoritosService from "../api/favoritosService";
+import logrosService from "../api/logrosService";
+import seguimientosService from "../api/seguimientosService";
+import negocioService from "../api/negocioService";
 import { useAuth } from "../context/AuthContext";
 import "../styles/profile.css";
 
@@ -112,38 +116,106 @@ function ReviewIcon() {
   );
 }
 
-// Componente para logros (persona)
-function Achievement({ title, description, icon, unlocked }) {
+function UploadIcon() {
   return (
-    <div className={`profile-achievement ${unlocked ? 'unlocked' : 'locked'}`}>
-      <div className="profile-achievement-icon">{icon}</div>
+    <svg viewBox="0 0 24 24" fill="none" className="profile-upload-icon">
+      <path
+        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// Componente para logros (persona) - CON DATOS REALES
+function Achievement({ logro, progreso }) {
+  // Validar que el logro tenga datos
+  if (!logro) {
+    return null;
+  }
+
+  const porcentaje = progreso && logro.meta ? (progreso.progreso_actual / logro.meta) * 100 : 0;
+  const completado = progreso?.completado || false;
+
+  return (
+    <div className={`profile-achievement ${completado ? 'unlocked' : 'locked'}`}>
+      <div className="profile-achievement-icon">{logro.icono || '🏆'}</div>
       <div className="profile-achievement-info">
-        <h4>{title}</h4>
-        <p>{description}</p>
+        <h4>{logro.nombre || 'Logro sin nombre'}</h4>
+        <p>{logro.descripcion || 'Sin descripción'}</p>
+        {!completado && progreso && logro.meta && (
+          <div className="profile-achievement-progress">
+            <div className="profile-progress-bar">
+              <div 
+                className="profile-progress-fill" 
+                style={{ width: `${Math.min(porcentaje, 100)}%` }}
+              ></div>
+            </div>
+            <span className="profile-progress-text">
+              {progreso.progreso_actual} / {logro.meta}
+            </span>
+          </div>
+        )}
       </div>
-      {unlocked && <span className="profile-achievement-badge">✓</span>}
+      {completado && <span className="profile-achievement-badge">✓</span>}
     </div>
   );
 }
 
-// Componente para favoritos (persona)
-function FavoriteItem({ name, category, location }) {
+// Componente para favoritos (persona) - CON DATOS REALES
+function FavoriteItem({ favorito, onEliminar, onVer }) {
+  const [eliminando, setEliminando] = useState(false);
+
+  // Validar que el favorito tenga datos del negocio
+  if (!favorito || !favorito.negocio) {
+    return null;
+  }
+
+  const handleEliminar = async () => {
+    if (window.confirm('¿Estás seguro de eliminar este favorito?')) {
+      setEliminando(true);
+      try {
+        await onEliminar(favorito.negocio.id);
+      } catch (error) {
+        console.error('Error al eliminar favorito:', error);
+        setEliminando(false);
+      }
+    }
+  };
+
   return (
     <div className="profile-favorite">
       <div>
-        <h4>{name}</h4>
+        <h4>{favorito.negocio.nombre || 'Negocio sin nombre'}</h4>
         <p>
-          {category} · {location}
+          {favorito.negocio.categoria?.nombre || 'Sin categoría'} · {favorito.negocio.municipio?.nombre || 'Sin ubicación'}
         </p>
       </div>
-      <button type="button" className="profile-favorite-btn">
-        Ver
-      </button>
+      <div className="profile-favorite-actions">
+        <button 
+          type="button" 
+          className="profile-favorite-btn profile-btn-view"
+          onClick={() => onVer(favorito.negocio.id)}
+        >
+          Ver
+        </button>
+        <button 
+          type="button" 
+          className="profile-favorite-btn profile-btn-delete"
+          onClick={handleEliminar}
+          disabled={eliminando}
+        >
+          {eliminando ? 'Eliminando...' : 'Eliminar'}
+        </button>
+      </div>
     </div>
   );
 }
 
-// Componente para estadísticas (negocio)
+// Componente para estadísticas (negocio) - CON DATOS REALES
 function StatCard({ label, value, icon }) {
   return (
     <div className="profile-stat-card">
@@ -189,10 +261,52 @@ export default function CuentaPage() {
   });
   const [updateMessage, setUpdateMessage] = useState('');
 
+  // Estados para funcionalidades nuevas
+  const [logros, setLogros] = useState([]);
+  const [favoritos, setFavoritos] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    visualizaciones: 0,
+    favoritos: 0,
+    resenas: 0,
+    seguidores: 0
+  });
+  const [loadingLogros, setLoadingLogros] = useState(false);
+  const [loadingFavoritos, setLoadingFavoritos] = useState(false);
+  const [loadingEstadisticas, setLoadingEstadisticas] = useState(false);
+
+  // Estados para upload de fotos
+  const [uploadingFoto, setUploadingFoto] = useState(false);
+  const [previewFoto, setPreviewFoto] = useState(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [previewLogo, setPreviewLogo] = useState(null);
+  const [fotosNegocio, setFotosNegocio] = useState([]);
+  const [uploadingFotoNegocio, setUploadingFotoNegocio] = useState(false);
+
   // Cargar datos del perfil al montar el componente
   useEffect(() => {
     loadProfile();
   }, [userType]);
+
+  // Cargar logros cuando se selecciona la sección (solo persona)
+  useEffect(() => {
+    if (userType === 'persona' && activeSection === 'logros') {
+      loadLogros();
+    }
+  }, [activeSection, userType]);
+
+  // Cargar favoritos cuando se selecciona la sección (solo persona)
+  useEffect(() => {
+    if (userType === 'persona' && activeSection === 'favoritos') {
+      loadFavoritos();
+    }
+  }, [activeSection, userType]);
+
+  // Cargar estadísticas cuando se selecciona la sección (solo negocio)
+  useEffect(() => {
+    if (userType === 'negocio' && activeSection === 'estadisticas' && profileData?.negocio?.id) {
+      loadEstadisticas();
+    }
+  }, [activeSection, userType, profileData]);
 
   const loadProfile = async () => {
     try {
@@ -213,6 +327,10 @@ export default function CuentaPage() {
             email_contacto: data.negocio.email_contacto || '',
             id_municipio: data.negocio.id_municipio || null
           });
+          // Cargar fotos del negocio si existen
+          if (data.negocio.fotos) {
+            setFotosNegocio(data.negocio.fotos);
+          }
         }
       } else {
         data = await profileService.getProfile();
@@ -234,6 +352,55 @@ export default function CuentaPage() {
       console.error('Error cargando perfil:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadLogros = async () => {
+    try {
+      setLoadingLogros(true);
+      const data = await logrosService.obtenerLogros();
+      setLogros(data.logros || []);
+    } catch (err) {
+      console.error('Error cargando logros:', err);
+    } finally {
+      setLoadingLogros(false);
+    }
+  };
+
+  const loadFavoritos = async () => {
+    try {
+      setLoadingFavoritos(true);
+      const data = await favoritosService.obtenerFavoritos();
+      setFavoritos(data.favoritos || []);
+    } catch (err) {
+      console.error('Error cargando favoritos:', err);
+    } finally {
+      setLoadingFavoritos(false);
+    }
+  };
+
+  const loadEstadisticas = async () => {
+    try {
+      setLoadingEstadisticas(true);
+      
+      if (profileData?.negocio?.id) {
+        // Obtener seguidores
+        const seguidoresData = await seguimientosService.obtenerSeguidores(profileData.negocio.id);
+        
+        // Obtener datos del negocio para otras estadísticas
+        const negocioData = await negocioService.obtenerNegocio(profileData.negocio.id);
+        
+        setEstadisticas({
+          visualizaciones: negocioData.negocio?.visualizaciones || 0,
+          favoritos: negocioData.negocio?.total_favoritos || 0,
+          resenas: negocioData.negocio?.total_resenas || 0,
+          seguidores: seguidoresData.total || 0
+        });
+      }
+    } catch (err) {
+      console.error('Error cargando estadísticas:', err);
+    } finally {
+      setLoadingEstadisticas(false);
     }
   };
 
@@ -298,6 +465,166 @@ export default function CuentaPage() {
       setUpdateMessage('Error al cambiar la contraseña');
       console.error('Error cambiando contraseña:', err);
     }
+  };
+
+  // Manejar upload de foto de perfil (persona)
+  const handleFotoPerfilChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUpdateMessage('La imagen es muy grande. Máximo 5MB.');
+      return;
+    }
+
+    // Validar formato
+    if (!file.type.startsWith('image/')) {
+      setUpdateMessage('Solo se permiten archivos de imagen.');
+      return;
+    }
+
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewFoto(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Subir foto
+    try {
+      setUploadingFoto(true);
+      setUpdateMessage('');
+      await profileService.subirFotoPerfil(file);
+      setUpdateMessage('Foto de perfil actualizada correctamente');
+      await loadProfile();
+      setTimeout(() => {
+        setUpdateMessage('');
+        setPreviewFoto(null);
+      }, 2000);
+    } catch (err) {
+      setUpdateMessage('Error al subir la foto de perfil');
+      console.error('Error subiendo foto:', err);
+    } finally {
+      setUploadingFoto(false);
+    }
+  };
+
+  // Manejar upload de logo (negocio)
+  const handleLogoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUpdateMessage('La imagen es muy grande. Máximo 5MB.');
+      return;
+    }
+
+    // Validar formato
+    if (!file.type.startsWith('image/')) {
+      setUpdateMessage('Solo se permiten archivos de imagen.');
+      return;
+    }
+
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewLogo(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Subir logo
+    try {
+      setUploadingLogo(true);
+      setUpdateMessage('');
+      await profileService.subirLogo(file);
+      setUpdateMessage('Logo actualizado correctamente');
+      await loadProfile();
+      setTimeout(() => {
+        setUpdateMessage('');
+        setPreviewLogo(null);
+      }, 2000);
+    } catch (err) {
+      setUpdateMessage('Error al subir el logo');
+      console.error('Error subiendo logo:', err);
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  // Manejar upload de fotos adicionales (negocio)
+  const handleFotoNegocioChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar que no exceda el límite de 4 fotos
+    if (fotosNegocio.length >= 4) {
+      setUpdateMessage('Máximo 4 fotos adicionales permitidas.');
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUpdateMessage('La imagen es muy grande. Máximo 5MB.');
+      return;
+    }
+
+    // Validar formato
+    if (!file.type.startsWith('image/')) {
+      setUpdateMessage('Solo se permiten archivos de imagen.');
+      return;
+    }
+
+    // Subir foto
+    try {
+      setUploadingFotoNegocio(true);
+      setUpdateMessage('');
+      const orden = fotosNegocio.length + 1;
+      await negocioService.subirFotoNegocio(formData.id, file, orden);
+      setUpdateMessage('Foto agregada correctamente');
+      await loadProfile();
+      setTimeout(() => setUpdateMessage(''), 2000);
+    } catch (err) {
+      setUpdateMessage('Error al subir la foto');
+      console.error('Error subiendo foto de negocio:', err);
+    } finally {
+      setUploadingFotoNegocio(false);
+    }
+  };
+
+  // Eliminar foto del negocio
+  const handleEliminarFotoNegocio = async (idFoto) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta foto?')) return;
+
+    try {
+      setUpdateMessage('');
+      await negocioService.eliminarFotoNegocio(formData.id, idFoto);
+      setUpdateMessage('Foto eliminada correctamente');
+      await loadProfile();
+      setTimeout(() => setUpdateMessage(''), 2000);
+    } catch (err) {
+      setUpdateMessage('Error al eliminar la foto');
+      console.error('Error eliminando foto:', err);
+    }
+  };
+
+  // Eliminar favorito
+  const handleEliminarFavorito = async (idNegocio) => {
+    try {
+      await favoritosService.eliminarFavorito(idNegocio);
+      setUpdateMessage('Favorito eliminado correctamente');
+      await loadFavoritos();
+      setTimeout(() => setUpdateMessage(''), 2000);
+    } catch (err) {
+      setUpdateMessage('Error al eliminar favorito');
+      console.error('Error eliminando favorito:', err);
+    }
+  };
+
+  // Ver detalle de negocio
+  const handleVerNegocio = (idNegocio) => {
+    navigate(`/negocio/${idNegocio}`);
   };
 
   const handleLogout = () => {
@@ -486,7 +813,7 @@ export default function CuentaPage() {
 
         {/* CONTENIDO PRINCIPAL */}
         <section className="profile-content">
-          {/* LOGROS (solo para persona) */}
+          {/* LOGROS (solo para persona) - CON DATOS REALES */}
           {userType === 'persona' && activeSection === "logros" && (
             <div className="profile-card">
               <h2>Tus Logros</h2>
@@ -494,76 +821,56 @@ export default function CuentaPage() {
                 Completa desafíos y gana logros mientras apoyas negocios locales.
               </p>
 
-              <div className="profile-achievements-grid">
-                <Achievement
-                  title="Explorador"
-                  description="Visita 10 negocios distintos"
-                  icon="🗺️"
-                  unlocked={false}
-                />
-                <Achievement
-                  title="Cliente Fiel"
-                  description="Guarda 5 negocios como favoritos"
-                  icon="❤️"
-                  unlocked={false}
-                />
-                <Achievement
-                  title="Apoyo Local"
-                  description="Recomienda 3 negocios"
-                  icon="🤝"
-                  unlocked={false}
-                />
-                <Achievement
-                  title="Social"
-                  description="Sigue a 10 negocios"
-                  icon="👥"
-                  unlocked={false}
-                />
-                <Achievement
-                  title="Crítico"
-                  description="Deja 5 reseñas"
-                  icon="⭐"
-                  unlocked={false}
-                />
-                <Achievement
-                  title="Influencer"
-                  description="20 personas visitaron negocios por tu recomendación"
-                  icon="📢"
-                  unlocked={false}
-                />
-              </div>
+              {loadingLogros ? (
+                <p>Cargando logros...</p>
+              ) : logros.length > 0 ? (
+                <div className="profile-achievements-grid">
+                  {logros.map((item, index) => (
+                    item?.logro ? (
+                      <Achievement 
+                        key={item.logro.id || index} 
+                        logro={item.logro} 
+                        progreso={item.progreso}
+                      />
+                    ) : null
+                  ))}
+                </div>
+              ) : (
+                <p>No hay logros disponibles.</p>
+              )}
             </div>
           )}
 
-          {/* FAVORITOS (solo para persona) */}
+          {/* FAVORITOS (solo para persona) - CON DATOS REALES */}
           {userType === 'persona' && activeSection === "favoritos" && (
             <div className="profile-card">
               <h2>Favoritos</h2>
               <p className="profile-card-sub">
-                Estos son algunos de los negocios que te gustan.
+                Estos son los negocios que has guardado como favoritos.
               </p>
 
-              <div className="profile-favorites-list">
-                <FavoriteItem
-                  name="Pupusería Doña Ana"
-                  category="Comida típica"
-                  location="San Salvador"
-                />
-                <FavoriteItem
-                  name="Café El Mirador"
-                  category="Cafetería"
-                  location="Santa Tecla"
-                />
-                <FavoriteItem
-                  name="Tienda TechSV"
-                  category="Tecnología"
-                  location="San Miguel"
-                />
-              </div>
+              {loadingFavoritos ? (
+                <p>Cargando favoritos...</p>
+              ) : favoritos.length > 0 ? (
+                <div className="profile-favorites-list">
+                  {favoritos
+                    .filter(favorito => favorito && favorito.negocio)
+                    .map((favorito) => (
+                      <FavoriteItem
+                        key={favorito.id}
+                        favorito={favorito}
+                        onEliminar={handleEliminarFavorito}
+                        onVer={handleVerNegocio}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <p>No tienes favoritos guardados aún.</p>
+              )}
             </div>
           )}
 
-          {/* ESTADÍSTICAS (solo para negocio) */}
+          {/* ESTADÍSTICAS (solo para negocio) - CON DATOS REALES */}
           {userType === 'negocio' && activeSection === "estadisticas" && (
             <div className="profile-card">
               <h2>Estadísticas</h2>
@@ -571,33 +878,39 @@ export default function CuentaPage() {
                 Resumen del rendimiento de tu negocio en la plataforma.
               </p>
 
-              <div className="profile-stats-grid">
-                <StatCard
-                  label="Visualizaciones"
-                  value="1,234"
-                  icon="👁️"
-                />
-                <StatCard
-                  label="Guardados"
-                  value="89"
-                  icon="❤️"
-                />
-                <StatCard
-                  label="Reseñas"
-                  value="45"
-                  icon="⭐"
-                />
-                <StatCard
-                  label="Seguidores"
-                  value="156"
-                  icon="👥"
-                />
-              </div>
+              {loadingEstadisticas ? (
+                <p>Cargando estadísticas...</p>
+              ) : (
+                <>
+                  <div className="profile-stats-grid">
+                    <StatCard
+                      label="Visualizaciones"
+                      value={estadisticas.visualizaciones}
+                      icon="👁️"
+                    />
+                    <StatCard
+                      label="Guardados"
+                      value={estadisticas.favoritos}
+                      icon="❤️"
+                    />
+                    <StatCard
+                      label="Reseñas"
+                      value={estadisticas.resenas}
+                      icon="⭐"
+                    />
+                    <StatCard
+                      label="Seguidores"
+                      value={estadisticas.seguidores}
+                      icon="👥"
+                    />
+                  </div>
 
-              <div className="profile-stats-chart">
-                <h3>Actividad reciente</h3>
-                <p>Próximamente: Gráfico de visualizaciones y engagement</p>
-              </div>
+                  <div className="profile-stats-chart">
+                    <h3>Actividad reciente</h3>
+                    <p>Próximamente: Gráfico de visualizaciones y engagement</p>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -613,7 +926,7 @@ export default function CuentaPage() {
                 <div className="profile-reviews-rating">
                   <h3>4.5</h3>
                   <div className="profile-reviews-stars">★★★★☆</div>
-                  <p>Basado en 45 reseñas</p>
+                  <p>Basado en {estadisticas.resenas} reseñas</p>
                 </div>
               </div>
 
@@ -654,6 +967,115 @@ export default function CuentaPage() {
                 </div>
               )}
 
+              {/* UPLOAD DE FOTO/LOGO */}
+              <div className="profile-upload-section">
+                {userType === 'persona' ? (
+                  <>
+                    <h3 className="profile-section-title">Foto de perfil</h3>
+                    <div className="profile-upload-container">
+                      <div className="profile-upload-preview">
+                        {previewFoto || profileData?.foto_url ? (
+                          <img 
+                            src={previewFoto || profileData.foto_url} 
+                            alt="Preview" 
+                            className="profile-upload-img"
+                          />
+                        ) : (
+                          <div className="profile-upload-placeholder">
+                            <UploadIcon />
+                            <p>Sin foto</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="profile-upload-actions">
+                        <label htmlFor="foto-perfil" className="profile-btn-upload">
+                          {uploadingFoto ? 'Subiendo...' : 'Cambiar foto'}
+                          <input
+                            id="foto-perfil"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFotoPerfilChange}
+                            disabled={uploadingFoto}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        <p className="profile-upload-hint">
+                          JPG, PNG o GIF. Máximo 5MB.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="profile-section-title">Logo del negocio</h3>
+                    <div className="profile-upload-container">
+                      <div className="profile-upload-preview">
+                        {previewLogo || profileData?.logo_url ? (
+                          <img 
+                            src={previewLogo || profileData.logo_url} 
+                            alt="Logo" 
+                            className="profile-upload-img"
+                          />
+                        ) : (
+                          <div className="profile-upload-placeholder">
+                            <UploadIcon />
+                            <p>Sin logo</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="profile-upload-actions">
+                        <label htmlFor="logo-negocio" className="profile-btn-upload">
+                          {uploadingLogo ? 'Subiendo...' : 'Cambiar logo'}
+                          <input
+                            id="logo-negocio"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoChange}
+                            disabled={uploadingLogo}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        <p className="profile-upload-hint">
+                          JPG, PNG o GIF. Máximo 5MB.
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3 className="profile-section-title">Fotos adicionales (máximo 4)</h3>
+                    <div className="profile-photos-grid">
+                      {fotosNegocio.map((foto) => (
+                        <div key={foto.id} className="profile-photo-item">
+                          <img src={foto.url} alt={`Foto ${foto.orden}`} />
+                          <button
+                            type="button"
+                            className="profile-photo-delete"
+                            onClick={() => handleEliminarFotoNegocio(foto.id)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      {fotosNegocio.length < 4 && (
+                        <label className="profile-photo-add">
+                          <UploadIcon />
+                          <span>{uploadingFotoNegocio ? 'Subiendo...' : 'Agregar foto'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFotoNegocioChange}
+                            disabled={uploadingFotoNegocio}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <hr className="profile-divider" />
+
+              <h3 className="profile-section-title">Información {userType === 'negocio' ? 'del negocio' : 'personal'}</h3>
               <form className="profile-form" onSubmit={handleSubmit}>
                 {userType === 'persona' ? (
                   <>

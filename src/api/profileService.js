@@ -113,6 +113,50 @@ const profileService = {
       console.error('Error al cambiar contraseña:', error);
       throw error;
     }
+  },
+
+  /**
+   * Subir foto de perfil (persona)
+   * @param {File} file - Archivo de imagen
+   * @returns {Promise} Respuesta del servidor con URL de la foto
+   */
+  async subirFotoPerfil(file) {
+    try {
+      const formData = new FormData();
+      formData.append('foto', file);
+
+      const response = await axiosInstance.post('/perfil/foto', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al subir foto de perfil:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Subir logo del negocio
+   * @param {File} file - Archivo de imagen
+   * @returns {Promise} Respuesta del servidor con URL del logo
+   */
+  async subirLogo(file) {
+    try {
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const response = await axiosInstance.post('/perfil/logo', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al subir logo:', error);
+      throw error;
+    }
   }
 };
 

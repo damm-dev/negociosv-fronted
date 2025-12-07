@@ -80,8 +80,8 @@ export default function SearchResults({ resultados, filtros, loading }) {
         {/* Grid de resultados */}
         <div className="search-results-grid">
           {negocios.map((negocio) => {
-            // Preparar imagen
-            let imagen = "https://via.placeholder.com/600x400?text=Sin+Imagen";
+            // Preparar imagen - usar SVG como fallback
+            let imagen = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='%23999'%3ESin Imagen%3C/text%3E%3C/svg%3E";
             if (negocio.logo) {
               imagen = `${SERVER_URL}/storage/${negocio.logo}`;
             }
