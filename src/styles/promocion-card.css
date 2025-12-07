@@ -1,0 +1,166 @@
+/* src/styles/promocion-card.css */
+
+.promocion-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.promocion-card.vigente {
+  border-color: #28a745;
+}
+
+.promocion-card.expirada {
+  opacity: 0.6;
+  border-color: #dc3545;
+}
+
+.promocion-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.promocion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.promocion-discount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  min-width: 80px;
+}
+
+.discount-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.discount-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.promocion-status {
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.badge-active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-expired {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.promocion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.promocion-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.promocion-description {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.promocion-code {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.promocion-code svg {
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+}
+
+.promocion-code span {
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.promocion-code strong {
+  color: #667eea;
+  font-weight: 700;
+}
+
+.promocion-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.promocion-dates svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .promocion-card {
+    padding: 1rem;
+  }
+
+  .promocion-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .promocion-discount {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .discount-number {
+    font-size: 1.75rem;
+  }
+}

@@ -271,17 +271,52 @@ export default function Navbar() {
 
   // Obtener iniciales del usuario
   const getInitials = () => {
-    if (!user?.perfil) return "U";
-    const nombres = user.perfil.nombres || "";
-    const apellidos = user.perfil.apellidos || "";
-    return `${nombres.charAt(0)}${apellidos.charAt(0)}`.toUpperCase();
+    if (!user) return "U";
+    
+    if (userType === 'negocio') {
+      const nombre = user.nombre || user.negocio?.nombre || "";
+      return nombre.charAt(0).toUpperCase() || "N";
+    } else {
+      const nombres = user.perfil?.nombres || "";
+      const apellidos = user.perfil?.apellidos || "";
+      const inicialNombre = nombres.charAt(0).toUpperCase();
+      const inicialApellido = apellidos.charAt(0).toUpperCase();
+      
+      if (inicialNombre && inicialApellido) {
+        return inicialNombre + inicialApellido;
+      } else if (inicialNombre) {
+        return inicialNombre;
+      }
+      return "U";
+    }
   };
 
   // Obtener nombre completo
   const getFullName = () => {
-    if (!user?.perfil) return "Usuario";
-    return `${user.perfil.nombres || ""} ${user.perfil.apellidos || ""}`.trim();
+    if (!user) return "Usuario";
+    
+    if (userType === 'negocio') {
+      return user.nombre || user.negocio?.nombre || "Negocio";
+    } else {
+      const nombres = user.perfil?.nombres || "";
+      const apellidos = user.perfil?.apellidos || "";
+      const nombreCompleto = `${nombres} ${apellidos}`.trim();
+      return nombreCompleto || user.email || "Usuario";
+    }
   };
+
+  // Obtener foto de perfil
+  const getProfilePhoto = () => {
+    if (!user) return null;
+    
+    if (userType === 'negocio') {
+      return user.logo_url || user.logo || null;
+    } else {
+      return user.perfil?.foto_url || user.perfil?.foto || null;
+    }
+  };
+
+  const profilePhoto = getProfilePhoto();
 
   return (
     <header className="layout-header">
@@ -313,9 +348,13 @@ export default function Navbar() {
                 data-tooltip={label}
               >
                 <span className="nav-icon">
-                  {id === "cuenta" && isAuthenticated() ? (
+                {id === "cuenta" && isAuthenticated() ? (
                     <div className="nav-mobile-avatar">
-                      <span>{getInitials()}</span>
+                      {profilePhoto ? (
+                        <img src={profilePhoto} alt={getFullName()} />
+                      ) : (
+                        <span>{getInitials()}</span>
+                      )}
                     </div>
                   ) : (
                     <Icon active={activeTab === id} />
@@ -337,7 +376,11 @@ export default function Navbar() {
               title="Ver mi cuenta"
             >
               <div className="nav-user-avatar">
-                <span>{getInitials()}</span>
+                {profilePhoto ? (
+                  <img src={profilePhoto} alt={getFullName()} />
+                ) : (
+                  <span>{getInitials()}</span>
+                )}
               </div>
               <span className="nav-user-name">{getFullName()}</span>
             </button>

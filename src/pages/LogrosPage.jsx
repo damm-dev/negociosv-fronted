@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import logrosService from "../api/logrosService";
 import "../styles/logros.css";
 
 /* ==== COMPONENTE DE INSIGNIA CON SVG ==== */
@@ -157,8 +158,64 @@ export default function LogrosPage() {
   });
 
   useEffect(() => {
-    // Simular datos de logros (en producción vendrían del backend)
-    const mockAchievements = [
+    cargarLogros();
+  }, []);
+
+  const cargarLogros = async () => {
+    try {
+      const data = await logrosService.obtenerLogros();
+      
+      // Mapear los logros del backend al formato del componente
+      const logrosFormateados = data.logros.map(logro => {
+        // Determinar el icono según el tipo
+        let IconComponent;
+        switch(logro.tipo) {
+          case 'explorador':
+            IconComponent = ExplorerIcon;
+            break;
+          case 'cliente_fiel':
+            IconComponent = LoyalCustomerIcon;
+            break;
+          case 'apoyo_local':
+            IconComponent = LocalSupportIcon;
+            break;
+          case 'social':
+            IconComponent = SocialIcon;
+            break;
+          case 'critico':
+            IconComponent = ReviewerIcon;
+            break;
+          case 'influencer':
+            IconComponent = InfluencerIcon;
+            break;
+          default:
+            IconComponent = ExplorerIcon;
+        }
+
+        return {
+          id: logro.id,
+          title: logro.nombre,
+          description: logro.descripcion,
+          icon: <IconComponent />,
+          progress: logro.progreso || 0,
+          total: logro.meta,
+          completed: logro.completado || false
+        };
+      });
+
+      setAchievements(logrosFormateados);
+
+      // Usar las estadísticas del backend
+      setStats({
+        completed: data.completados,
+        total: data.total,
+        percentage: data.porcentaje_completado
+      });
+    } catch (error) {
+      console.error('Error al cargar logros:', error);
+      
+      // Fallback a datos mock si falla la carga
+      const mockAchievements = [
       {
         id: 1,
         title: "Explorador",
@@ -213,17 +270,18 @@ export default function LogrosPage() {
         total: 20,
         completed: false
       }
-    ];
+      ];
 
-    setAchievements(mockAchievements);
+      setAchievements(mockAchievements);
 
-    // Calcular estadísticas
-    const completed = mockAchievements.filter(a => a.completed).length;
-    const total = mockAchievements.length;
-    const percentage = Math.round((completed / total) * 100);
+      // Calcular estadísticas
+      const completed = mockAchievements.filter(a => a.completed).length;
+      const total = mockAchievements.length;
+      const percentage = Math.round((completed / total) * 100);
 
-    setStats({ completed, total, percentage });
-  }, []);
+      setStats({ completed, total, percentage });
+    }
+  };
 
   return (
     <div className="logros-page">
