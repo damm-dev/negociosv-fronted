@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./business-reviews.css";
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://negociosv.com/api";
 
 export default function BusinessReviews({
   business,
@@ -38,9 +38,9 @@ export default function BusinessReviews({
     "Usuario";
 
   // Solo usuarios con perfil "persona" pueden dejar reseñas (no negocios)
-  const isAuth = 
-    typeof isAuthenticated === "function" && 
-    isAuthenticated() && 
+  const isAuth =
+    typeof isAuthenticated === "function" &&
+    isAuthenticated() &&
     userType === "persona";
 
   // ID del negocio (soporta varias formas)
@@ -95,9 +95,8 @@ export default function BusinessReviews({
           const usuario = r.usuario ?? {};
           const perfil = usuario.perfil ?? {};
 
-          const nameFromPerfil = `${perfil.nombres ?? ""} ${
-            perfil.apellidos ?? ""
-          }`.trim();
+          const nameFromPerfil = `${perfil.nombres ?? ""} ${perfil.apellidos ?? ""
+            }`.trim();
 
           return {
             id: r.id_resena,
@@ -202,10 +201,10 @@ export default function BusinessReviews({
         const updatedReviews = reviews.map((r) =>
           r.id === myReview.id
             ? {
-                ...r,
-                rating: resenaActualizada.calificacion,
-                comment: resenaActualizada.comentario,
-              }
+              ...r,
+              rating: resenaActualizada.calificacion,
+              comment: resenaActualizada.comentario,
+            }
             : r
         );
 
@@ -252,7 +251,7 @@ export default function BusinessReviews({
       if (error.response?.status === 422) {
         setReviewError(
           error.response.data?.message ||
-            "Revisa los datos de la reseña e inténtalo de nuevo."
+          "Revisa los datos de la reseña e inténtalo de nuevo."
         );
       } else if (error.response?.status === 403) {
         setReviewError("No tienes permiso para realizar esta acción.");
@@ -418,18 +417,18 @@ export default function BusinessReviews({
                   ? "Actualizando..."
                   : "Actualizar reseña"
                 : isSubmitting
-                ? "Enviando..."
-                : "Enviar reseña"}
+                  ? "Enviando..."
+                  : "Enviar reseña"}
             </button>
           </form>
         )
       ) : (
         <p className="review-login-message">
-          {!isAuthenticated || !(typeof isAuthenticated === "function" && isAuthenticated()) 
+          {!isAuthenticated || !(typeof isAuthenticated === "function" && isAuthenticated())
             ? "Inicia sesión para dejar tu reseña."
             : userType === "negocio"
-            ? "Los negocios no pueden dejar reseñas."
-            : "Inicia sesión con un perfil de persona para dejar tu reseña."}
+              ? "Los negocios no pueden dejar reseñas."
+              : "Inicia sesión con un perfil de persona para dejar tu reseña."}
         </p>
       )}
     </div>

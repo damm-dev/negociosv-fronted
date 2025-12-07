@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./SearchResults.css";
 
-const SERVER_URL = "http://127.0.0.1:8000";
+const SERVER_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || "https://negociosv.com";
 
 export default function SearchResults({ resultados, filtros, loading }) {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function SearchResults({ resultados, filtros, loading }) {
           {!filtros.query && filtros.municipio && "No hay negocios en el municipio seleccionado"}
           {!filtros.query && !filtros.municipio && "Intenta con otros términos de búsqueda"}
         </p>
-        <button 
+        <button
           className="empty-btn"
           onClick={() => window.location.reload()}
         >
@@ -94,27 +94,27 @@ export default function SearchResults({ resultados, filtros, loading }) {
             const ubicacion = negocio.municipio?.nombre || negocio.direccion || "El Salvador";
 
             // Preparar calificación
-            const calificacion = negocio.resenas_avg_calificacion 
+            const calificacion = negocio.resenas_avg_calificacion
               ? parseFloat(negocio.resenas_avg_calificacion).toFixed(1)
               : null;
             const totalResenas = negocio.resenas_count || 0;
 
             // Preparar distancia (si existe)
-            const distancia = negocio.distancia 
-              ? negocio.distancia < 1 
+            const distancia = negocio.distancia
+              ? negocio.distancia < 1
                 ? `${Math.round(negocio.distancia * 1000)} m`
                 : `${negocio.distancia.toFixed(1)} km`
               : null;
 
             return (
-              <article 
-                key={negocio.id_negocio} 
+              <article
+                key={negocio.id_negocio}
                 className="result-card"
-                itemScope 
+                itemScope
                 itemType="https://schema.org/LocalBusiness"
               >
                 {/* Imagen */}
-                <div 
+                <div
                   className="result-card-image"
                   style={{ backgroundImage: `url(${imagen})` }}
                   onClick={() => navigate(`/negocios/${negocio.id_negocio}`)}
@@ -136,14 +136,14 @@ export default function SearchResults({ resultados, filtros, loading }) {
                 {/* Contenido */}
                 <div className="result-card-content">
                   <div className="result-card-header">
-                    <h3 
+                    <h3
                       className="result-card-title"
                       itemProp="name"
                       onClick={() => navigate(`/negocios/${negocio.id_negocio}`)}
                     >
                       {negocio.nombre}
                     </h3>
-                    
+
                     {calificacion && (
                       <div className="result-card-rating" itemProp="aggregateRating" itemScope itemType="https://schema.org/AggregateRating">
                         <span className="rating-stars">⭐</span>

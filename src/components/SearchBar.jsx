@@ -16,7 +16,7 @@ export default function SearchBar({ onSearch, onLoading, className = "" }) {
   useEffect(() => {
     const cargarMunicipios = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/municipios");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || "https://negociosv.com/api"}/municipios`);
 
         if (response.data.success && response.data.data) {
           setMunicipios(response.data.data);

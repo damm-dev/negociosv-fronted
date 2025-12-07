@@ -1,6 +1,6 @@
 import axios from './axiosConfig';
 
-const API_URL = 'http://localhost:8000/api/admin';
+const API_URL = `${import.meta.env.VITE_API_URL || 'https://negociosv.com/api'}/admin`;
 
 // ==================== AUTENTICACIÓN ====================
 

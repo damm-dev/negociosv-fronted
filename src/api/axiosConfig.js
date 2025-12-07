@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuración base de Axios
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://negociosv.com/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       // El servidor respondió con un código de estado fuera del rango 2xx
       console.error('Error de respuesta:', error.response.data);
-      
+
       // Si es 401, limpiar autenticación
       if (error.response.status === 401) {
         localStorage.removeItem('auth_token');
