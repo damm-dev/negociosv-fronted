@@ -22,7 +22,6 @@ export default function SearchBar() {
 
      <button type="submit" className="searchbar-button">
          <span className="btn-text">Buscar</span>
-         <span className="btn-icon">🔍</span>
       </button>
 
     </form>
