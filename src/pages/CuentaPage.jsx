@@ -195,15 +195,15 @@ function FavoriteItem({ favorito, onEliminar, onVer }) {
         </p>
       </div>
       <div className="profile-favorite-actions">
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="profile-favorite-btn profile-btn-view"
           onClick={() => onVer(favorito.negocio.id)}
         >
           Ver
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="profile-favorite-btn profile-btn-delete"
           onClick={handleEliminar}
           disabled={eliminando}
