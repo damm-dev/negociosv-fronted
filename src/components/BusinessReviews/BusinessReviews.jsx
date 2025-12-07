@@ -37,9 +37,11 @@ export default function BusinessReviews({
     user?.email ||
     "Usuario";
 
-  // Solo usuarios "persona" pueden dejar reseñas
-  // Si el usuario está autenticado (función), lo consideramos autorizado para reseñar
-  const isAuth = typeof isAuthenticated === "function" ? isAuthenticated() : false;
+  // Solo usuarios con perfil "persona" pueden dejar reseñas (no negocios)
+  const isAuth = 
+    typeof isAuthenticated === "function" && 
+    isAuthenticated() && 
+    userType === "persona";
 
   // ID del negocio (soporta varias formas)
   const negocioId =
@@ -423,7 +425,11 @@ export default function BusinessReviews({
         )
       ) : (
         <p className="review-login-message">
-          Inicia sesión con un perfil para dejar tu reseña.
+          {!isAuthenticated || !(typeof isAuthenticated === "function" && isAuthenticated()) 
+            ? "Inicia sesión para dejar tu reseña."
+            : userType === "negocio"
+            ? "Los negocios no pueden dejar reseñas."
+            : "Inicia sesión con un perfil de persona para dejar tu reseña."}
         </p>
       )}
     </div>

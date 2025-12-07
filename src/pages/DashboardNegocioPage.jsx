@@ -1,26 +1,82 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import authService from '../api/authService';
 import '../styles/dashboard-negocio.css';
 
+const API_URL = "http://127.0.0.1:8000/api";
+
 export default function DashboardNegocioPage() {
-  const { user } = useAuth();
+  const { user: contextUser } = useAuth();
   const [stats, setStats] = useState({
     visualizaciones: 0,
     resenasTotal: 0,
     promedioCalificacion: 0,
     visitasHoy: 0,
   });
+  const [loading, setLoading] = useState(true);
+
+  // Si el contexto no tiene el usuario, intentar obtenerlo del localStorage
+  const currentUser = contextUser || authService.getCurrentUser()?.data || null;
+
+  // Obtener ID del negocio
+  const negocioId = 
+    currentUser?.negocio?.id_negocio ?? 
+    currentUser?.negocio?.id ?? 
+    currentUser?.negocioId ?? 
+    currentUser?.id_negocio ?? 
+    currentUser?.id ?? 
+    currentUser?.pk ?? 
+    null;
 
   useEffect(() => {
-    // Aquí se cargarían las estadísticas reales desde la API
-    // Por ahora usamos datos de ejemplo
-    setStats({
-      visualizaciones: 1234,
-      resenasTotal: 45,
-      promedioCalificacion: 4.5,
-      visitasHoy: 23,
-    });
-  }, []);
+    const loadStats = async () => {
+      setLoading(true);
+      try {
+        if (!negocioId) {
+          setStats({
+            visualizaciones: 0,
+            resenasTotal: 0,
+            promedioCalificacion: 0,
+            visitasHoy: 0,
+          });
+          setLoading(false);
+          return;
+        }
+
+        // Cargar reseñas desde la API
+        const { data } = await axios.get(`${API_URL}/negocio/${negocioId}/resenas`);
+        
+        // Acepta array directo o { data: [...] }
+        const resenas = Array.isArray(data) ? data : data.data ?? [];
+
+        // Calcular estadísticas
+        const resenasTotal = resenas.length;
+        const promedioCalificacion = resenasTotal > 0
+          ? resenas.reduce((sum, r) => sum + r.calificacion, 0) / resenasTotal
+          : 0;
+
+        setStats({
+          visualizaciones: 1234, // Esto podría venir de otra API si está disponible
+          resenasTotal,
+          promedioCalificacion,
+          visitasHoy: 23, // Esto podría venir de otra API si está disponible
+        });
+      } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+        setStats({
+          visualizaciones: 0,
+          resenasTotal: 0,
+          promedioCalificacion: 0,
+          visitasHoy: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, [negocioId]);
 
   return (
     <div className="dashboard-container">
