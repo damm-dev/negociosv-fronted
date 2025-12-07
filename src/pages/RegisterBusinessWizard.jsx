@@ -5,6 +5,8 @@ import { initDraggableClosing } from '../utils/draggableInit';
 import ProgressBar from '../components/ProgressBar';
 import '../styles/formNegocio.css';
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 export default function RegisterBusinessWizard() {
   const navigate = useNavigate();
   const { registerBusiness } = useAuth();
@@ -44,7 +46,7 @@ export default function RegisterBusinessWizard() {
     const cargarMunicipios = async () => {
       try {
         setLoadingMunicipios(true);
-        const response = await fetch('http://localhost:8000/api/municipios');
+        const response = await fetch(`${API_BASE}/municipios`);
         const data = await response.json();
         
         if (data.success && data.data) {
@@ -81,7 +83,7 @@ export default function RegisterBusinessWizard() {
     // Cargar categorías desde la API
     const cargarCategorias = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/categorias');
+        const response = await fetch(`${API_BASE}/categorias`);
         const data = await response.json();
         
         if (data.success && data.data) {
@@ -109,7 +111,7 @@ export default function RegisterBusinessWizard() {
     // Cargar métodos de pago desde la API
     const cargarMetodosPago = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/metodos-pago');
+        const response = await fetch(`${API_BASE}/metodos-pago`);
         const data = await response.json();
         
         if (data.success && data.data) {

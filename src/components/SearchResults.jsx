@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./SearchResults.css";
 
-const SERVER_URL = "http://127.0.0.1:8000";
+const SERVER_URL = import.meta.env.VITE_API_URL;
 
 export default function SearchResults({ resultados, filtros, loading }) {
   const navigate = useNavigate();
@@ -80,8 +80,8 @@ export default function SearchResults({ resultados, filtros, loading }) {
         {/* Grid de resultados */}
         <div className="search-results-grid">
           {negocios.map((negocio) => {
-            // Preparar imagen
-            let imagen = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%23f0f0f0' width='600' height='400'/%3E%3Ctext fill='%23999' font-family='sans-serif' font-size='24' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3ESin Imagen%3C/text%3E%3C/svg%3E";
+            // Preparar imagen - usar SVG como fallback
+            let imagen = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='%23999'%3ESin Imagen%3C/text%3E%3C/svg%3E";
             if (negocio.logo) {
               imagen = `${SERVER_URL}/storage/${negocio.logo}`;
             }
