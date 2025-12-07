@@ -63,7 +63,7 @@ export default function BusinessDetail() {
           n.logo_url ||
           n.logo ||
           n.imagen ||
-          "https://via.placeholder.com/800x400?text=NegocioSV";
+          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='%23999'%3ENegocioSV%3C/text%3E%3C/svg%3E";
 
         setBusiness({
           id_negocio: n.id_negocio ?? n.id ?? null,

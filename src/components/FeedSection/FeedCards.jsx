@@ -36,7 +36,8 @@ export default function FeedCards({ selectedCategory }) {
             categoriesList = ["Varios"];
           }
 
-          let image = "https://via.placeholder.com/600x400?text=Sin+Imagen";
+          // Usar una imagen SVG como fallback en lugar de via.placeholder
+          let image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' fill='%23999'%3ESin Imagen%3C/text%3E%3C/svg%3E";
           const dbPath = negocio.logo || negocio.logo_path;
           if (dbPath) image = `${SERVER_URL}/storage/${dbPath}`;
 
