@@ -46,14 +46,14 @@ export default function RegisterPersonWizard() {
   useEffect(() => {
     // Inicializar draggable
     initDraggableClosing();
-    
+
     // Cargar municipios desde la API
     const cargarMunicipios = async () => {
       try {
         setLoadingMunicipios(true);
-        const response = await fetch(`${API_BASE}/municipios`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://negociosv.com/api'}/municipios`);
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           // Mapear los datos al formato esperado
           const municipiosFormateados = data.data.map(m => ({
@@ -123,9 +123,9 @@ export default function RegisterPersonWizard() {
 
   // Función para calcular edad
   const calcularEdad = (fechaNacimiento) => {
-    const nacimiento = fechaNacimiento instanceof Date 
-        ? fechaNacimiento
-        : new Date(fechaNacimiento);
+    const nacimiento = fechaNacimiento instanceof Date
+      ? fechaNacimiento
+      : new Date(fechaNacimiento);
     const hoy = new Date();
     let edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
@@ -211,12 +211,12 @@ export default function RegisterPersonWizard() {
         // Convertir la fecha almacenada (string) a objeto Date para validación
         const fechaNacDate = new Date(formData.fecha_nacimiento);
         const hoy = new Date();
-        
+
         if (fechaNacDate > hoy) {
           alert("La fecha de nacimiento no puede ser futura");
           return false;
         }
-        
+
         const edad = calcularEdad(fechaNacDate);
         if (edad < 18) {
           alert("Debes ser mayor de 18 años para registrarte");
@@ -366,7 +366,7 @@ export default function RegisterPersonWizard() {
       setShowSuccessModal(true); // Mostramos el modal
       console.log("Respuesta del servidor:", response);
 
-      
+
     } catch (err) {
       console.error("Error en registro:", err);
       if (err.response?.data) {
@@ -399,10 +399,10 @@ export default function RegisterPersonWizard() {
     }
   };
 
-const handleSuccessClose = () => {
-  setShowSuccessModal(false);
-  navigate('/login'); // O a donde quieras redirigir
-};
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    navigate('/login'); // O a donde quieras redirigir
+  };
   const renderStep = () => {
     switch (currentStep) {
       case 1: // Nombres
@@ -485,9 +485,9 @@ const handleSuccessClose = () => {
         );
 
       case 4: // Fecha de nacimiento (Implementación con DatePicker)
-        const selectedDate = formData.fecha_nacimiento 
-            ? moment(formData.fecha_nacimiento).toDate() 
-            : null;
+        const selectedDate = formData.fecha_nacimiento
+          ? moment(formData.fecha_nacimiento).toDate()
+          : null;
 
         return (
           <>
@@ -804,13 +804,13 @@ const handleSuccessClose = () => {
         </div>
       )}
       {/* Modal de Éxito al Registrarse */}
-<SuccessModal
-  isOpen={showSuccessModal}
-  onClose={handleSuccessClose}
-  title="¡Cuenta creada!"
-  message="Tu registro se ha completado exitosamente. Ahora puedes iniciar sesión y explorar."
-  btnText="Ir a Iniciar Sesión"
-/>
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessClose}
+        title="¡Cuenta creada!"
+        message="Tu registro se ha completado exitosamente. Ahora puedes iniciar sesión y explorar."
+        btnText="Ir a Iniciar Sesión"
+      />
     </div>
   );
 }

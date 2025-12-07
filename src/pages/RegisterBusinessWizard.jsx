@@ -41,14 +41,14 @@ export default function RegisterBusinessWizard() {
   useEffect(() => {
     // Inicializar draggable
     initDraggableClosing();
-    
+
     // Cargar municipios desde la API
     const cargarMunicipios = async () => {
       try {
         setLoadingMunicipios(true);
-        const response = await fetch(`${API_BASE}/municipios`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://negociosv.com/api'}/municipios`);
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           const municipiosFormateados = data.data.map(m => ({
             id: m.id,
@@ -83,9 +83,9 @@ export default function RegisterBusinessWizard() {
     // Cargar categorías desde la API
     const cargarCategorias = async () => {
       try {
-        const response = await fetch(`${API_BASE}/categorias`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://negociosv.com/api'}/categorias`);
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           setCategorias(data.data);
         } else {
@@ -111,9 +111,9 @@ export default function RegisterBusinessWizard() {
     // Cargar métodos de pago desde la API
     const cargarMetodosPago = async () => {
       try {
-        const response = await fetch(`${API_BASE}/metodos-pago`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://negociosv.com/api'}/metodos-pago`);
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           setMetodosPago(data.data);
         } else {

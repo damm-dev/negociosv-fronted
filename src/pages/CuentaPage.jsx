@@ -131,31 +131,46 @@ function UploadIcon() {
 }
 
 // Componente para logros (persona) - CON DATOS REALES
-function Achievement({ logro, progreso }) {
+function Achievement({ logro }) {
   // Validar que el logro tenga datos
   if (!logro) {
     return null;
   }
 
-  const porcentaje = progreso && logro.meta ? (progreso.progreso_actual / logro.meta) * 100 : 0;
-  const completado = progreso?.completado || false;
+  // El backend devuelve el progreso directamente en el objeto logro
+  const progresoActual = logro.progreso || 0;
+  const meta = logro.meta || 1;
+  const porcentaje = (progresoActual / meta) * 100;
+  const completado = logro.completado || false;
+
+  // Mapear iconos a emojis
+  const iconoEmoji = {
+    explorer: '🧭',
+    loyal: '❤️',
+    support: '🤝',
+    social: '👥',
+    reviewer: '⭐',
+    influencer: '🌟'
+  };
 
   return (
     <div className={`profile-achievement ${completado ? 'unlocked' : 'locked'}`}>
-      <div className="profile-achievement-icon">{logro.icono || '🏆'}</div>
+      <div className="profile-achievement-icon">
+        {iconoEmoji[logro.icono] || '🏆'}
+      </div>
       <div className="profile-achievement-info">
         <h4>{logro.nombre || 'Logro sin nombre'}</h4>
         <p>{logro.descripcion || 'Sin descripción'}</p>
-        {!completado && progreso && logro.meta && (
+        {!completado && (
           <div className="profile-achievement-progress">
             <div className="profile-progress-bar">
-              <div 
-                className="profile-progress-fill" 
+              <div
+                className="profile-progress-fill"
                 style={{ width: `${Math.min(porcentaje, 100)}%` }}
               ></div>
             </div>
             <span className="profile-progress-text">
-              {progreso.progreso_actual} / {logro.meta}
+              {progresoActual} / {meta}
             </span>
           </div>
         )}
@@ -169,8 +184,9 @@ function Achievement({ logro, progreso }) {
 function FavoriteItem({ favorito, onEliminar, onVer }) {
   const [eliminando, setEliminando] = useState(false);
 
-  // Validar que el favorito tenga datos del negocio
-  if (!favorito || !favorito.negocio) {
+  // El backend devuelve directamente los datos del negocio en el objeto favorito
+  // { id_favorito, id_negocio, nombre, descripcion, logo_url, municipio, departamento, categorias }
+  if (!favorito || !favorito.id_negocio) {
     return null;
   }
 
@@ -178,7 +194,7 @@ function FavoriteItem({ favorito, onEliminar, onVer }) {
     if (window.confirm('¿Estás seguro de eliminar este favorito?')) {
       setEliminando(true);
       try {
-        await onEliminar(favorito.negocio.id);
+        await onEliminar(favorito.id_negocio);
       } catch (error) {
         console.error('Error al eliminar favorito:', error);
         setEliminando(false);
@@ -186,19 +202,31 @@ function FavoriteItem({ favorito, onEliminar, onVer }) {
     }
   };
 
+  // Obtener la primera categoría
+  const categoria = Array.isArray(favorito.categorias) && favorito.categorias.length > 0
+    ? favorito.categorias[0]
+    : null;
+
   return (
     <div className="profile-favorite">
-      <div>
-        <h4>{favorito.negocio.nombre || 'Negocio sin nombre'}</h4>
+      {favorito.logo_url && (
+        <img
+          src={favorito.logo_url}
+          alt={favorito.nombre}
+          className="profile-favorite-logo"
+        />
+      )}
+      <div className="profile-favorite-info">
+        <h4>{favorito.nombre || 'Negocio sin nombre'}</h4>
         <p>
-          {favorito.negocio.categoria?.nombre || 'Sin categoría'} · {favorito.negocio.municipio?.nombre || 'Sin ubicación'}
+          {categoria || 'Sin categoría'} · {favorito.municipio || 'Sin ubicación'}
         </p>
       </div>
       <div className="profile-favorite-actions">
         <button
           type="button"
           className="profile-favorite-btn profile-btn-view"
-          onClick={() => onVer(favorito.negocio.id)}
+          onClick={() => onVer(favorito.id_negocio)}
         >
           Ver
         </button>
@@ -312,7 +340,7 @@ export default function CuentaPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       let data;
       if (userType === 'negocio') {
         data = await profileService.getBusinessProfile();
@@ -345,7 +373,7 @@ export default function CuentaPage() {
           });
         }
       }
-      
+
       setProfileData(data);
     } catch (err) {
       setError('Error al cargar el perfil. Por favor, intenta de nuevo.');
@@ -382,14 +410,14 @@ export default function CuentaPage() {
   const loadEstadisticas = async () => {
     try {
       setLoadingEstadisticas(true);
-      
+
       if (profileData?.negocio?.id) {
         // Obtener seguidores
         const seguidoresData = await seguimientosService.obtenerSeguidores(profileData.negocio.id);
-        
+
         // Obtener datos del negocio para otras estadísticas
         const negocioData = await negocioService.obtenerNegocio(profileData.negocio.id);
-        
+
         setEstadisticas({
           visualizaciones: negocioData.negocio?.visualizaciones || 0,
           favoritos: negocioData.negocio?.total_favoritos || 0,
@@ -424,13 +452,13 @@ export default function CuentaPage() {
     e.preventDefault();
     try {
       setUpdateMessage('');
-      
+
       if (userType === 'negocio') {
         await profileService.updateBusinessProfile(formData);
       } else {
         await profileService.updateProfile(formData);
       }
-      
+
       setUpdateMessage('Perfil actualizado correctamente');
       await loadProfile();
       setTimeout(() => setUpdateMessage(''), 3000);
@@ -442,7 +470,7 @@ export default function CuentaPage() {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setUpdateMessage('Las contraseñas no coinciden');
       return;
@@ -580,14 +608,23 @@ export default function CuentaPage() {
     try {
       setUploadingFotoNegocio(true);
       setUpdateMessage('');
+
+      // Verificar que tenemos el ID del negocio
+      if (!formData.id) {
+        setUpdateMessage('Error: No se encontró el ID del negocio');
+        return;
+      }
+
       const orden = fotosNegocio.length + 1;
       await negocioService.subirFotoNegocio(formData.id, file, orden);
       setUpdateMessage('Foto agregada correctamente');
       await loadProfile();
       setTimeout(() => setUpdateMessage(''), 2000);
     } catch (err) {
-      setUpdateMessage('Error al subir la foto');
-      console.error('Error subiendo foto de negocio:', err);
+      // Mostrar mensaje de error más específico
+      const errorMsg = err.response?.data?.message || err.message || 'Error al subir la foto';
+      setUpdateMessage(errorMsg);
+      console.error('Error subiendo foto de negocio:', err.response?.data || err);
     } finally {
       setUploadingFotoNegocio(false);
     }
@@ -695,7 +732,7 @@ export default function CuentaPage() {
       <div className="profile-header">
         <h1>{userType === 'negocio' ? 'Perfil de Negocio' : 'Tu perfil'}</h1>
         <p>
-          {userType === 'negocio' 
+          {userType === 'negocio'
             ? 'Gestiona la información de tu negocio y revisa tus estadísticas.'
             : 'Gestiona tu cuenta y personaliza tu experiencia en NegocioSV.'}
         </p>
@@ -825,14 +862,11 @@ export default function CuentaPage() {
                 <p>Cargando logros...</p>
               ) : logros.length > 0 ? (
                 <div className="profile-achievements-grid">
-                  {logros.map((item, index) => (
-                    item?.logro ? (
-                      <Achievement 
-                        key={item.logro.id || index} 
-                        logro={item.logro} 
-                        progreso={item.progreso}
-                      />
-                    ) : null
+                  {logros.map((logro, index) => (
+                    <Achievement
+                      key={logro.id || index}
+                      logro={logro}
+                    />
                   ))}
                 </div>
               ) : (
@@ -854,10 +888,10 @@ export default function CuentaPage() {
               ) : favoritos.length > 0 ? (
                 <div className="profile-favorites-list">
                   {favoritos
-                    .filter(favorito => favorito && favorito.negocio)
+                    .filter(favorito => favorito && favorito.id_negocio)
                     .map((favorito) => (
                       <FavoriteItem
-                        key={favorito.id}
+                        key={favorito.id_favorito || favorito.id_negocio}
                         favorito={favorito}
                         onEliminar={handleEliminarFavorito}
                         onVer={handleVerNegocio}
@@ -975,9 +1009,9 @@ export default function CuentaPage() {
                     <div className="profile-upload-container">
                       <div className="profile-upload-preview">
                         {previewFoto || profileData?.foto_url ? (
-                          <img 
-                            src={previewFoto || profileData.foto_url} 
-                            alt="Preview" 
+                          <img
+                            src={previewFoto || profileData.foto_url}
+                            alt="Preview"
                             className="profile-upload-img"
                           />
                         ) : (
@@ -1011,9 +1045,9 @@ export default function CuentaPage() {
                     <div className="profile-upload-container">
                       <div className="profile-upload-preview">
                         {previewLogo || profileData?.logo_url ? (
-                          <img 
-                            src={previewLogo || profileData.logo_url} 
-                            alt="Logo" 
+                          <img
+                            src={previewLogo || profileData.logo_url}
+                            alt="Logo"
                             className="profile-upload-img"
                           />
                         ) : (
@@ -1228,8 +1262,8 @@ export default function CuentaPage() {
                 <div className="profile-form-row">
                   <div className="profile-form-group">
                     <label htmlFor="pass-actual">Contraseña actual</label>
-                    <input 
-                      id="pass-actual" 
+                    <input
+                      id="pass-actual"
                       name="currentPassword"
                       type="password"
                       value={passwordData.currentPassword}
@@ -1238,8 +1272,8 @@ export default function CuentaPage() {
                   </div>
                   <div className="profile-form-group">
                     <label htmlFor="pass-nueva">Nueva contraseña</label>
-                    <input 
-                      id="pass-nueva" 
+                    <input
+                      id="pass-nueva"
                       name="newPassword"
                       type="password"
                       value={passwordData.newPassword}
@@ -1251,8 +1285,8 @@ export default function CuentaPage() {
                   <label htmlFor="pass-confirm">
                     Confirmar nueva contraseña
                   </label>
-                  <input 
-                    id="pass-confirm" 
+                  <input
+                    id="pass-confirm"
                     name="confirmPassword"
                     type="password"
                     value={passwordData.confirmPassword}

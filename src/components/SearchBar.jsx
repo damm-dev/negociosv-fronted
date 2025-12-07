@@ -3,7 +3,7 @@ import axios from "axios";
 import "./SearchBar.css";
 import negocioService from "../api/negocioService";
 
-export default function SearchBar({ onSearch, onLoading }) {
+export default function SearchBar({ onSearch, onLoading, className = "" }) {
   const [query, setQuery] = useState("");
   const [municipio, setMunicipio] = useState("");
   const [municipios, setMunicipios] = useState([]);
@@ -16,8 +16,8 @@ export default function SearchBar({ onSearch, onLoading }) {
   useEffect(() => {
     const cargarMunicipios = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/municipios`);
-        
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || "https://negociosv.com/api"}/municipios`);
+
         if (response.data.success && response.data.data) {
           setMunicipios(response.data.data);
         } else if (Array.isArray(response.data)) {
@@ -32,7 +32,7 @@ export default function SearchBar({ onSearch, onLoading }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (onLoading) onLoading(true);
 
     try {
@@ -44,7 +44,7 @@ export default function SearchBar({ onSearch, onLoading }) {
       };
 
       const resultados = await negocioService.buscarNegocios(params);
-      
+
       if (onSearch) {
         onSearch(resultados, params);
       }
@@ -75,7 +75,7 @@ export default function SearchBar({ onSearch, onLoading }) {
 
   const handleModoChange = (nuevoModo) => {
     setModoUbicacion(nuevoModo);
-    
+
     if (nuevoModo === "gps") {
       setMunicipio("");
       if (!ubicacionUsuario) {
@@ -88,7 +88,7 @@ export default function SearchBar({ onSearch, onLoading }) {
   };
 
   return (
-    <div className="searchbar-container">
+    <div className={`searchbar-container ${className}`.trim()}>
       <form className="searchbar-form" onSubmit={handleSubmit}>
         {/* Input de búsqueda principal */}
         <div className="searchbar-main-row">
@@ -108,7 +108,7 @@ export default function SearchBar({ onSearch, onLoading }) {
         {/* Filtros con Switch */}
         <div className="searchbar-filters-row">
           <span className="filter-label">Filtrar por:</span>
-          
+
           {/* Switch Toggle */}
           <div className="location-switch">
             <button

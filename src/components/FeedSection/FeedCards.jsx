@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./FeedCards.css"; // Asegúrate de tener este CSS o usa card-section.css
 
-const SERVER_URL = "http://127.0.0.1:8000";
+const SERVER_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || "https://negociosv.com";
 const API_URL = `${SERVER_URL}/api/negocios`;
 
 export default function FeedCards({ selectedCategory }) {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function FeedCards({ selectedCategory }) {
       try {
         setLoading(true);
         const response = await axios.get(API_URL);
-        
+
         // Extracción de datos de Laravel
         let raw = [];
         const body = response.data;
@@ -45,10 +45,10 @@ export default function FeedCards({ selectedCategory }) {
             id: negocio.id_negocio || negocio.id,
             name: negocio.nombre || "Negocio",
             description: negocio.descripcion || "",
-            categoriesList, 
+            categoriesList,
             location: negocio.municipio?.nombre || negocio.direccion || "El Salvador",
             image,
-            rating: 4.8, 
+            rating: 4.8,
             reviews: 0,
             installs: "Nuevo"
           };
@@ -68,44 +68,44 @@ export default function FeedCards({ selectedCategory }) {
   const filteredBusinesses = (!selectedCategory || selectedCategory === "Todos")
     ? businesses
     : businesses.filter((b) => {
-        // Busca si alguna categoría del negocio incluye el texto del botón
-        return b.categoriesList.some(cat => 
-            cat.toLowerCase().includes(selectedCategory.toLowerCase())
-        );
-      });
+      // Busca si alguna categoría del negocio incluye el texto del botón
+      return b.categoriesList.some(cat =>
+        cat.toLowerCase().includes(selectedCategory.toLowerCase())
+      );
+    });
 
-  if (loading) return <p style={{textAlign:'center', padding:'40px'}}>Cargando negocios...</p>;
+  if (loading) return <p style={{ textAlign: 'center', padding: '40px' }}>Cargando negocios...</p>;
 
   return (
     <section className="cards-section">
       <div style={{ padding: '0 20px', marginBottom: '20px' }}>
         <h2>
-          {selectedCategory === "Todos" 
-            ? "Todos los negocios" 
+          {selectedCategory === "Todos"
+            ? "Todos los negocios"
             : `Resultados para: ${selectedCategory}`}
         </h2>
-        <p style={{color: '#666'}}>
+        <p style={{ color: '#666' }}>
           Mostrando {filteredBusinesses.length} resultados encontrados.
         </p>
       </div>
 
       {filteredBusinesses.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px" }}>
-           <p>No se encontraron negocios en la categoría <strong>{selectedCategory}</strong>.</p>
-           <p>¡Prueba con otra o selecciona "Todos"!</p>
+          <p>No se encontraron negocios en la categoría <strong>{selectedCategory}</strong>.</p>
+          <p>¡Prueba con otra o selecciona "Todos"!</p>
         </div>
       ) : (
         <div className="wp-style-grid">
           {filteredBusinesses.map((b) => (
             <article key={b.id} className="wp-card">
               <div className="wp-card-image" style={{ backgroundImage: `url(${b.image})` }} />
-              
+
               <div className="wp-card-body">
                 <h3 className="wp-card-name">{b.name}</h3>
                 <p className="wp-card-description">
                   {b.description.length > 60 ? b.description.substring(0, 60) + "..." : b.description}
                 </p>
-                
+
                 <div className="wp-card-meta">
                   <span className="wp-card-category">{b.categoriesList[0] || "General"}</span>
                   <span className="wp-card-location">{b.location}</span>
@@ -118,7 +118,7 @@ export default function FeedCards({ selectedCategory }) {
               </div>
 
               <div className="wp-card-actions">
-                <button 
+                <button
                   className="wp-card-btn"
                   onClick={() => navigate(`/negocios/${b.id}`)}
                 >

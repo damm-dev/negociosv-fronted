@@ -218,10 +218,10 @@ export default function Navbar() {
 
   // Determinar qué tabs mostrar según el tipo de usuario
   // Si es persona y NO está autenticado, filtrar el tab de logros
-  const TABS = userType === 'negocio' 
-    ? TABS_NEGOCIO 
-    : isAuthenticated() 
-      ? TABS_PERSONA 
+  const TABS = userType === 'negocio'
+    ? TABS_NEGOCIO
+    : isAuthenticated()
+      ? TABS_PERSONA
       : TABS_PERSONA.filter(tab => tab.id !== 'logros');
 
   // Actualizar posición de la barrita indicadora
@@ -229,14 +229,14 @@ export default function Navbar() {
     const updateIndicator = () => {
       const pill = document.querySelector('.nav-pill');
       const activeButton = document.querySelector('.nav-item--active');
-      
+
       if (pill && activeButton) {
         const pillRect = pill.getBoundingClientRect();
         const buttonRect = activeButton.getBoundingClientRect();
-        
+
         const left = buttonRect.left - pillRect.left + 12;
         const width = buttonRect.width - 24;
-        
+
         pill.style.setProperty('--indicator-left', `${left}px`);
         pill.style.setProperty('--indicator-width', `${width}px`);
       }
@@ -245,7 +245,7 @@ export default function Navbar() {
     // Actualizar inmediatamente y después de un pequeño delay para asegurar que el DOM esté listo
     updateIndicator();
     setTimeout(updateIndicator, 100);
-    
+
     // Actualizar en resize
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
@@ -272,16 +272,17 @@ export default function Navbar() {
   // Obtener iniciales del usuario
   const getInitials = () => {
     if (!user) return "U";
-    
+
     if (userType === 'negocio') {
-      const nombre = user.nombre || user.negocio?.nombre || "";
+      // Priorizar user.negocio.nombre sobre user.nombre
+      const nombre = user.negocio?.nombre || user.nombre || "";
       return nombre.charAt(0).toUpperCase() || "N";
     } else {
       const nombres = user.perfil?.nombres || "";
       const apellidos = user.perfil?.apellidos || "";
       const inicialNombre = nombres.charAt(0).toUpperCase();
       const inicialApellido = apellidos.charAt(0).toUpperCase();
-      
+
       if (inicialNombre && inicialApellido) {
         return inicialNombre + inicialApellido;
       } else if (inicialNombre) {
@@ -294,9 +295,10 @@ export default function Navbar() {
   // Obtener nombre completo
   const getFullName = () => {
     if (!user) return "Usuario";
-    
+
     if (userType === 'negocio') {
-      return user.nombre || user.negocio?.nombre || "Negocio";
+      // El nombre del negocio puede estar en diferentes lugares según cómo se guardó
+      return user.negocio?.nombre || user.nombre || "Negocio";
     } else {
       const nombres = user.perfil?.nombres || "";
       const apellidos = user.perfil?.apellidos || "";
@@ -308,9 +310,10 @@ export default function Navbar() {
   // Obtener foto de perfil
   const getProfilePhoto = () => {
     if (!user) return null;
-    
+
     if (userType === 'negocio') {
-      return user.logo_url || user.logo || null;
+      // El logo puede estar en user.negocio.logo_url o directamente en user.logo_url
+      return user.negocio?.logo_url || user.logo_url || user.negocio?.logo || user.logo || null;
     } else {
       return user.perfil?.foto_url || user.perfil?.foto || null;
     }
@@ -333,9 +336,8 @@ export default function Navbar() {
               <button
                 key={id}
                 type="button"
-                className={`nav-item ${
-                  activeTab === id ? "nav-item--active" : ""
-                } ${mobileOnly ? "nav-item--mobile-only" : ""}`}
+                className={`nav-item ${activeTab === id ? "nav-item--active" : ""
+                  } ${mobileOnly ? "nav-item--mobile-only" : ""}`}
                 onClick={() => {
                   setActiveTab(id);
                   // Si es el botón de cuenta y no está autenticado, redirigir a crear cuenta
@@ -348,7 +350,7 @@ export default function Navbar() {
                 data-tooltip={label}
               >
                 <span className="nav-icon">
-                {id === "cuenta" && isAuthenticated() ? (
+                  {id === "cuenta" && isAuthenticated() ? (
                     <div className="nav-mobile-avatar">
                       {profilePhoto ? (
                         <img src={profilePhoto} alt={getFullName()} />
@@ -369,9 +371,9 @@ export default function Navbar() {
         {/* DERECHA: botones sesión o perfil de usuario */}
         <div className="nav-actions">
           {isAuthenticated() ? (
-            <button 
-              className="nav-user-profile" 
-              type="button" 
+            <button
+              className="nav-user-profile"
+              type="button"
               onClick={() => navigate("/cuenta")}
               title="Ver mi cuenta"
             >

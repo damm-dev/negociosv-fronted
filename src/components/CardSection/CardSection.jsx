@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./card-section.css";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/negocios`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://negociosv.com/api"}/negocios`;
 
 export default function CardSection() {
   const [businesses, setBusinesses] = useState([]);

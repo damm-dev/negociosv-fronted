@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import authService from '../api/authService';
 import '../styles/resenas-negocio.css';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "https://negociosv.com/api";
 
 export default function ResenasNegocioPage() {
   const { user: contextUser } = useAuth();
@@ -17,13 +17,13 @@ export default function ResenasNegocioPage() {
 
   // Obtener ID del negocio del usuario autenticado
   // El negocio tiene la propiedad id_negocio dentro del objeto negocio
-  const negocioId = 
-    currentUser?.negocio?.id_negocio ?? 
-    currentUser?.negocio?.id ?? 
-    currentUser?.negocioId ?? 
-    currentUser?.id_negocio ?? 
-    currentUser?.id ?? 
-    currentUser?.pk ?? 
+  const negocioId =
+    currentUser?.negocio?.id_negocio ??
+    currentUser?.negocio?.id ??
+    currentUser?.negocioId ??
+    currentUser?.id_negocio ??
+    currentUser?.id ??
+    currentUser?.pk ??
     null;
 
   // Cargar reseñas desde el backend
@@ -39,7 +39,7 @@ export default function ResenasNegocioPage() {
 
       try {
         const { data } = await axios.get(`${API_URL}/negocio/${negocioId}/resenas`);
-        
+
         // Acepta array directo o { data: [...] }
         const list = Array.isArray(data) ? data : data.data ?? [];
 

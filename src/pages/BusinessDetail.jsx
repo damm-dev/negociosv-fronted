@@ -12,7 +12,7 @@ import seguimientosService from "../api/seguimientosService";
 import promocionesService from "../api/promocionesService";
 import logrosService from "../api/logrosService";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/negocio`;
+const API_URL = `${import.meta.env.VITE_API_URL || "https://negociosv.com/api"}/negocio`;
 
 export default function BusinessDetail() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ export default function BusinessDetail() {
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
   // Estados para interacciones
   const [isFavorito, setIsFavorito] = useState(false);
   const [isSiguiendo, setIsSiguiendo] = useState(false);
@@ -277,9 +277,8 @@ export default function BusinessDetail() {
       <div className="tabs-container">
         <div className="tabs-header">
           <button
-            className={`tab-btn ${
-              activeTab === "general" ? "active" : ""
-            }`}
+            className={`tab-btn ${activeTab === "general" ? "active" : ""
+              }`}
             onClick={() => setActiveTab("general")}
           >
             Información general
@@ -287,9 +286,8 @@ export default function BusinessDetail() {
 
           {promociones.length > 0 && (
             <button
-              className={`tab-btn ${
-                activeTab === "promociones" ? "active" : ""
-              }`}
+              className={`tab-btn ${activeTab === "promociones" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("promociones")}
             >
               Promociones ({promociones.length})
@@ -297,18 +295,16 @@ export default function BusinessDetail() {
           )}
 
           <button
-            className={`tab-btn ${
-              activeTab === "reviews" ? "active" : ""
-            }`}
+            className={`tab-btn ${activeTab === "reviews" ? "active" : ""
+              }`}
             onClick={() => setActiveTab("reviews")}
           >
             Reseñas
           </button>
 
           <button
-            className={`tab-btn ${
-              activeTab === "contact" ? "active" : ""
-            }`}
+            className={`tab-btn ${activeTab === "contact" ? "active" : ""
+              }`}
             onClick={() => setActiveTab("contact")}
           >
             Contáctanos
