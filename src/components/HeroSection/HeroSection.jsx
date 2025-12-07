@@ -4,7 +4,7 @@ import gsap from "gsap";
 import "./HeroSection.css";
 import SearchBar from "../SearchBar.jsx";
 
-export default function HeroSection() {
+export default function HeroSection({ onSearch, onLoading }) {
   const subtitleRef = useRef(null);
 
   // Helper function to split subtitle text into spans
@@ -100,7 +100,7 @@ export default function HeroSection() {
             "Apoya a los emprendedores salvadoreños y descubre nuevas oportunidades."
           )}
         </p>
-        <SearchBar className="search-bar" />
+        <SearchBar className="search-bar" onSearch={onSearch} onLoading={onLoading} />
       </div>
     </section>
   );
