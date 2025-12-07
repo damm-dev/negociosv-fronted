@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import authService from '../api/authService';
 import '../styles/resenas-negocio.css';
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ResenasNegocioPage() {
   const { user: contextUser } = useAuth();
