@@ -78,6 +78,33 @@
   margin: 0;
 }
 
+.stat-badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.stat-badge.positive {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+}
+
+.stat-badge.negative {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+}
+
+.stat-stars {
+  display: block;
+  font-size: 16px;
+  color: #fbbf24;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
 /* ===== DASHBOARD SECTIONS ===== */
 .dashboard-section {
   background: white;
@@ -133,6 +160,26 @@
 
 .activity-time {
   font-size: 13px;
+  color: #9ca3af;
+}
+
+.activity-empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+}
+
+.activity-empty p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+}
+
+.activity-empty span {
+  font-size: 14px;
   color: #9ca3af;
 }
 

@@ -3,10 +3,13 @@
    =========================== */
 
 .profile-page {
-  min-height: calc(100vh - 120px); /* ajusta según alto de navbar+footer */
+  min-height: calc(100vh - 120px);
+  /* ajusta según alto de navbar+footer */
   padding: 2.5rem 2rem 3rem;
-  background: #f3f4f6;              /* fondo gris claro */
-  color: #111827;                   /* texto principal oscuro */
+  background: #f3f4f6;
+  /* fondo gris claro */
+  color: #111827;
+  /* texto principal oscuro */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -299,24 +302,49 @@
 .profile-favorite {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 12px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
 }
 
-.profile-favorite h4 {
+.profile-favorite:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.profile-favorite-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e5e7eb;
+}
+
+.profile-favorite-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-favorite-info h4 {
   margin: 0 0 0.15rem;
   font-size: 0.98rem;
   color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.profile-favorite p {
+.profile-favorite-info p {
   margin: 0;
   font-size: 0.85rem;
   color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profile-favorite-btn {
