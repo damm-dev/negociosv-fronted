@@ -164,6 +164,11 @@ function Achievement({ logro, progreso }) {
 function FavoriteItem({ favorito, onEliminar, onVer }) {
   const [eliminando, setEliminando] = useState(false);
 
+  // Validar que favorito.negocio existe
+  if (!favorito || !favorito.negocio) {
+    return null;
+  }
+
   const handleEliminar = async () => {
     if (window.confirm('¿Estás seguro de eliminar este favorito?')) {
       setEliminando(true);
@@ -185,15 +190,15 @@ function FavoriteItem({ favorito, onEliminar, onVer }) {
         </p>
       </div>
       <div className="profile-favorite-actions">
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="profile-favorite-btn profile-btn-view"
           onClick={() => onVer(favorito.negocio.id)}
         >
           Ver
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="profile-favorite-btn profile-btn-delete"
           onClick={handleEliminar}
           disabled={eliminando}
