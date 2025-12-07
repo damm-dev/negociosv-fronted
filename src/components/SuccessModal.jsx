@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/formNegocio.css'; // Asegúrate de importar tus estilos
+import '../styles/formNegocio.css'; 
 
 const SuccessModal = ({ isOpen, onClose, title, message, btnText = "Continuar" }) => {
   if (!isOpen) return null;
@@ -21,7 +21,7 @@ const SuccessModal = ({ isOpen, onClose, title, message, btnText = "Continuar" }
           <button 
             className="modal-btn modal-btn-confirm" 
             onClick={onClose}
-            style={{ width: '100%' }} // Botón ancho para enfocar la acción
+            style={{ width: '100%' }} 
           >
             {btnText}
           </button>

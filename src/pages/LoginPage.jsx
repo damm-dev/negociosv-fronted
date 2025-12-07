@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { initDraggableClosing } from "../utils/draggableInit";
 import "../styles/login.css";
-// 1. Ya tenías el import, lo dejamos igual
 import SuccessModal from "../components/SuccessModal";
 
 export default function LoginPage() {
@@ -24,7 +23,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
-  // 2. Ya tenías estos estados, los usamos para controlar el flujo
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [redirectPath, setRedirectPath] = useState('/home');
 

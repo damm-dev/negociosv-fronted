@@ -242,7 +242,7 @@ textarea.big-input {
 
 /* --- BARRA INFERIOR (Footer Fijo) --- */
 .bottom-bar {
-  position: fixed; /* ya está así */
+  position: fixed; 
   bottom: 0;
   left: 0;
   right: 0;
@@ -341,10 +341,7 @@ textarea.big-input {
   color: var(--text-color);
   font-weight: 500;
 }
-/* =========================
-   OVERRIDES PARA WIZARD PERSONAS
-   (centrado + botones separados)
-========================= */
+
 
 /* Hace el layout igual al wizard negocio: pantalla completa centrada */
 .wizard-layout{
@@ -400,7 +397,7 @@ textarea.big-input {
    BOTÓN CANCELAR Y MODAL
 ========================= */
 
-/* Botón cancelar - Consistente con account-type */
+/* Botón cancelar  */
 .cancel-button {
   position: fixed;
   top: 1.5rem;
@@ -500,6 +497,7 @@ textarea.big-input {
   color: #020617;
   margin: 0;
   letter-spacing: -0.3px;
+  text-align: center;
 }
 
 .modal-message {
@@ -510,7 +508,7 @@ textarea.big-input {
   text-align: center;
 }
 
-/* Botones del modal - Minimalista */
+/* Botones del modal  */
 .modal-buttons {
   display: flex;
   gap: 12px;
